@@ -487,6 +487,7 @@
     </div>
   </div>
   <button class="btn-clear" onclick="clearChat()">LIMPAR</button>
+  <button class="btn-clear" onclick="changeKey()" style="border-color:rgba(255,107,53,0.3);color:#ff6b35;">🔑</button>
 </div>
 
 <div id="chat-area" style="display:none;">
@@ -708,6 +709,18 @@ async function sendMessage(text) {
   isTyping = false;
   document.getElementById('send-btn').disabled = false;
   document.getElementById('user-input').focus();
+}
+
+function changeKey() {
+  const nova = prompt('Cola sua nova chave Gemini (AIza...):');
+  if (!nova) return;
+  if (!nova.startsWith('AIza')) {
+    alert('Chave inválida! Precisa começar com AIza...');
+    return;
+  }
+  apiKey = nova;
+  localStorage.setItem('vex_api_key', apiKey);
+  addMessage('vex', '🔑 Chave atualizada com sucesso! Pode continuar a conversa normalmente.');
 }
 
 function saveHistory() {
