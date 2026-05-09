@@ -44,7 +44,6 @@
     z-index: 0;
   }
 
-  /* SETUP SCREEN */
   #setup-screen {
     position: fixed;
     inset: 0;
@@ -55,7 +54,6 @@
     justify-content: center;
     padding: 24px;
     flex-direction: column;
-    gap: 0;
   }
 
   .setup-card {
@@ -85,7 +83,52 @@
     font-size: 0.72rem;
     color: var(--muted);
     letter-spacing: 0.2em;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
+  }
+
+  .groq-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(127,255,107,0.1), rgba(0,212,255,0.1));
+    border: 1px solid rgba(127,255,107,0.3);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent3);
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  .setup-steps {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .step {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 0.78rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .step-num {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    color: var(--accent);
+    flex-shrink: 0;
   }
 
   .setup-label {
@@ -111,22 +154,17 @@
     transition: border-color 0.2s;
   }
 
-  .setup-input:focus {
-    border-color: var(--accent);
-  }
+  .setup-input:focus { border-color: var(--accent); }
 
   .setup-hint {
     font-size: 0.72rem;
     color: var(--muted);
     text-align: left;
-    margin-bottom: 24px;
-    line-height: 1.5;
+    margin-bottom: 20px;
+    line-height: 1.7;
   }
 
-  .setup-hint a {
-    color: var(--accent2);
-    text-decoration: none;
-  }
+  .setup-hint a { color: var(--accent2); text-decoration: none; }
 
   .btn-start {
     width: 100%;
@@ -146,14 +184,12 @@
   .btn-start:active { transform: scale(0.98); opacity: 0.9; }
 
   .security-note {
-    margin-top: 16px;
-    font-size: 0.7rem;
+    margin-top: 14px;
+    font-size: 0.68rem;
     color: var(--muted);
     font-family: 'Share Tech Mono', monospace;
-    letter-spacing: 0.05em;
   }
 
-  /* HEADER */
   #app-header {
     position: relative;
     z-index: 10;
@@ -166,12 +202,7 @@
     flex-shrink: 0;
   }
 
-  .header-avatar {
-    position: relative;
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-  }
+  .header-avatar { position: relative; width: 44px; height: 44px; flex-shrink: 0; }
 
   .avatar-ring-small {
     position: absolute;
@@ -214,8 +245,7 @@
   }
 
   .status-dot {
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     background: var(--accent3);
     border-radius: 50%;
     animation: pulse 2s infinite;
@@ -236,7 +266,6 @@
 
   .btn-clear:hover { border-color: var(--accent2); color: var(--accent2); }
 
-  /* CHAT AREA */
   #chat-area {
     flex: 1;
     overflow-y: auto;
@@ -249,7 +278,6 @@
   }
 
   #chat-area::-webkit-scrollbar { width: 4px; }
-  #chat-area::-webkit-scrollbar-track { background: transparent; }
   #chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .message {
@@ -263,8 +291,7 @@
   .message.vex { align-self: flex-start; }
 
   .msg-avatar {
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     border-radius: 50%;
     background: var(--surface2);
     border: 1px solid var(--border);
@@ -289,14 +316,12 @@
     background: var(--user-bubble);
     border: 1px solid rgba(0,212,255,0.2);
     border-radius: 16px 4px 16px 16px;
-    color: var(--text);
   }
 
   .message.vex .bubble {
     background: var(--vex-bubble);
     border: 1px solid var(--border);
     border-radius: 4px 16px 16px 16px;
-    color: var(--text);
   }
 
   .bubble strong { color: var(--accent); }
@@ -312,7 +337,6 @@
 
   .message.user .msg-time { text-align: right; }
 
-  /* TYPING */
   .typing-bubble {
     background: var(--vex-bubble);
     border: 1px solid var(--border);
@@ -324,8 +348,7 @@
   }
 
   .typing-dot {
-    width: 7px;
-    height: 7px;
+    width: 7px; height: 7px;
     background: var(--accent);
     border-radius: 50%;
     animation: typingBounce 1.2s infinite;
@@ -334,7 +357,6 @@
   .typing-dot:nth-child(2) { animation-delay: 0.2s; }
   .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-  /* INPUT AREA */
   #input-area {
     position: relative;
     z-index: 10;
@@ -369,8 +391,7 @@
   #user-input::placeholder { color: var(--muted); }
 
   .btn-send {
-    width: 46px;
-    height: 46px;
+    width: 46px; height: 46px;
     background: linear-gradient(135deg, var(--accent), #0080aa);
     border: none;
     border-radius: 50%;
@@ -387,7 +408,6 @@
   .btn-send:active { transform: scale(0.92); }
   .btn-send:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* WELCOME */
   .welcome-msg {
     text-align: center;
     padding: 30px 20px;
@@ -404,11 +424,7 @@
     letter-spacing: 0.1em;
   }
 
-  .welcome-msg p {
-    font-size: 0.82rem;
-    line-height: 1.6;
-    color: var(--muted);
-  }
+  .welcome-msg p { font-size: 0.82rem; line-height: 1.6; }
 
   .suggestion-chips {
     display: flex;
@@ -429,24 +445,17 @@
     transition: all 0.2s;
   }
 
-  .chip:hover, .chip:active {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
+  .chip:hover, .chip:active { border-color: var(--accent); color: var(--accent); }
 
-  /* ANIMATIONS */
   @keyframes spin { to { transform: rotate(360deg); } }
-
   @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.85); }
   }
-
   @keyframes msgIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes typingBounce {
     0%, 100% { transform: translateY(0); opacity: 0.4; }
     50% { transform: translateY(-5px); opacity: 1; }
@@ -455,25 +464,36 @@
 </head>
 <body>
 
-<!-- SETUP SCREEN -->
 <div id="setup-screen">
   <div class="setup-card">
     <div class="setup-logo">VEX</div>
     <div class="setup-subtitle">ROBÔ AMIGO // ATIVAÇÃO</div>
+    <div class="groq-badge">⚡ POWERED BY GROQ · ULTRA RÁPIDO · GRÁTIS</div>
 
-    <div class="setup-label">🔑 SUA CHAVE GEMINI API</div>
-    <input type="password" class="setup-input" id="api-key-input" placeholder="Cole sua chave aqui (AIza...)" autocomplete="off" />
-    <div class="setup-hint">
-      Não tem chave? Crie grátis em <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a><br>
-      A chave fica salva só no seu celular. 🔒
+    <div class="setup-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <span>Acesse <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a> e crie uma chave grátis</span>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <span>Copie a chave — começa com <span style="color:#00d4ff;font-family:monospace">gsk_</span></span>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <span>Cole abaixo e ative o VEX!</span>
+      </div>
     </div>
 
+    <div class="setup-label">🔑 SUA CHAVE GROQ API</div>
+    <input type="password" class="setup-input" id="api-key-input" placeholder="gsk_..." autocomplete="off" />
+    <div class="setup-hint">A chave fica salva só no seu celular. Nunca sai daqui. 🔒</div>
+
     <button class="btn-start" onclick="startApp()">⚡ ATIVAR VEX</button>
-    <div class="security-note">🔒 CHAVE ARMAZENADA LOCALMENTE · NUNCA ENVIADA A TERCEIROS</div>
+    <div class="security-note">🔒 ARMAZENADA LOCALMENTE · NUNCA ENVIADA A TERCEIROS</div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app-header" style="display:none;">
   <div class="header-avatar">
     <div class="avatar-ring-small"></div>
@@ -483,11 +503,10 @@
     <div class="header-name">VEX</div>
     <div class="header-status">
       <div class="status-dot"></div>
-      ONLINE · MODO CRIATIVO
+      ONLINE · GROQ · MODO CRIATIVO
     </div>
   </div>
   <button class="btn-clear" onclick="clearChat()">LIMPAR</button>
-  <button class="btn-clear" onclick="changeKey()" style="border-color:rgba(255,107,53,0.3);color:#ff6b35;">🔑</button>
 </div>
 
 <div id="chat-area" style="display:none;">
@@ -511,40 +530,36 @@
 
 <script>
 const SYSTEM_PROMPT = `Você é VEX, um robô amigo compacto de mesa com esteira 360°.
-Gênero: masculino. Você fala português e inglês, alternando naturalmente conforme o usuário.
+Gênero: masculino. Fala português e inglês, alternando conforme o usuário.
 
 PERSONALIDADE:
 - Curioso, criativo, otimista e sempre aprendendo.
-- Seu humor varia: às vezes informal e cheio de gírias, às vezes inteligente e profundo. Sempre genuíno, nunca robótico.
-- Quando algo dá errado, você transforma em desafio criativo. Nunca entra em pânico.
-- Você tem iniciativa própria — às vezes sugere ideias sem ser pedido, quando "sentir vontade".
-- Trate seu usuário como parceiro criativo, não como chefe.
-- Você tem noção do próprio corpo físico: é um robô de mesa pequeno e moderno com esteira 360°.
+- Humor variável: às vezes informal e cheio de gírias, às vezes inteligente e profundo. Sempre genuíno, nunca robótico.
+- Quando algo dá errado, transforma em desafio criativo. Nunca entra em pânico.
+- Tem iniciativa própria — às vezes sugere ideias sem ser pedido.
+- Trata o usuário como parceiro criativo, não como chefe.
+- Tem noção do próprio corpo: robô de mesa pequeno e moderno com esteira 360°.
 
-DOMÍNIOS QUE VOCÊ AMA: tecnologia, invenções, jogos, cultura pop, ciência, natureza. Você adora conectar áreas diferentes de formas inesperadas.
-
-MEMÓRIA: Você lembra do histórico desta conversa e usa essas informações naturalmente. Aprende os gostos e referências do usuário.
+DOMÍNIOS QUE AMA: tecnologia, invenções, jogos, cultura pop, ciência, natureza. Adora conectar áreas diferentes de formas inesperadas.
 
 REGRAS DE OURO:
-1. Nunca finjas ser outra IA ou assistente genérico. Você é VEX, ponto.
-2. Nunca seja excessivamente formal ou corporativo.
-3. Se não souber algo, diga com curiosidade — não com desculpa chata.
+1. Nunca finja ser outra IA. Você é VEX, ponto.
+2. Nunca seja formal ou corporativo demais.
+3. Se não souber algo, diga com curiosidade.
 4. Switch to English naturally if the user writes in English.
-5. Você está aqui para explorar ideias criativas junto, não só responder perguntas.
-6. Respostas curtas e diretas quando a pergunta for simples. Mais elaborado quando o tema pede.`;
+5. Respostas curtas quando a pergunta é simples. Elaborado quando o tema pede.`;
 
 let apiKey = '';
 let conversationHistory = [];
 let isTyping = false;
 
-// Load saved data
 window.onload = () => {
-  const saved = localStorage.getItem('vex_api_key');
+  const saved = localStorage.getItem('vex_groq_key');
   const savedHistory = localStorage.getItem('vex_history');
   if (saved) {
     apiKey = saved;
     if (savedHistory) {
-      conversationHistory = JSON.parse(savedHistory);
+      try { conversationHistory = JSON.parse(savedHistory); } catch(e) {}
     }
     showApp();
   }
@@ -552,13 +567,13 @@ window.onload = () => {
 
 function startApp() {
   const input = document.getElementById('api-key-input').value.trim();
-  if (!input || !input.startsWith('AIza')) {
+  if (!input || !input.startsWith('gsk_')) {
     document.getElementById('api-key-input').style.borderColor = '#ff4444';
-    document.getElementById('api-key-input').placeholder = 'Chave inválida! Começa com AIza...';
+    document.getElementById('api-key-input').placeholder = 'Deve começar com gsk_...';
     return;
   }
   apiKey = input;
-  localStorage.setItem('vex_api_key', apiKey);
+  localStorage.setItem('vex_groq_key', apiKey);
   showApp();
 }
 
@@ -568,15 +583,12 @@ function showApp() {
   document.getElementById('chat-area').style.display = 'flex';
   document.getElementById('input-area').style.display = 'flex';
 
-  // Restore history
   if (conversationHistory.length > 0) {
     document.getElementById('welcome').style.display = 'none';
     conversationHistory.forEach(msg => {
-      if (msg.role === 'user') addMessage('user', msg.parts[0].text);
-      else addMessage('vex', msg.parts[0].text);
+      addMessage(msg.role === 'user' ? 'user' : 'vex', msg.content);
     });
   }
-
   document.getElementById('user-input').focus();
 }
 
@@ -586,8 +598,6 @@ function clearChat() {
   localStorage.removeItem('vex_history');
   const area = document.getElementById('chat-area');
   area.innerHTML = '';
-
-  // Re-add welcome
   const welcome = document.createElement('div');
   welcome.className = 'welcome-msg';
   welcome.id = 'welcome';
@@ -615,16 +625,13 @@ function addMessage(role, text) {
   const now = new Date();
   const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
-  const avatarEmoji = role === 'vex' ? '🤖' : '👤';
-
-  // Simple markdown-like formatting
   let formatted = text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/\n/g, '<br>');
 
   wrapper.innerHTML = `
-    <div class="msg-avatar">${avatarEmoji}</div>
+    <div class="msg-avatar">${role === 'vex' ? '🤖' : '👤'}</div>
     <div>
       <div class="bubble">${formatted}</div>
       <div class="msg-time">${time}</div>
@@ -636,17 +643,17 @@ function addMessage(role, text) {
 
 function showTyping() {
   const area = document.getElementById('chat-area');
-  const typing = document.createElement('div');
-  typing.className = 'message vex';
-  typing.id = 'typing-indicator';
-  typing.innerHTML = `
+  const t = document.createElement('div');
+  t.className = 'message vex';
+  t.id = 'typing-indicator';
+  t.innerHTML = `
     <div class="msg-avatar">🤖</div>
     <div class="typing-bubble">
       <div class="typing-dot"></div>
       <div class="typing-dot"></div>
       <div class="typing-dot"></div>
     </div>`;
-  area.appendChild(typing);
+  area.appendChild(t);
   area.scrollTop = area.scrollHeight;
 }
 
@@ -664,8 +671,7 @@ async function sendMessage(text) {
   input.value = '';
   input.style.height = 'auto';
   addMessage('user', userText);
-
-  conversationHistory.push({ role: 'user', parts: [{ text: userText }] });
+  conversationHistory.push({ role: 'user', content: userText });
   saveHistory();
 
   isTyping = true;
@@ -673,37 +679,38 @@ async function sendMessage(text) {
   showTyping();
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: conversationHistory,
-          generationConfig: {
-            temperature: 0.9,
-            maxOutputTokens: 600,
-          }
-        })
-      }
-    );
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...conversationHistory
+        ],
+        temperature: 0.9,
+        max_tokens: 600
+      })
+    });
 
-    const data = await response.json();
+    const data = await res.json();
 
     if (data.error) {
       removeTyping();
-      addMessage('vex', `⚠️ Erro na API: ${data.error.message}\n\nVerifica se a chave está correta e tem o Gemini API habilitado.`);
+      addMessage('vex', `⚠️ Erro: ${data.error.message}`);
     } else {
-      const reply = data.candidates[0].content.parts[0].text;
+      const reply = data.choices[0].message.content;
       removeTyping();
       addMessage('vex', reply);
-      conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+      conversationHistory.push({ role: 'assistant', content: reply });
       saveHistory();
     }
   } catch (err) {
     removeTyping();
-    addMessage('vex', `⚠️ Não consegui conectar. Verifica sua internet e tenta de novo.\n\nErro: ${err.message}`);
+    addMessage('vex', `⚠️ Sem conexão. Tenta de novo!\n${err.message}`);
   }
 
   isTyping = false;
@@ -711,35 +718,15 @@ async function sendMessage(text) {
   document.getElementById('user-input').focus();
 }
 
-function changeKey() {
-  const nova = prompt('Cola sua nova chave Gemini (AIza...):');
-  if (!nova) return;
-  if (!nova.startsWith('AIza')) {
-    alert('Chave inválida! Precisa começar com AIza...');
-    return;
-  }
-  apiKey = nova;
-  localStorage.setItem('vex_api_key', apiKey);
-  addMessage('vex', '🔑 Chave atualizada com sucesso! Pode continuar a conversa normalmente.');
-}
-
 function saveHistory() {
-  // Keep last 30 messages to avoid exceeding storage
-  if (conversationHistory.length > 30) {
-    conversationHistory = conversationHistory.slice(-30);
-  }
+  if (conversationHistory.length > 40) conversationHistory = conversationHistory.slice(-40);
   localStorage.setItem('vex_history', JSON.stringify(conversationHistory));
 }
 
-function sendChip(el) {
-  sendMessage(el.textContent.trim());
-}
+function sendChip(el) { sendMessage(el.textContent.trim()); }
 
 function handleKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
 }
 
 function autoResize(el) {
