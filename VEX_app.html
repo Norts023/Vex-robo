@@ -353,8 +353,8 @@
   </div>
 
   <div id="inp-area">
-    <button class="ibtn" id="mic-btn" onclick="toggleMic()">🎙️</button>
-    <textarea id="txt" placeholder="Fala comigo..." rows="1" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+    <button class="ibtn" id="mic-btn" onclick="toggleMic()" title="Diga: Ei VEX!">🎙️</button>
+    <textarea id="txt" placeholder="Fala comigo... ou diga Ei VEX!" rows="1" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
     <button class="ibtn ready" id="send-btn" onclick="sendMsg()">➤</button>
   </div>
 </div>
@@ -622,6 +622,8 @@ function enterApp() {
   }
 
   document.getElementById('txt').focus();
+  // Inicia wake word automaticamente
+  setTimeout(() => startWakeMode(), 800);
 }
 
 /* ══ VOICE ══ */
@@ -652,24 +654,156 @@ function toggleVoice() {
 }
 
 /* ══ SPEECH REC ══ */
+let wakeMode   = false; // true = ouvindo wake word em loop
+let listenMode = false; // true = ouvindo comando do usuario
+
 function setupSpeechRec() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { document.getElementById('mic-btn').disabled = true; return; }
+
   recognition = new SR();
-  recognition.lang = 'pt-BR'; recognition.interimResults = false;
+  recognition.lang = 'pt-BR';
+  recognition.interimResults = true;  // precisa de interim pra detectar wake word rapido
+  recognition.continuous = false;
+
   recognition.onresult = e => {
-    const t = e.results[0][0].transcript;
-    document.getElementById('txt').value = t;
-    resize(document.getElementById('txt'));
-    stopRec(); sendMsg();
+    let transcript = '';
+    for (let i = 0; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript.toLowerCase();
+    }
+
+    if (wakeMode && !listenMode) {
+      // Detecta wake word "ei vex" ou variações
+      if (transcript.includes('ei vex') || transcript.includes('oi vex') || transcript.includes('hey vex')) {
+        wakeDetected();
+        return;
+      }
+      // Se terminou sem detectar, reinicia o loop
+      if (e.results[e.results.length-1].isFinal) {
+        restartWake();
+      }
+    } else if (listenMode) {
+      // Modo comando: só processa quando finalizar
+      if (e.results[e.results.length-1].isFinal) {
+        const cmd = e.results[e.results.length-1][0].transcript.trim();
+        if (cmd) {
+          document.getElementById('txt').value = cmd;
+          resize(document.getElementById('txt'));
+          stopListenMode();
+          sendMsg();
+        } else {
+          stopListenMode();
+        }
+      }
+    }
   };
-  recognition.onerror = () => stopRec();
-  recognition.onend   = () => stopRec();
+
+  recognition.onerror = e => {
+    if (e.error === 'no-speech' && wakeMode) { restartWake(); return; }
+    stopRec();
+  };
+
+  recognition.onend = () => {
+    if (wakeMode && !listenMode && !busy) {
+      restartWake();
+    } else if (!listenMode) {
+      stopRec();
+    }
+  };
 }
 
-function toggleMic() { if (!recognition) return; isRecording ? stopRec() : startRec(); }
-function startRec() { isRecording = true; document.getElementById('mic-btn').classList.add('recording'); setStatus('OUVINDO...'); try { recognition.start(); } catch(e){ stopRec(); } }
-function stopRec()  { isRecording = false; document.getElementById('mic-btn').classList.remove('recording'); setStatus('ONLINE'); try { recognition.stop(); } catch(e){} }
+/* Wake word detectada! */
+function wakeDetected() {
+  listenMode = true;
+  // Feedback visual e sonoro
+  setStatus('EI VEX! 👂');
+  document.getElementById('mic-btn').classList.add('recording');
+  avatarState('thinking');
+  // Bip de confirmação
+  playBeep();
+  // Para o recognition atual e reinicia em modo comando
+  try { recognition.stop(); } catch(e){}
+  setTimeout(() => {
+    if (listenMode) {
+      recognition.interimResults = false;
+      try { recognition.start(); } catch(e){ stopRec(); }
+    }
+  }, 300);
+}
+
+/* Reinicia loop de wake word */
+function restartWake() {
+  if (!wakeMode || listenMode) return;
+  recognition.interimResults = true;
+  setTimeout(() => {
+    if (wakeMode && !listenMode) {
+      try { recognition.start(); } catch(e){}
+    }
+  }, 100);
+}
+
+/* Para modo escuta de comando */
+function stopListenMode() {
+  listenMode = false;
+  document.getElementById('mic-btn').classList.remove('recording');
+  if (wakeMode) {
+    setStatus('👂 AGUARDANDO...');
+    recognition.interimResults = true;
+    restartWake();
+  } else {
+    setStatus('ONLINE');
+  }
+}
+
+/* Bip de confirmação quando VEX acorda */
+function playBeep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.frequency.value = 880;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.18);
+  } catch(e){}
+}
+
+/* Toggle manual do mic (botão) */
+function toggleMic() {
+  if (!recognition) return;
+  if (wakeMode) {
+    // Desliga wake word
+    wakeMode = false; listenMode = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+    document.getElementById('mic-btn').textContent = '🎙️';
+    setStatus('ONLINE');
+    try { recognition.stop(); } catch(e){}
+  } else {
+    // Liga wake word
+    startWakeMode();
+  }
+}
+
+function startWakeMode() {
+  if (!recognition) return;
+  wakeMode = true; listenMode = false;
+  recognition.interimResults = true;
+  document.getElementById('mic-btn').textContent = '👂';
+  setStatus('👂 AGUARDANDO...');
+  try { recognition.start(); } catch(e){}
+}
+
+function startRec() { startWakeMode(); }
+function stopRec() {
+  wakeMode = false; listenMode = false; isRecording = false;
+  document.getElementById('mic-btn').classList.remove('recording');
+  document.getElementById('mic-btn').textContent = '🎙️';
+  setStatus('ONLINE');
+  try { recognition.stop(); } catch(e){}
+}
 
 /* ══ AVATAR ══ */
 function avatarState(s) {
