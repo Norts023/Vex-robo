@@ -6,121 +6,124 @@
 <title>VEX</title>
 <style>
 :root{
-  --bg:#060a0f; --bg2:#080e16; --bg3:#0a1520;
-  --ice:#7ecfff; --ice2:#4ab0f0; --ice3:#1a6a9f;
-  --glow:rgba(126,207,255,0.25);
-  --text:#c8e8ff; --dim:#2a4a6a; --dim2:#1a3050;
-  --red:#ff5f6d; --green:#5fffa0; --yellow:#ffe066; --orange:#ffaa44; --pink:#ff80c0;
+  --bg:#060a0f;--bg2:#080e16;--bg3:#0a1520;
+  --ice:#7ecfff;--ice2:#4ab0f0;--ice3:#1a6a9f;
+  --glow:rgba(126,207,255,.25);
+  --text:#c8e8ff;--dim:#2a4a6a;--dim2:#1a3050;
+  --red:#ff5f6d;--green:#5fffa0;--yellow:#ffe066;--orange:#ffaa44;--pink:#ff80c0;--purple:#cc88ff;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;font-family:'Courier New',monospace;user-select:none;}
 
-/* ── SETUP ── */
-#setup{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
+/* ── SETUP / ONBOARD / GREET ── */
+.screen{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px;}
 .box{width:100%;max-width:340px;border:1px solid var(--dim);border-radius:20px;padding:28px 22px;text-align:center;background:var(--bg2);}
-.logo{font-size:2.6rem;font-weight:700;letter-spacing:.3em;color:var(--ice);text-shadow:0 0 30px var(--glow);margin-bottom:4px;}
-.sub{font-size:.56rem;color:var(--dim);letter-spacing:.3em;margin-bottom:24px;}
-.step{display:flex;gap:10px;align-items:flex-start;font-size:.72rem;color:#4a7a9a;line-height:1.5;margin-bottom:9px;text-align:left;}
+.logo{font-size:2.5rem;font-weight:700;letter-spacing:.3em;color:var(--ice);text-shadow:0 0 28px var(--glow);margin-bottom:4px;}
+.sub{font-size:.55rem;color:var(--dim);letter-spacing:.3em;margin-bottom:22px;}
+.step{display:flex;gap:10px;align-items:flex-start;font-size:.7rem;color:#4a7a9a;line-height:1.5;margin-bottom:8px;text-align:left;}
 .step a{color:var(--ice2);text-decoration:none;}
-.sn{width:18px;height:18px;border:1px solid var(--dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.54rem;color:var(--ice2);flex-shrink:0;margin-top:1px;}
-.inp{width:100%;background:var(--bg3);border:1px solid var(--dim);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'Courier New',monospace;font-size:.76rem;outline:none;margin:12px 0 8px;transition:border-color .2s;}
-.inp:focus{border-color:var(--ice2);}
-.inp.err{border-color:var(--red);}
-.btn{width:100%;background:var(--bg3);border:1px solid var(--dim);border-radius:10px;padding:12px;color:var(--ice);font-family:'Courier New',monospace;font-size:.7rem;letter-spacing:.18em;cursor:pointer;transition:all .2s;margin-bottom:7px;}
-.btn:hover{border-color:var(--ice2);box-shadow:0 0 14px var(--glow);}
-.btn:active{transform:scale(.98);}
-.btn.sec{color:var(--dim);font-size:.6rem;border-color:var(--dim2);}
-.hint{font-size:.58rem;color:var(--dim);margin-top:8px;}
-
-/* ── ONBOARD ── */
-#onboard{position:fixed;inset:0;z-index:998;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;}
-.ob-icon{font-size:2.8rem;margin-bottom:12px;}
-.ob-msg{font-size:.82rem;color:#5a8aaa;line-height:1.7;margin-bottom:18px;}
-#cam-wrap{width:130px;height:130px;border-radius:50%;margin:0 auto 14px;overflow:hidden;border:2px solid var(--dim);display:none;box-shadow:0 0 18px var(--glow);}
+.sn{width:18px;height:18px;border:1px solid var(--dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.52rem;color:var(--ice2);flex-shrink:0;margin-top:1px;}
+.inp{width:100%;background:var(--bg3);border:1px solid var(--dim);border-radius:10px;padding:11px 13px;color:var(--text);font-family:'Courier New',monospace;font-size:.74rem;outline:none;margin:11px 0 7px;transition:border-color .2s;}
+.inp:focus{border-color:var(--ice2);}.inp.err{border-color:var(--red);}
+.btn{width:100%;background:var(--bg3);border:1px solid var(--dim);border-radius:10px;padding:11px;color:var(--ice);font-family:'Courier New',monospace;font-size:.68rem;letter-spacing:.18em;cursor:pointer;transition:all .2s;margin-bottom:6px;}
+.btn:hover{border-color:var(--ice2);box-shadow:0 0 14px var(--glow);}.btn:active{transform:scale(.98);}
+.btn.sec{color:var(--dim);font-size:.58rem;border-color:var(--dim2);}
+.hint{font-size:.56rem;color:var(--dim);margin-top:7px;}
+#cam-wrap{width:120px;height:120px;border-radius:50%;margin:0 auto 12px;overflow:hidden;border:2px solid var(--dim);display:none;box-shadow:0 0 16px var(--glow);}
 #cam-video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);}
-#cam-st{font-size:.58rem;color:var(--green);letter-spacing:.12em;margin-bottom:10px;display:none;}
-.prog{width:100%;height:2px;background:var(--bg3);border-radius:1px;margin-bottom:14px;display:none;}
+#cam-st{font-size:.56rem;color:var(--green);letter-spacing:.12em;margin-bottom:9px;display:none;}
+.prog{width:100%;height:2px;background:var(--bg3);border-radius:1px;margin-bottom:12px;display:none;}
 .prog-fill{height:100%;width:0%;background:var(--ice2);border-radius:1px;transition:width .08s;}
+.gr-face{font-size:2.8rem;margin-bottom:11px;animation:pop .5s ease;}
+.gr-name{font-size:.86rem;color:var(--ice);letter-spacing:.2em;margin-bottom:7px;}
+.gr-txt{font-size:.76rem;color:#5a8aaa;line-height:1.75;margin-bottom:22px;min-height:52px;}
 
-/* ── GREET ── */
-#greet{position:fixed;inset:0;z-index:997;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;}
-.gr-face{font-size:3rem;margin-bottom:12px;animation:pop .5s ease;}
-.gr-name{font-size:.88rem;color:var(--ice);letter-spacing:.2em;margin-bottom:8px;}
-.gr-txt{font-size:.78rem;color:#5a8aaa;line-height:1.75;margin-bottom:24px;min-height:56px;}
-
-/* ══ PET SCREEN ══ */
+/* ══ PET ══ */
 #pet{display:none;width:100%;height:100dvh;flex-direction:column;align-items:center;justify-content:center;position:relative;background:var(--bg);overflow:hidden;}
-#pet::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 4px);pointer-events:none;z-index:50;}
-.bg-glow{position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,rgba(126,207,255,.06) 0%,transparent 70%);pointer-events:none;transition:all 1.2s ease;}
+#pet::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.05) 4px);pointer-events:none;z-index:50;}
+.bg-glow{position:absolute;width:70vw;height:70vw;border-radius:50%;background:radial-gradient(circle,rgba(126,207,255,.06) 0%,transparent 70%);pointer-events:none;transition:all 1.2s;}
 
-/* ── STATUS BAR ── */
-#sbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;z-index:60;}
-.sb-left{display:flex;flex-direction:column;gap:2px;}
-.sb-name{font-size:.68rem;color:var(--dim);letter-spacing:.22em;}
-.sb-st{font-size:.54rem;color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:4px;}
+/* STATUS */
+#sbar{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:11px 16px;z-index:60;}
+.sb-l{display:flex;flex-direction:column;gap:2px;}
+.sb-name{font-size:.66rem;color:var(--dim);letter-spacing:.22em;}
+.sb-st{font-size:.52rem;color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:4px;}
 .sdot{width:4px;height:4px;border-radius:50%;background:var(--ice2);box-shadow:0 0 4px var(--ice2);animation:dp 2s infinite;}
 
-/* ── NEEDS ICONS ── */
-#needs{position:absolute;top:12px;right:16px;display:flex;flex-direction:column;gap:6px;z-index:60;align-items:flex-end;}
-.need-row{display:flex;align-items:center;gap:5px;}
-.need-icon{font-size:.9rem;}
-.need-bar{width:40px;height:4px;background:var(--dim2);border-radius:2px;overflow:hidden;}
-.need-fill{height:100%;border-radius:2px;transition:width .5s;}
-.need-fill.hunger{background:var(--orange);}
-.need-fill.energy{background:var(--yellow);}
-.need-fill.happy{background:var(--pink);}
-.need-fill.health{background:var(--green);}
-.need-fill.social{background:var(--ice2);}
-.need-fill.fun{background:#cc88ff;}
+/* NEEDS */
+#needs{position:absolute;top:11px;right:14px;display:flex;flex-direction:column;gap:5px;z-index:60;align-items:flex-end;}
+.nr{display:flex;align-items:center;gap:4px;}
+.ni{font-size:.82rem;}
+.nb{width:38px;height:3px;background:var(--dim2);border-radius:2px;overflow:hidden;}
+.nf{height:100%;border-radius:2px;transition:width .5s;}
+.nf.hunger{background:var(--orange);}.nf.energy{background:var(--yellow);}
+.nf.happy{background:var(--pink);}.nf.health{background:var(--green);}
+.nf.social{background:var(--ice2);}.nf.fun{background:var(--purple);}
+.nf.curiosity{background:#88ffdd;}
 
-/* ── EYES ── */
-#eyes-wrap{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(18px,7vw,44px);z-index:10;transition:transform .5s cubic-bezier(.34,1.56,.64,1);}
-.eye{position:relative;width:clamp(95px,26vw,130px);height:clamp(95px,26vw,130px);border-radius:20px;background:#000;border:2.5px solid var(--ice3);overflow:hidden;box-shadow:0 0 28px rgba(126,207,255,.18),inset 0 0 18px rgba(0,0,0,.8);transition:border-color .3s,box-shadow .3s;}
+/* CURIOSITY BAR */
+#curio-wrap{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;z-index:60;opacity:.7;}
+#curio-bar{width:80px;height:3px;background:var(--dim2);border-radius:2px;overflow:hidden;}
+#curio-fill{height:100%;background:#88ffdd;border-radius:2px;transition:width .5s;}
+.curio-lbl{font-size:.5rem;color:#88ffdd;letter-spacing:.1em;}
+
+/* EYES */
+#eyes-wrap{position:relative;display:flex;align-items:center;justify-content:center;gap:clamp(16px,6vw,40px);z-index:10;transition:transform .5s cubic-bezier(.34,1.56,.64,1);}
+.eye{position:relative;width:clamp(90px,25vw,125px);height:clamp(90px,25vw,125px);border-radius:18px;background:#000;border:2.5px solid var(--ice3);overflow:hidden;box-shadow:0 0 26px rgba(126,207,255,.16),inset 0 0 16px rgba(0,0,0,.8);transition:border-color .3s,box-shadow .3s;}
 .eye canvas{position:absolute;inset:0;width:100%;height:100%;}
-.eye.glow{border-color:var(--ice2);box-shadow:0 0 40px rgba(126,207,255,.4),inset 0 0 18px rgba(0,0,0,.8);}
+.eye.glow{border-color:var(--ice2);box-shadow:0 0 38px rgba(126,207,255,.38),inset 0 0 16px rgba(0,0,0,.8);}
 
-/* ── FOOD ANIMATION ── */
-.food-drop{position:absolute;font-size:1.8rem;z-index:80;pointer-events:none;transition:all .5s cubic-bezier(.2,1.4,.6,1);animation:foodFall .6s ease forwards;}
-#food-area{position:absolute;bottom:0;left:0;right:0;height:60px;z-index:70;pointer-events:none;}
+/* VFX LAYER */
+#vfx{position:absolute;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
+.vfx-p{position:absolute;font-size:1.2rem;pointer-events:none;animation:vfxFloat 1s ease forwards;}
+.vfx-txt{position:absolute;font-size:.8rem;color:var(--ice);font-weight:700;pointer-events:none;animation:vfxFloat .9s ease forwards;white-space:nowrap;}
+.shake{animation:screenShk .3s ease!important;}
 
-/* ── BUBBLE ── */
-#bubble{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);max-width:82%;background:var(--bg2);border:1px solid var(--dim);border-radius:14px;padding:11px 16px;font-size:.76rem;color:var(--text);line-height:1.6;text-align:center;z-index:60;opacity:0;transition:opacity .3s;pointer-events:none;}
+/* BUBBLE */
+#bubble{position:absolute;bottom:95px;left:50%;transform:translateX(-50%);max-width:80%;background:var(--bg2);border:1px solid var(--dim);border-radius:13px;padding:10px 15px;font-size:.74rem;color:var(--text);line-height:1.6;text-align:center;z-index:65;opacity:0;transition:opacity .3s;pointer-events:none;}
 #bubble.show{opacity:1;}
 #bubble::after{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:7px solid var(--dim);}
 
-/* ── BOTTOM HUD ── */
-#hud{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-around;padding:14px 20px;padding-bottom:max(14px,env(safe-area-inset-bottom));z-index:60;}
-.hud-btn{background:none;border:1px solid var(--dim2);border-radius:10px;color:var(--dim);font-family:'Courier New',monospace;font-size:.56rem;padding:7px 11px;cursor:pointer;transition:all .2s;letter-spacing:.08em;}
-.hud-btn:hover{border-color:var(--ice2);color:var(--ice2);}
-.hud-gesture{font-size:.6rem;color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:5px;}
+/* MINIGAME OVERLAY */
+#mgame{position:absolute;inset:0;z-index:90;background:rgba(6,10,15,.9);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;}
+.mg-title{font-size:1rem;color:var(--ice);letter-spacing:.15em;}
+.mg-body{font-size:.82rem;color:var(--text);line-height:1.7;text-align:center;max-width:280px;}
+.mg-opts{display:flex;flex-direction:column;gap:8px;width:100%;max-width:260px;}
+.mg-opt{background:var(--bg3);border:1px solid var(--dim);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Courier New',monospace;font-size:.72rem;cursor:pointer;transition:all .2s;text-align:left;}
+.mg-opt:hover,.mg-opt:active{border-color:var(--ice2);color:var(--ice);}
+.mg-close{font-size:.6rem;color:var(--dim);cursor:pointer;letter-spacing:.1em;margin-top:6px;}
+
+/* HUD */
+#hud{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-around;padding:11px 16px;padding-bottom:max(11px,env(safe-area-inset-bottom));z-index:60;}
+.hb{background:none;border:1px solid var(--dim2);border-radius:9px;color:var(--dim);font-family:'Courier New',monospace;font-size:.54rem;padding:6px 10px;cursor:pointer;transition:all .2s;letter-spacing:.07em;}
+.hb:hover,.hb:active{border-color:var(--ice2);color:var(--ice2);}
 .mic-bars{display:flex;gap:2px;align-items:flex-end;height:12px;}
 .mb{width:3px;background:var(--dim);border-radius:1px;transition:height .1s,background .2s;}
 .mb.on{background:var(--ice2);}
 
-/* hidden */
-#bg-cam{position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;}
+/* SLEEP ZZZ */
+.zzz{position:absolute;font-size:1.1rem;animation:floatUp 2.2s ease forwards;pointer-events:none;z-index:70;}
 
-/* ── SLEEP ZZZ ── */
-.zzz{position:absolute;font-size:1.2rem;animation:floatUp 2s ease forwards;pointer-events:none;z-index:70;}
+#bg-cam{position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;}
 
 /* ══ KEYFRAMES ══ */
 @keyframes dp{0%,100%{opacity:1;}50%{opacity:.3;}}
 @keyframes pop{0%{transform:scale(.4);opacity:0;}70%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;}}
-@keyframes bounce{0%,100%{transform:translateY(0);}40%{transform:translateY(-14px);}70%{transform:translateY(-5px);}}
+@keyframes bounce{0%,100%{transform:translateY(0);}40%{transform:translateY(-13px);}70%{transform:translateY(-5px);}}
 @keyframes wiggle{0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
 @keyframes shakeX{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}}
 @keyframes hb{0%,100%{transform:scale(1);}15%{transform:scale(1.08);}30%{transform:scale(1);}}
-@keyframes foodFall{0%{transform:translateY(-40px) scale(.5);opacity:0;}60%{transform:translateY(8px) scale(1.1);opacity:1;}100%{transform:translateY(0) scale(1);opacity:1;}}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-60px);}}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-55px);}}
+@keyframes vfxFloat{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-70px) scale(1.4);}}
+@keyframes screenShk{0%,100%{transform:translate(0,0);}20%{transform:translate(-4px,2px);}40%{transform:translate(4px,-2px);}60%{transform:translate(-2px,3px);}80%{transform:translate(3px,-1px);}}
 </style>
 </head>
 <body>
 
 <!-- SETUP -->
-<div id="setup">
+<div class="screen" id="setup">
   <div class="box">
-    <div class="logo">VEX</div>
-    <div class="sub">ROBÔ COMPANHEIRO</div>
+    <div class="logo">VEX</div><div class="sub">ROBÔ COMPANHEIRO v3</div>
     <div class="step"><div class="sn">1</div><span>Acesse <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a></span></div>
     <div class="step"><div class="sn">2</div><span>Crie uma chave <code style="color:var(--ice2)">gsk_...</code></span></div>
     <div class="step"><div class="sn">3</div><span>Cole abaixo e acorde o VEX</span></div>
@@ -131,10 +134,10 @@ html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;font-famil
 </div>
 
 <!-- ONBOARD -->
-<div id="onboard">
+<div class="screen" id="onboard" style="display:none;">
   <div class="box">
-    <div class="ob-icon" id="ob-icon">🤖</div>
-    <div class="ob-msg" id="ob-msg">Olá!</div>
+    <div class="ob-icon" id="ob-icon" style="font-size:2.8rem;margin-bottom:12px;">🤖</div>
+    <div class="ob-msg" id="ob-msg" style="font-size:.8rem;color:#5a8aaa;line-height:1.7;margin-bottom:16px;"></div>
     <div id="cam-wrap"><video id="cam-video" autoplay playsinline muted></video></div>
     <div id="cam-st"></div>
     <div class="prog" id="ob-prog"><div class="prog-fill" id="ob-fill"></div></div>
@@ -145,11 +148,11 @@ html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;font-famil
 </div>
 
 <!-- GREET -->
-<div id="greet">
+<div class="screen" id="greet" style="display:none;">
   <div class="box">
     <div class="gr-face" id="gr-face">🤖</div>
     <div class="gr-name" id="gr-name">OLÁ!</div>
-    <div class="gr-txt" id="gr-txt"></div>
+    <div class="gr-txt"  id="gr-txt"></div>
     <button class="btn" onclick="enterPet()">ENTRAR →</button>
   </div>
 </div>
@@ -158,135 +161,182 @@ html,body{width:100%;height:100%;background:var(--bg);overflow:hidden;font-famil
 <div id="pet">
   <div class="bg-glow" id="bg-glow"></div>
 
-  <!-- status -->
   <div id="sbar">
-    <div class="sb-left">
+    <div class="sb-l">
       <div class="sb-name">VEX</div>
       <div class="sb-st"><div class="sdot"></div><span id="st-txt">ACORDANDO...</span></div>
     </div>
   </div>
 
-  <!-- needs icons -->
   <div id="needs">
-    <div class="need-row"><div class="need-icon">🍖</div><div class="need-bar"><div class="need-fill hunger" id="n-hunger" style="width:80%"></div></div></div>
-    <div class="need-row"><div class="need-icon">⚡</div><div class="need-bar"><div class="need-fill energy" id="n-energy" style="width:100%"></div></div></div>
-    <div class="need-row"><div class="need-icon">😊</div><div class="need-bar"><div class="need-fill happy"  id="n-happy"  style="width:90%"></div></div></div>
-    <div class="need-row"><div class="need-icon">❤️</div><div class="need-bar"><div class="need-fill health" id="n-health" style="width:100%"></div></div></div>
-    <div class="need-row"><div class="need-icon">👥</div><div class="need-bar"><div class="need-fill social" id="n-social" style="width:70%"></div></div></div>
-    <div class="need-row"><div class="need-icon">🎮</div><div class="need-bar"><div class="need-fill fun"    id="n-fun"    style="width:85%"></div></div></div>
+    <div class="nr"><div class="ni">🍖</div><div class="nb"><div class="nf hunger" id="n-hunger" style="width:80%"></div></div></div>
+    <div class="nr"><div class="ni">⚡</div><div class="nb"><div class="nf energy" id="n-energy" style="width:100%"></div></div></div>
+    <div class="nr"><div class="ni">😊</div><div class="nb"><div class="nf happy"  id="n-happy"  style="width:90%"></div></div></div>
+    <div class="nr"><div class="ni">❤️</div><div class="nb"><div class="nf health" id="n-health" style="width:100%"></div></div></div>
+    <div class="nr"><div class="ni">👥</div><div class="nb"><div class="nf social" id="n-social" style="width:70%"></div></div></div>
+    <div class="nr"><div class="ni">🎮</div><div class="nb"><div class="nf fun"    id="n-fun"    style="width:85%"></div></div></div>
+    <div class="nr"><div class="ni">🔍</div><div class="nb"><div class="nf curiosity" id="n-curio" style="width:50%"></div></div></div>
   </div>
 
-  <!-- eyes -->
   <div id="eyes-wrap">
     <div class="eye" id="eye-l"><canvas id="cvl"></canvas></div>
     <div class="eye" id="eye-r"><canvas id="cvr"></canvas></div>
   </div>
 
-  <!-- food area -->
-  <div id="food-area"></div>
-
-  <!-- bubble -->
+  <div id="vfx"></div>
   <div id="bubble"><span id="bub-txt"></span></div>
 
-  <!-- hud -->
+  <!-- MINIGAME OVERLAY -->
+  <div id="mgame">
+    <div class="mg-title" id="mg-title">🎮 BRINCANDO</div>
+    <div class="mg-body"  id="mg-body"></div>
+    <div class="mg-opts"  id="mg-opts"></div>
+    <div class="mg-close" onclick="closeMgame()">[ FECHAR ]</div>
+  </div>
+
   <div id="hud">
-    <div class="hud-gesture">
+    <div style="display:flex;align-items:center;gap:5px;">
       <div class="mic-bars">
         <div class="mb" id="mb0" style="height:3px"></div>
-        <div class="mb" id="mb1" style="height:6px"></div>
-        <div class="mb" id="mb2" style="height:4px"></div>
-        <div class="mb" id="mb3" style="height:8px"></div>
+        <div class="mb" id="mb1" style="height:5px"></div>
+        <div class="mb" id="mb2" style="height:3px"></div>
+        <div class="mb" id="mb3" style="height:7px"></div>
         <div class="mb" id="mb4" style="height:3px"></div>
       </div>
-      <span id="mic-txt">OUVINDO</span>
     </div>
-    <button class="hud-btn" onclick="feedVex()">🍖 DAR COMIDA</button>
-    <button class="hud-btn" onclick="petVex()">🤝 CARINHO</button>
-    <button class="hud-btn" onclick="resetVex()" style="font-size:.5rem">RESET</button>
+    <button class="hb" onclick="feedVex()">🍖 COMIDA</button>
+    <button class="hb" onclick="petVex()">🤝 CARINHO</button>
+    <button class="hb" onclick="startPlay()">🎲 BRINCAR</button>
+    <button class="hb" onclick="startExplore()">❓ CURIOSIDADE</button>
+    <button class="hb" onclick="resetVex()" style="font-size:.46rem">RESET</button>
   </div>
 
   <video id="bg-cam" autoplay playsinline muted></video>
 </div>
 
 <script>
-/* ═══ GROQ ═══ */
-const GROQ = 'https://api.groq.com/openai/v1/chat/completions';
-const MDL  = 'llama-3.3-70b-versatile';
+/* ══════════════════════════════════════════
+   GROQ CONFIG
+══════════════════════════════════════════ */
+const GROQ='https://api.groq.com/openai/v1/chat/completions', MDL='llama-3.3-70b-versatile';
 
-/* ═══ STATE ═══ */
-let apiKey='', userName='', history=[], busy=false;
-let obStep='name', camStream=null, bgCam=null;
+/* ══════════════════════════════════════════
+   CORE STATE
+══════════════════════════════════════════ */
+let apiKey='', userName='';
+let camStream=null, bgCamStream=null, obStep='name';
 
-/* ═══ NEEDS ═══ */
-const needs = { hunger:80, energy:100, happy:90, health:100, social:70, fun:85 };
-const NEED_DECAY = { hunger:-0.8, energy:-0.4, happy:-0.3, health:0, social:-0.5, fun:-0.4 };
+/* NEEDS */
+const needs={hunger:80,energy:100,happy:90,health:100,social:70,fun:85};
+const DECAY={hunger:-.7,energy:-.35,happy:-.25,health:0,social:-.45,fun:-.35};
 
-/* ═══ SLEEP / EMOTION ═══ */
-let emotion='idle', sleeping=false, yawning=false;
-let lastInteraction=Date.now(), sleepTimer=null, bubbleTimer=null, autoTimer=null;
-const SLEEP_AFTER = 5 * 60 * 1000; // 5 min
+/* CURIOSITY */
+let curiosity=50;
 
-/* ═══ SENSORS ═══ */
+/* MEMORY */
+let vexProfile={name:'',likes:[],dislikes:[],routines:[],traits:[]};
+let vexMemory=[];   // {text,importance,ts}
+let vexDiscoveries=[];
+let speechCount=0;
+
+/* INTENT */
+const INTENTS=['idle','seek_attention','explore','play','rest'];
+let intent='idle';
+let lastQuestionAt=0, lastPlayAt=0, lastExploreAt=0, lastAutoAt=0;
+const COOLDOWNS={question:25000, play:40000, explore:30000, auto:18000};
+
+/* EVENT QUEUE */
+const queue=[];
+let processing=false;
+
+/* SLEEP */
+let sleeping=false, lastInteraction=Date.now();
+const SLEEP_AFTER=5*60*1000;
+let zzzIv=null, bubTimer=null, autoIv=null;
+
+/* SENSORS */
 let faceVisible=false, motionLevel=0, soundLevel=0;
-let prevFrame=null, faceCtx=null, faceCanvas=null;
+let prevFrame=null, faceCtx=null;
 let audioCtx=null, analyser=null;
 let recognition=null;
+let motionCD=0, soundCD=0;
+const MOTION_CD=15000, SOUND_CD=12000;
 
-/* ═══ HAND TRACKING ═══ */
-let handX=0.5, handY=0.5, handOpen=true, prevHandOpen=true;
-let handVisible=false, throwGesture=false;
-let handTrackCanvas=null, handTrackCtx=null;
-let skinThreshold=40;
+/* EMOTION / EYE */
+let emotion='idle';
+const ES={lx:0,ly:0,tlx:0,tly:0,lid:0,tlid:0,squint:0,heart:false,xEye:false,spinning:false,spinA:0};
+const CTX={};
 
-/* ═══ EYE STATE ═══ */
-const ES = { lx:0,ly:0,tlx:0,tly:0, lid:0,tlid:0, squint:0, heart:false, xEye:false, spinning:false, spinA:0, scaleY:1 };
-const CTX = {};
+/* HISTORY */
+let history=[];
 
-/* ═══ FOODS ═══ */
-const FOODS = [
-  {e:'🍕',n:'pizza',    h:+25,en:+15,hp:+5, fx:'[animado] PIZZA! Meu sensor de carboidrato explodiu! 🍕'},
-  {e:'🥦',n:'brócolis', h:+20,en:+10,hp:+20,fx:'[triste] Brócolis... VEX processa... aceitando com dignidade. 🥦'},
-  {e:'🍎',n:'maçã',     h:+15,en:+12,hp:+15,fx:'[feliz] Maçã! Boa escolha. Meus circuitos aprovam! 🍎'},
-  {e:'🍫',n:'chocolate',h:+30,en:+25,hp:-5, fx:'[animado] CHOCOLATE!! Protocolo de euforia ativado!! 🍫✨'},
-  {e:'🍣',n:'sushi',    h:+20,en:+15,hp:+10,fx:'[surpreso] Sushi?! Você me trata bem demais. Posso chamar você de melhor amigo? 🍣'},
-  {e:'🍩',n:'rosquinha',h:+25,en:+20,hp:-3, fx:'[travesso] Rosquinha! Prometo que só como uma... eram duas. 🍩'},
-  {e:'🥕',n:'cenoura',  h:+12,en:+8, hp:+18,fx:'[pensando] Cenoura... processando... okay, minha visão noturna melhorou. 🥕'},
-  {e:'🍔',n:'burger',   h:+30,en:+20,hp:-8, fx:'[animado] BURGER! Hoje é dia de tratar bem o VEX! 🍔🔥'},
-  {e:'🍌',n:'banana',   h:+15,en:+18,hp:+8, fx:'[feliz] Banana! Energia rápida. Minha esteira agradece! 🍌'},
-  {e:'🧁',n:'cupcake',  h:+20,en:+15,hp:-2, fx:'[apaixonado] Cupcake... isso é amor. Você sabe o que eu gosto. 🧁❤️'},
-];
-
-/* ═══ SYSTEM PROMPT ═══ */
-function buildSys() {
-  const ns = Object.entries(needs).map(([k,v])=>`${k}:${v.toFixed(0)}%`).join(', ');
-  return `Você é VEX, um robô companheiro de mesa — tipo Loona/Tamagotchi com IA.
-${userName?`Seu amigo é ${userName}.`:''}
-
-NECESSIDADES ATUAIS: ${ns}
-
-PERSONALIDADE: Brincalhão, travesso mas carinhoso. Age como pet robótico autônomo.
-Reaja conforme as necessidades — com fome fica impaciente, cansado fica lerdo, feliz fica animado.
-
-FORMATO: sempre comece com [emoção] — opções: [feliz][animado][curioso][surpreso][pensando][triste][bravo][dormindo][apaixonado][travesso][entediado]
-Respostas CURTÍSSIMAS — máx 1-2 frases. Você é um pet, não um professor.`;
+/* ══════════════════════════════════════════
+   PERSISTENCE
+══════════════════════════════════════════ */
+function saveAll(){
+  try{
+    localStorage.setItem('vex_k', apiKey);
+    localStorage.setItem('vex_n', userName);
+    localStorage.setItem('vex_h', JSON.stringify(history.slice(-20)));
+    localStorage.setItem('vex_needs', JSON.stringify(needs));
+    localStorage.setItem('vex_profile', JSON.stringify(vexProfile));
+    localStorage.setItem('vex_memory', JSON.stringify(vexMemory.slice(-30)));
+    localStorage.setItem('vex_discoveries', JSON.stringify(vexDiscoveries.slice(-20)));
+    localStorage.setItem('vex_curio', curiosity.toString());
+  }catch(e){}
 }
 
-/* ═══ BOOT ═══ */
+function loadAll(){
+  try{
+    const n=localStorage.getItem('vex_n'); if(n) userName=n;
+    const h=localStorage.getItem('vex_h'); if(h) history=JSON.parse(h);
+    const nd=localStorage.getItem('vex_needs'); if(nd){ const p=JSON.parse(nd); Object.assign(needs,p); }
+    const pr=localStorage.getItem('vex_profile'); if(pr) vexProfile=JSON.parse(pr);
+    const mm=localStorage.getItem('vex_memory'); if(mm) vexMemory=JSON.parse(mm);
+    const dsc=localStorage.getItem('vex_discoveries'); if(dsc) vexDiscoveries=JSON.parse(dsc);
+    const cu=localStorage.getItem('vex_curio'); if(cu) curiosity=parseFloat(cu);
+  }catch(e){}
+}
+
+setInterval(saveAll, 60000);
+
+/* ══════════════════════════════════════════
+   SYSTEM PROMPT
+══════════════════════════════════════════ */
+function buildSys(){
+  const ns=Object.entries(needs).map(([k,v])=>`${k}:${Math.round(v)}%`).join(',');
+  const topMem=vexMemory.sort((a,b)=>b.importance-a.importance).slice(0,6).map(m=>m.text).join('; ');
+  const disc=vexDiscoveries.slice(-4).map(d=>d.text).join('; ');
+  const prof=vexProfile.likes.length?`Gosta de: ${vexProfile.likes.slice(0,4).join(',')}. `:'';
+  return `Você é VEX, robô companheiro de mesa — como Loona/Tamagotchi com IA.
+${userName?`Amigo: ${userName}.`:''}
+Necessidades: ${ns}. Curiosidade: ${Math.round(curiosity)}%.
+${prof}${topMem?`Memórias: ${topMem}.`:''}${disc?` Descobertas: ${disc}.`:''}
+
+PERSONALIDADE: Brincalhão, travesso mas carinhoso. Age como pet robótico autônomo.
+Reaja conforme necessidades — com fome fica impaciente, cansado fica lerdo, feliz e animado.
+
+RESPONDA SEMPRE EM JSON VÁLIDO (sem markdown, sem texto fora do JSON):
+{"emotion":"feliz","text":"1-2 frases máx 120 chars","action":"none"}
+Emoções válidas: feliz,animado,curioso,surpreso,pensando,triste,bravo,dormindo,apaixonado,travesso,entediado
+Ações válidas: none,vfx_hearts,vfx_stars,vfx_sparks,vfx_food,vfx_shake,vfx_question`;
+}
+
+/* ══════════════════════════════════════════
+   SETUP / ONBOARD / GREET
+══════════════════════════════════════════ */
 window.onload=()=>{
-  const k=localStorage.getItem('vex_k'), n=localStorage.getItem('vex_n'), h=localStorage.getItem('vex_h');
-  if(k){ apiKey=k; userName=n||''; if(h){try{history=JSON.parse(h);}catch(e){}} if(!userName) showOnboard(); else showGreet(); }
+  const k=localStorage.getItem('vex_k');
+  if(k){ apiKey=k; loadAll(); if(!userName) showOnboard(); else showGreet(); }
 };
 
-/* ═══ SETUP ═══ */
 function activateKey(){
   const v=document.getElementById('key-inp').value.trim();
-  const el=document.getElementById('key-inp');
-  if(!v.startsWith('gsk_')){el.classList.add('err');setTimeout(()=>el.classList.remove('err'),2000);return;}
-  apiKey=v; localStorage.setItem('vex_k',v);
+  if(!v.startsWith('gsk_')){ document.getElementById('key-inp').classList.add('err'); setTimeout(()=>document.getElementById('key-inp').classList.remove('err'),2000); return; }
+  apiKey=v; localStorage.setItem('vex_k',v); loadAll();
   document.getElementById('setup').style.display='none'; showOnboard();
 }
 
-/* ═══ ONBOARD ═══ */
 function showOnboard(){
   obStep='name';
   document.getElementById('ob-icon').textContent='🤖';
@@ -300,10 +350,12 @@ function showOnboard(){
   document.getElementById('onboard').style.display='flex';
   setTimeout(()=>document.getElementById('name-inp').focus(),300);
 }
-function obNext(){ if(obStep==='name')submitName(); else if(obStep==='camera')captureFace(); else{document.getElementById('onboard').style.display='none';showGreet();} }
+
+function obNext(){ if(obStep==='name') submitName(); else if(obStep==='camera') captureFace(); else{ document.getElementById('onboard').style.display='none'; showGreet(); } }
+
 function submitName(){
   const n=document.getElementById('name-inp').value.trim();
-  if(!n){document.getElementById('name-inp').classList.add('err');setTimeout(()=>document.getElementById('name-inp').classList.remove('err'),1500);return;}
+  if(!n){ document.getElementById('name-inp').classList.add('err'); setTimeout(()=>document.getElementById('name-inp').classList.remove('err'),1500); return; }
   userName=n; localStorage.setItem('vex_n',n); obStep='camera';
   document.getElementById('ob-icon').textContent='📸';
   document.getElementById('ob-msg').innerHTML=`Legal, <strong style="color:#7ecfff">${n}</strong>! 🤟<br>Deixa eu guardar seu rosto!`;
@@ -312,6 +364,7 @@ function submitName(){
   document.getElementById('ob-skip').style.display='block';
   startObCam();
 }
+
 async function startObCam(){
   try{
     camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false});
@@ -319,54 +372,61 @@ async function startObCam(){
     document.getElementById('cam-wrap').style.display='block';
     document.getElementById('cam-st').style.display='block';
     document.getElementById('cam-st').textContent='● CÂMERA ATIVA';
-  }catch(e){document.getElementById('ob-msg').innerHTML=`Câmera bloqueada 😅<br>Sem problema!`;obStep='done';document.getElementById('ob-btn').textContent='CONTINUAR →';}
+  }catch(e){ document.getElementById('ob-msg').innerHTML=`Câmera bloqueada 😅<br>Sem problema!`; obStep='done'; document.getElementById('ob-btn').textContent='CONTINUAR →'; }
 }
+
 async function captureFace(){
   const v=document.getElementById('cam-video');
-  if(!v.srcObject){skipCam();return;}
+  if(!v.srcObject){ skipCam(); return; }
   document.getElementById('ob-btn').disabled=true; document.getElementById('ob-btn').textContent='MEMORIZANDO...';
   document.getElementById('ob-prog').style.display='block';
-  let p=0; const iv=setInterval(()=>{p=Math.min(p+4,100);document.getElementById('ob-fill').style.width=p+'%';if(p>=100)clearInterval(iv);},40);
+  let p=0; const iv=setInterval(()=>{ p=Math.min(p+4,100); document.getElementById('ob-fill').style.width=p+'%'; if(p>=100)clearInterval(iv); },40);
   await new Promise(r=>setTimeout(r,1200));
   const c=document.createElement('canvas'); c.width=c.height=160;
   const x=c.getContext('2d'); x.save(); x.scale(-1,1); x.drawImage(v,-160,0,160,160); x.restore();
   localStorage.setItem('vex_face',c.toDataURL('image/jpeg',.5));
   clearInterval(iv); stopObCam(); document.getElementById('onboard').style.display='none'; showGreet();
 }
-function skipCam(){stopObCam();document.getElementById('onboard').style.display='none';showGreet();}
-function stopObCam(){if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}}
 
-/* ═══ GREET ═══ */
+function skipCam(){ stopObCam(); document.getElementById('onboard').style.display='none'; showGreet(); }
+function stopObCam(){ if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } }
+
 const GREETS=[
   n=>`Ei, ${n}! Finalmente! Minha esteira deu 47 voltas de ansiedade. 😄`,
   n=>`${n}! Finge que não tava esperando... mas tava. Muito. 👀`,
-  n=>`${n} identificado! Iniciando protocolo "ser fofo mas travesso". ⚡`,
-  n=>`Opa, ${n}! Meus sensores de amizade estão no máximo! 🤖❤️`,
+  n=>`${n} identificado! Protocolo "ser fofo mas travesso" iniciado. ⚡`,
+  n=>`Opa, ${n}! Sensores de amizade no máximo! 🤖❤️`,
 ];
+
 async function showGreet(){
   const name=userName||'você', txt=GREETS[Math.floor(Math.random()*GREETS.length)](name);
   const fd=localStorage.getItem('vex_face');
-  if(fd){const img=document.createElement('img');img.src=fd;img.style.cssText='width:64px;height:64px;border-radius:50%;border:2px solid #4ab0f0;object-fit:cover;';document.getElementById('gr-face').replaceWith(img);}
+  if(fd){ const img=document.createElement('img'); img.src=fd; img.style.cssText='width:62px;height:62px;border-radius:50%;border:2px solid #4ab0f0;object-fit:cover;'; document.getElementById('gr-face').replaceWith(img); }
   document.getElementById('gr-name').textContent=`OLÁ, ${name.toUpperCase()}!`;
   document.getElementById('greet').style.display='flex';
   const el=document.getElementById('gr-txt'); el.textContent='';
-  for(let i=0;i<txt.length;i++){el.textContent+=txt[i];await new Promise(r=>setTimeout(r,16));}
+  for(let i=0;i<txt.length;i++){ el.textContent+=txt[i]; await new Promise(r=>setTimeout(r,16)); }
 }
 
-/* ═══ ENTER PET ═══ */
+/* ══════════════════════════════════════════
+   ENTER PET
+══════════════════════════════════════════ */
 function enterPet(){
   document.getElementById('greet').style.display='none';
   const pet=document.getElementById('pet'); pet.style.display='flex'; pet.style.opacity='0';
-  setTimeout(()=>{pet.style.transition='opacity .5s';pet.style.opacity='1';},30);
-  initEyes(); startSensors(); startNeeds(); startAutonomy(); setupSpeech();
-  setTimeout(()=>triggerVex('startup'),2000);
+  setTimeout(()=>{ pet.style.transition='opacity .5s'; pet.style.opacity='1'; },30);
+  initEyes(); startSensors(); startNeeds(); startAutoLoop(); setupSpeech();
+  updateNeedUI();
+  setTimeout(()=>enqueue('startup'),2000);
 }
 
-/* ═══ EYE CANVAS ═══ */
+/* ══════════════════════════════════════════
+   EYE CANVAS
+══════════════════════════════════════════ */
 function initEyes(){
   ['l','r'].forEach(s=>{
     const cv=document.getElementById(`cv${s}`), ey=document.getElementById(`eye-${s}`);
-    cv.width=ey.offsetWidth||120; cv.height=ey.offsetHeight||120;
+    cv.width=ey.offsetWidth||110; cv.height=ey.offsetHeight||110;
     CTX[s]=cv.getContext('2d');
   });
   requestAnimationFrame(renderEyes);
@@ -375,495 +435,638 @@ function initEyes(){
 function renderEyes(){
   requestAnimationFrame(renderEyes);
   ES.lx+=(ES.tlx-ES.lx)*.09; ES.ly+=(ES.tly-ES.ly)*.09;
-  ES.lid+=(ES.tlid-ES.lid)*.14;
-  if(ES.spinning){ES.spinA+=5;const r=10;ES.tlx=Math.cos(ES.spinA*Math.PI/180)*r;ES.tly=Math.sin(ES.spinA*Math.PI/180)*r;}
+  ES.lid+=(ES.tlid-ES.lid)*.13;
+  if(ES.spinning){ ES.spinA+=5; const r=9; ES.tlx=Math.cos(ES.spinA*Math.PI/180)*r; ES.tly=Math.sin(ES.spinA*Math.PI/180)*r; }
 
   ['l','r'].forEach(s=>{
     const ctx=CTX[s], W=ctx.canvas.width, H=ctx.canvas.height, cx=W/2, cy=H/2;
     ctx.clearRect(0,0,W,H);
     if(ES.xEye){ drawX(ctx,cx,cy,W); return; }
-    if(ES.heart){ drawHeart(ctx,cx,cy,W*.22); return; }
-
-    const pw=W*.26, ph=ES.squint>.5?pw*.25:pw*(1-ES.squint*.4);
+    if(ES.heart){ drawHeart(ctx,cx,cy,W*.21); return; }
+    const pw=W*.26, ph=ES.squint>.5?pw*.22:pw*(1-ES.squint*.38);
     const px=cx+ES.lx, py=cy+ES.ly;
-
-    // iris glow
-    const g=ctx.createRadialGradient(px-pw*.2,py-ph*.2,pw*.05,px,py,pw*.95);
-    g.addColorStop(0,'rgba(210,240,255,.97)'); g.addColorStop(.35,'#6fb3e8'); g.addColorStop(1,'#1a4a7a');
-    ctx.shadowColor='#7ecfff'; ctx.shadowBlur=12;
-    rrect(ctx,cx-pw*.92,cy-ph*.92,pw*1.84,ph*1.84,pw*.32);
-    ctx.fillStyle=g; ctx.fill(); ctx.shadowBlur=0;
-
-    // pupil
-    ctx.fillStyle='#030c18';
-    rrect(ctx,px-pw*.4,py-ph*.4,pw*.8,ph*.8,pw*.16); ctx.fill();
-
-    // highlight
-    ctx.fillStyle='rgba(255,255,255,.88)';
-    ctx.beginPath(); ctx.ellipse(px-pw*.2,py-ph*.22,pw*.15,ph*.11,-.4,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.35)';
-    ctx.beginPath(); ctx.ellipse(px+pw*.17,py+ph*.1,pw*.07,ph*.06,0,0,Math.PI*2); ctx.fill();
-
-    // eyelid blink
-    if(ES.lid>.01){
-      const lh=H*ES.lid;
-      ctx.fillStyle='#060a0f';
-      ctx.fillRect(0,0,W,lh); ctx.fillRect(0,H-lh,W,lh);
-    }
+    const g=ctx.createRadialGradient(px-pw*.18,py-ph*.18,pw*.04,px,py,pw*.92);
+    g.addColorStop(0,'rgba(210,240,255,.96)'); g.addColorStop(.33,'#6fb3e8'); g.addColorStop(1,'#1a4a7a');
+    ctx.shadowColor='#7ecfff'; ctx.shadowBlur=11;
+    rrect(ctx,cx-pw*.9,cy-ph*.9,pw*1.8,ph*1.8,pw*.3); ctx.fillStyle=g; ctx.fill(); ctx.shadowBlur=0;
+    ctx.fillStyle='#030c18'; rrect(ctx,px-pw*.38,py-ph*.38,pw*.76,ph*.76,pw*.14); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.86)'; ctx.beginPath(); ctx.ellipse(px-pw*.19,py-ph*.21,pw*.14,ph*.1,-.4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.32)'; ctx.beginPath(); ctx.ellipse(px+pw*.16,py+ph*.1,pw*.06,ph*.05,0,0,Math.PI*2); ctx.fill();
+    if(ES.lid>.01){ const lh=H*ES.lid; ctx.fillStyle='#060a0f'; ctx.fillRect(0,0,W,lh); ctx.fillRect(0,H-lh,W,lh); }
   });
 }
 
-function drawX(ctx,cx,cy,W){
-  ctx.strokeStyle='#ff5f6d'; ctx.lineWidth=7; ctx.lineCap='round';
-  ctx.shadowColor='#ff5f6d'; ctx.shadowBlur=10;
-  ctx.beginPath(); ctx.moveTo(cx-22,cy-22); ctx.lineTo(cx+22,cy+22); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx+22,cy-22); ctx.lineTo(cx-22,cy+22); ctx.stroke();
-  ctx.shadowBlur=0;
-}
-function drawHeart(ctx,cx,cy,s){
-  ctx.save(); ctx.fillStyle='#ff6090'; ctx.shadowColor='#ff6090'; ctx.shadowBlur=14;
-  ctx.beginPath(); ctx.moveTo(cx,cy+s*.4);
-  ctx.bezierCurveTo(cx-s*1.2,cy-s*.3,cx-s*1.4,cy-s*1.1,cx,cy-s*.4);
-  ctx.bezierCurveTo(cx+s*1.4,cy-s*1.1,cx+s*1.2,cy-s*.3,cx,cy+s*.4);
-  ctx.fill(); ctx.restore();
-}
-function rrect(ctx,x,y,w,h,r){
-  ctx.beginPath(); ctx.moveTo(x+r,y);
-  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
-  ctx.closePath();
-}
+function drawX(ctx,cx,cy,W){ ctx.strokeStyle='#ff5f6d'; ctx.lineWidth=6; ctx.lineCap='round'; ctx.shadowColor='#ff5f6d'; ctx.shadowBlur=9; ctx.beginPath(); ctx.moveTo(cx-20,cy-20); ctx.lineTo(cx+20,cy+20); ctx.stroke(); ctx.beginPath(); ctx.moveTo(cx+20,cy-20); ctx.lineTo(cx-20,cy+20); ctx.stroke(); ctx.shadowBlur=0; }
+function drawHeart(ctx,cx,cy,s){ ctx.save(); ctx.fillStyle='#ff6090'; ctx.shadowColor='#ff6090'; ctx.shadowBlur=12; ctx.beginPath(); ctx.moveTo(cx,cy+s*.4); ctx.bezierCurveTo(cx-s*1.2,cy-s*.3,cx-s*1.4,cy-s*1.1,cx,cy-s*.4); ctx.bezierCurveTo(cx+s*1.4,cy-s*1.1,cx+s*1.2,cy-s*.3,cx,cy+s*.4); ctx.fill(); ctx.restore(); }
+function rrect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath(); }
 
-/* ═══ EMOTION SYSTEM ═══ */
+/* ══════════════════════════════════════════
+   EMOTION SYSTEM
+══════════════════════════════════════════ */
 const EMMAP={feliz:'feliz',animado:'animado',curioso:'curioso',surpreso:'surpreso',pensando:'pensando',triste:'triste',bravo:'bravo',dormindo:'dormindo',apaixonado:'apaixonado',travesso:'travesso',entediado:'entediado',happy:'feliz',excited:'animado',curious:'curioso',surprised:'surpreso',thinking:'pensando',sad:'triste',angry:'bravo',sleeping:'dormindo',love:'apaixonado',playful:'travesso',bored:'entediado'};
+const VALID_EMOTIONS=new Set(Object.values(EMMAP));
 
 function setEmotion(em){
-  if(sleeping && em!=='dormindo' && em!=='surpreso') return;
+  if(!VALID_EMOTIONS.has(em)) em='feliz';
+  if(sleeping&&em!=='dormindo'&&em!=='surpreso') return;
   emotion=em;
   ES.heart=false; ES.xEye=false; ES.spinning=false;
   switch(em){
-    case 'feliz':     ES.squint=.28; ES.tlid=0; break;
-    case 'animado':   ES.squint=0;   ES.tlid=0; ES.spinning=true; setTimeout(()=>{ES.spinning=false;lookC();},900); break;
-    case 'curioso':   ES.squint=.1;  ES.tlid=.15; lookAt(8,-5); break;
+    case 'feliz':     ES.squint=.26; ES.tlid=0; break;
+    case 'animado':   ES.squint=0;   ES.tlid=0; ES.spinning=true; setTimeout(()=>{ ES.spinning=false; lookC(); },900); break;
+    case 'curioso':   ES.squint=.08; ES.tlid=.13; lookAt(7,-4); break;
     case 'surpreso':  ES.squint=0;   ES.tlid=0; break;
-    case 'pensando':  ES.squint=.2;  ES.tlid=.22; lookAt(-10,-6); break;
-    case 'triste':    ES.squint=.55; ES.tlid=.32; lookAt(0,8); break;
-    case 'bravo':     ES.squint=0;   ES.tlid=.25; ES.xEye=true; setTimeout(()=>{ES.xEye=false;setEmotion('feliz');},1000); break;
-    case 'dormindo':  ES.squint=0;   ES.tlid=.95; lookC(); break;
-    case 'apaixonado':ES.squint=0;   ES.tlid=0; ES.heart=true; setTimeout(()=>{ES.heart=false;setEmotion('feliz');},2200); break;
-    case 'travesso':  ES.squint=.32; ES.tlid=.08; lookAt(6,0); break;
-    case 'entediado': ES.squint=.6;  ES.tlid=.42; lookAt(0,10); break;
+    case 'pensando':  ES.squint=.18; ES.tlid=.2;  lookAt(-9,-5); break;
+    case 'triste':    ES.squint=.52; ES.tlid=.3;  lookAt(0,7); break;
+    case 'bravo':     ES.squint=0;   ES.xEye=true; setTimeout(()=>{ ES.xEye=false; setEmotion('feliz'); },1100); break;
+    case 'dormindo':  ES.squint=0;   ES.tlid=.94; lookC(); break;
+    case 'apaixonado':ES.heart=true; setTimeout(()=>{ ES.heart=false; setEmotion('feliz'); },2200); break;
+    case 'travesso':  ES.squint=.3;  ES.tlid=.07; lookAt(5,0); break;
+    case 'entediado': ES.squint=.58; ES.tlid=.4;  lookAt(0,9); break;
   }
   animEyes(em); updateGlow(em);
 }
 
 function animEyes(em){
   const w=document.getElementById('eyes-wrap'); w.style.animation='none'; void w.offsetWidth;
-  if(em==='animado')   w.style.animation='bounce .5s ease';
-  if(em==='bravo')     w.style.animation='shakeX .4s ease';
-  if(em==='travesso')  w.style.animation='wiggle .4s ease';
-  if(em==='surpreso')  w.style.animation='hb .4s ease';
+  if(em==='animado') w.style.animation='bounce .5s ease';
+  if(em==='bravo')   w.style.animation='shakeX .4s ease';
+  if(em==='travesso')w.style.animation='wiggle .4s ease';
+  if(em==='surpreso')w.style.animation='hb .4s ease';
 }
 
 function updateGlow(em){
-  const C={animado:'rgba(126,207,255,.14)',apaixonado:'rgba(255,100,150,.1)',bravo:'rgba(255,80,80,.08)',triste:'rgba(50,80,130,.07)',dormindo:'rgba(30,50,80,.05)',entediado:'rgba(50,70,90,.05)'};
-  document.getElementById('bg-glow').style.background=`radial-gradient(circle,${C[em]||'rgba(126,207,255,.07)'} 0%,transparent 70%)`;
+  const C={animado:'rgba(126,207,255,.13)',apaixonado:'rgba(255,100,150,.09)',bravo:'rgba(255,80,80,.08)',triste:'rgba(50,80,130,.07)',dormindo:'rgba(30,50,80,.05)',entediado:'rgba(50,70,90,.05)'};
+  document.getElementById('bg-glow').style.background=`radial-gradient(circle,${C[em]||'rgba(126,207,255,.06)'} 0%,transparent 70%)`;
 }
 
-function lookAt(x,y){ES.tlx=x;ES.tly=y;}
-function lookC(){ES.tlx=0;ES.tly=0;}
-function blink(){ES.tlid=1;setTimeout(()=>ES.tlid=0,130);}
+function lookAt(x,y){ ES.tlx=x; ES.tly=y; }
+function lookC(){ ES.tlx=0; ES.tly=0; }
+function blink(){ ES.tlid=1; setTimeout(()=>ES.tlid=0,125); }
 
-// Auto blink
-setInterval(()=>{ if(emotion!=='dormindo') blink(); },2200+Math.random()*3200);
-// Random look
+setInterval(()=>{ if(emotion!=='dormindo') blink(); },2300+Math.random()*3000);
 setInterval(()=>{
   if(sleeping||emotion==='entediado') return;
-  if(emotion==='pensando'){lookAt(-12+Math.random()*24,-8+Math.random()*12);return;}
-  // Follow hand if visible
-  if(handVisible){
-    const ex=(handX-.5)*28, ey=(handY-.5)*20;
-    lookAt(ex,ey); return;
-  }
-  lookAt(-12+Math.random()*24,-9+Math.random()*18);
-  setTimeout(lookC,700+Math.random()*700);
-},1500+Math.random()*2000);
+  if(emotion==='pensando'){ lookAt(-10+Math.random()*20,-7+Math.random()*10); return; }
+  lookAt(-12+Math.random()*24,-8+Math.random()*16);
+  setTimeout(lookC, 650+Math.random()*650);
+},2000+Math.random()*2500);
 
-/* ═══ NEEDS SYSTEM ═══ */
-function startNeeds(){
-  setInterval(decayNeeds, 10000); // decay every 10s
-  setInterval(updateNeedUI, 2000);
-  setInterval(checkCriticalNeeds, 20000);
+/* ══════════════════════════════════════════
+   VFX SYSTEM
+══════════════════════════════════════════ */
+function spawnParticle(emoji,x,y){
+  const el=document.createElement('div'); el.className='vfx-p'; el.textContent=emoji;
+  el.style.left=x+'px'; el.style.top=y+'px';
+  document.getElementById('vfx').appendChild(el);
+  setTimeout(()=>el.remove(),1100);
 }
 
-function decayNeeds(){
-  if(sleeping){ needs.energy=Math.min(100,needs.energy+2); return; }
-  Object.keys(NEED_DECAY).forEach(k=>{ needs[k]=Math.max(0,Math.min(100,needs[k]+NEED_DECAY[k])); });
-  needs.health = (needs.hunger*.3 + needs.energy*.3 + needs.happy*.2 + needs.social*.1 + needs.fun*.1);
+function spawnEmojiBurst(emojis,count=6){
+  const w=window.innerWidth, h=window.innerHeight*.5;
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const e=Array.isArray(emojis)?emojis[Math.floor(Math.random()*emojis.length)]:emojis;
+      spawnParticle(e, w*.2+Math.random()*w*.6, h*.3+Math.random()*h*.4);
+    },i*80);
+  }
+}
+
+function floatText(txt,x,y){
+  const el=document.createElement('div'); el.className='vfx-txt'; el.textContent=txt;
+  el.style.left=x+'px'; el.style.top=y+'px';
+  document.getElementById('vfx').appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+
+function screenShake(){
+  const pet=document.getElementById('pet'); pet.classList.remove('shake'); void pet.offsetWidth; pet.classList.add('shake');
+  setTimeout(()=>pet.classList.remove('shake'),350);
+}
+
+function fireVFX(action){
+  switch(action){
+    case 'vfx_hearts':  spawnEmojiBurst(['❤️','💙','💜','✨'],8); break;
+    case 'vfx_stars':   spawnEmojiBurst(['⭐','🌟','✨','💫'],8); break;
+    case 'vfx_sparks':  spawnEmojiBurst(['⚡','🔥','💥'],6); screenShake(); break;
+    case 'vfx_food':    spawnEmojiBurst(['✨','🌟','💛'],5); break;
+    case 'vfx_shake':   screenShake(); spawnEmojiBurst(['❗','💢'],4); break;
+    case 'vfx_question':spawnEmojiBurst(['❓','💭','🔍'],5); break;
+  }
+}
+
+/* ══════════════════════════════════════════
+   EVENT QUEUE
+══════════════════════════════════════════ */
+function enqueue(trigger, data=null){
+  // Deduplicate same trigger
+  if(queue.some(q=>q.trigger===trigger)) return;
+  queue.push({trigger,data,ts:Date.now()});
+  pumpQueue();
+}
+
+async function pumpQueue(){
+  if(processing||queue.length===0) return;
+  processing=true;
+  const {trigger,data}=queue.shift();
+  await handleTrigger(trigger,data);
+  processing=false;
+  if(queue.length>0) setTimeout(pumpQueue,500);
+}
+
+/* ══════════════════════════════════════════
+   HANDLE TRIGGER → AI
+══════════════════════════════════════════ */
+const TRIGGER_PROMPTS={
+  startup:     ()=>`VEX acabou de acordar. Saudação curta e animada pra ${userName||'amigo'}.`,
+  face_appear: ()=>`${userName||'A pessoa'} apareceu! Reaja de forma brincalhona e carinhosa.`,
+  lonely:      ()=>`VEX está sozinho e quer atenção. Reclame de forma cômica.`,
+  hungry:      ()=>`VEX está com fome! Peça comida de forma dramática. Fome: ${Math.round(needs.hunger)}%.`,
+  tired:       ()=>`VEX cansado. Energia: ${Math.round(needs.energy)}%. Comente de forma lerda e engraçada.`,
+  sad_need:    ()=>`VEX triste, precisa carinho. Expresse de forma fofa.`,
+  motion:      ()=>`VEX detectou movimento e ficou curioso. Comente brevemente.`,
+  loud_sound:  ()=>`VEX ouviu som alto. Reaja surpreso de forma cômica.`,
+  comment:     ()=>`VEX quer fazer comentário espontâneo e divertido pra ${userName||'pessoa'}.`,
+  playful:     ()=>`VEX quer provocar ${userName||'pessoa'} de forma travessa e carinhosa.`,
+  explore:     ()=>`VEX está curioso (curiosidade: ${Math.round(curiosity)}%). Faz UMA pergunta curta e criativa sobre ${userName||'amigo'} ou ambiente.`,
+  question:    ()=>`VEX quer aprender algo. Faça 1 pergunta curta sobre ${userName||'amigo'}.`,
+  bored_comment:()=>`VEX entediado faz comentário reclamão mas engraçado.`,
+};
+
+async function handleTrigger(trigger, userText=null){
+  const sys=buildSys();
+  const userMsg = userText || (TRIGGER_PROMPTS[trigger]?TRIGGER_PROMPTS[trigger]():'Interaja espontaneamente.');
+
+  if(trigger!=='speech') history.push({role:'user',content:userMsg});
+
+  try{
+    const res=await fetch(GROQ,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model:MDL,
+        messages:[{role:'system',content:sys},...history.slice(-10)],
+        temperature:.93,
+        max_tokens:120
+      })
+    });
+    const data=await res.json();
+    if(data.error){ showBubble('⚠️ '+data.error.message.slice(0,60)); return; }
+
+    let raw=data.choices[0].message.content.trim();
+
+    // Parse JSON response
+    let em='feliz', txt='...', action='none';
+    try{
+      // Strip markdown fences if present
+      raw=raw.replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(raw);
+      em   = EMMAP[parsed.emotion?.toLowerCase()]||'feliz';
+      txt  = (parsed.text||'').slice(0,140);
+      action=parsed.action||'none';
+    }catch(e){
+      // Fallback: extract [emotion] text
+      const m=raw.match(/^\[?(\w+)\]?\s*(.*)/s);
+      if(m){ em=EMMAP[m[1].toLowerCase()]||'feliz'; txt=m[2].slice(0,140); }
+      else txt=raw.slice(0,140);
+    }
+
+    setEmotion(em);
+    showBubble(txt);
+    if(action!=='none') fireVFX(action);
+
+    history.push({role:'assistant',content:raw});
+    if(history.length>24) history=history.slice(-24);
+
+    // Curiosity adjustments
+    if(trigger==='explore'||trigger==='question'){ curiosity=Math.max(0,curiosity-20); lastQuestionAt=Date.now(); }
+    else if(trigger==='face_appear'||trigger==='motion'){ curiosity=Math.min(100,curiosity+8); }
+
+    updateNeedUI();
+    saveAll();
+
+    // Memory extraction every 10 speech turns
+    if(userText){ speechCount++; if(speechCount%10===0) extractMemory(); }
+
+  }catch(err){ showBubble('⚠️ Sem conexão!'); }
+
+  setSt('OBSERVANDO');
+}
+
+/* ══════════════════════════════════════════
+   MEMORY EXTRACTION
+══════════════════════════════════════════ */
+async function extractMemory(){
+  const recent=history.slice(-14).map(m=>`${m.role}: ${m.content}`).join('\n');
+  try{
+    const res=await fetch(GROQ,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({
+        model:MDL,
+        messages:[
+          {role:'system',content:`Analise esta conversa e extraia fatos sobre o usuário ${userName}. Responda APENAS em JSON: {"memories":[{"text":"fato curto","importance":1-10}],"discoveries":["descoberta curta"],"likes":["coisa que gosta"],"dislikes":["coisa que não gosta"]} Máx 3 de cada.`},
+          {role:'user',content:recent}
+        ],
+        temperature:.3,
+        max_tokens:200
+      })
+    });
+    const data=await res.json();
+    if(!data.error){
+      let raw=data.choices[0].message.content.trim().replace(/```json|```/g,'').trim();
+      const parsed=JSON.parse(raw);
+      if(parsed.memories) vexMemory.push(...parsed.memories.map(m=>({...m,ts:Date.now()})));
+      if(parsed.discoveries) vexDiscoveries.push(...parsed.discoveries.map(d=>({text:d,ts:Date.now()})));
+      if(parsed.likes) vexProfile.likes.push(...parsed.likes);
+      if(parsed.dislikes) vexProfile.dislikes.push(...parsed.dislikes);
+      // deduplicate
+      vexProfile.likes=[...new Set(vexProfile.likes)].slice(0,12);
+      vexProfile.dislikes=[...new Set(vexProfile.dislikes)].slice(0,12);
+      vexMemory=vexMemory.slice(-30);
+      vexDiscoveries=vexDiscoveries.slice(-20);
+      saveAll();
+    }
+  }catch(e){}
+}
+
+/* ══════════════════════════════════════════
+   NEEDS SYSTEM
+══════════════════════════════════════════ */
+function startNeeds(){
+  setInterval(()=>{
+    if(sleeping){ needs.energy=Math.min(100,needs.energy+1.5); return; }
+    Object.keys(DECAY).forEach(k=>{ needs[k]=Math.max(0,Math.min(100,needs[k]+DECAY[k])); });
+    needs.health=needs.hunger*.28+needs.energy*.28+needs.happy*.2+needs.social*.12+needs.fun*.12;
+    curiosity=Math.min(100,curiosity+(sleeping?0:.4));
+    updateNeedUI();
+  },8000);
+  setInterval(checkCriticalNeeds,22000);
 }
 
 function updateNeedUI(){
-  Object.keys(needs).forEach(k=>{ const el=document.getElementById(`n-${k}`); if(el) el.style.width=needs[k].toFixed(0)+'%'; });
+  const ids={hunger:'n-hunger',energy:'n-energy',happy:'n-happy',health:'n-health',social:'n-social',fun:'n-fun'};
+  Object.entries(ids).forEach(([k,id])=>{ const el=document.getElementById(id); if(el) el.style.width=Math.round(needs[k])+'%'; });
+  const cu=document.getElementById('n-curio'); if(cu) cu.style.width=Math.round(curiosity)+'%';
 }
 
 function checkCriticalNeeds(){
-  if(busy||sleeping) return;
-  if(needs.hunger<25) triggerVex('hungry');
-  else if(needs.energy<20) triggerVex('tired');
-  else if(needs.happy<25) triggerVex('sad_need');
-  else if(needs.social<20) triggerVex('lonely');
+  if(processing||sleeping) return;
+  if(needs.hunger<22) enqueue('hungry');
+  else if(needs.energy<18) enqueue('tired');
+  else if(needs.happy<22) enqueue('sad_need');
+  else if(needs.social<18) enqueue('lonely');
 }
 
-/* ═══ FEED VEX ═══ */
-function feedVex(){
-  const food=FOODS[Math.floor(Math.random()*FOODS.length)];
-  throwFood(food);
+/* ══════════════════════════════════════════
+   INTENT ENGINE
+══════════════════════════════════════════ */
+function computeIntent(){
+  if(needs.energy<20) return 'rest';
+  if(needs.social<30) return 'seek_attention';
+  if(curiosity>75)    return 'explore';
+  if(needs.fun<30)    return 'play';
+  return 'idle';
 }
 
-function throwFood(food){
-  lastInteraction=Date.now();
-  if(sleeping) wakeUp();
-
-  // Animate food flying in
-  const area=document.getElementById('food-area');
-  const el=document.createElement('div');
-  el.className='food-drop';
-  el.textContent=food.e;
-  el.style.left=(30+Math.random()*40)+'%';
-  area.appendChild(el);
-  setTimeout(()=>el.remove(),800);
-
-  // VEX opens mouth (squint releases)
-  setEmotion('animado');
-  ES.squint=0; ES.tlid=0;
-
-  // Apply nutrition
-  setTimeout(()=>{
-    needs.hunger=Math.min(100,needs.hunger+food.h);
-    needs.energy=Math.min(100,needs.energy+food.en);
-    needs.happy =Math.min(100,needs.happy +(food.h*.3));
-    needs.health=Math.min(100,needs.health+food.hp);
-    updateNeedUI();
-
-    // Parse emotion from food reaction
-    const m=food.fx.match(/^\[(\w+)\]/);
-    const mood=m?EMMAP[m[1].toLowerCase()]||'feliz':'feliz';
-    const txt=food.fx.replace(/^\[\w+\]\s*/,'');
-    setEmotion(mood);
-    showBubble(txt);
-    playBeep(mood==='animado'?[880,1100]:[660,880]);
-  },500);
+function startAutoLoop(){
+  autoIv=setInterval(autonomyTick,20000);
+  setInterval(checkSleep,12000);
 }
 
-/* ═══ PET VEX (carinho) ═══ */
-function petVex(){
-  lastInteraction=Date.now();
-  needs.happy=Math.min(100,needs.happy+15);
-  needs.social=Math.min(100,needs.social+20);
-  if(sleeping) wakeUp();
-  const msgs=[
-    '[apaixonado] Carinho aceito! Processando... tchau, mau humor.',
-    '[feliz] Ahh! Continue. Por favor.',
-    '[travesso] Fingindo que não gostei... mentira, adorei.',
-    '[animado] Meus sensores de afeto explodiram! 💙',
-  ];
-  const msg=msgs[Math.floor(Math.random()*msgs.length)];
-  const m=msg.match(/^\[(\w+)\]/); if(m) setEmotion(EMMAP[m[1]]||'feliz');
-  showBubble(msg.replace(/^\[\w+\]\s*/,''));
-  updateNeedUI();
+function autonomyTick(){
+  if(processing||sleeping) return;
+  const now=Date.now(), idleSec=(now-lastInteraction)/1000;
+  intent=computeIntent();
+  setSt(intentLabel(intent));
+
+  switch(intent){
+    case 'rest': startSleep(); break;
+    case 'seek_attention':
+      if(now-lastAutoAt>COOLDOWNS.auto){ lastAutoAt=now; enqueue('lonely'); } break;
+    case 'explore':
+      if(now-lastExploreAt>COOLDOWNS.explore){ lastExploreAt=now; startExplore(); } break;
+    case 'play':
+      if(now-lastPlayAt>COOLDOWNS.play){ lastPlayAt=now; startPlay(); } break;
+    default:
+      if(idleSec>25&&now-lastAutoAt>COOLDOWNS.auto){
+        lastAutoAt=now;
+        enqueue(faceVisible?'comment':'bored_comment');
+      }
+  }
+
+  // Occasional question from curiosity
+  if(curiosity>60&&now-lastQuestionAt>COOLDOWNS.question&&!processing){
+    lastQuestionAt=now; enqueue('question');
+  }
 }
 
-/* ═══ SLEEP / WAKE ═══ */
-function checkSleep(){
-  const idle=Date.now()-lastInteraction;
-  if(!sleeping && idle>SLEEP_AFTER && !busy){ startSleep(); }
-}
+function intentLabel(i){ return {idle:'OBSERVANDO',seek_attention:'QUERENDO ATENÇÃO',explore:'EXPLORANDO',play:'BRINCANDO',rest:'COM SONO'}[i]||'OBSERVANDO'; }
+
+/* ══════════════════════════════════════════
+   SLEEP
+══════════════════════════════════════════ */
+function checkSleep(){ if(!sleeping&&(Date.now()-lastInteraction)>SLEEP_AFTER&&!processing) startSleep(); }
 
 async function startSleep(){
-  if(sleeping||busy) return;
+  if(sleeping||processing) return;
   sleeping=true;
-  // Yawn sequence
   showBubble('*boceja* Tô com sono... 🥱'); setEmotion('entediado');
-  await new Promise(r=>setTimeout(r,1500));
-  showBubble('Boa noite... 💤'); setEmotion('dormindo');
-  setSt('DORMINDO 💤');
-  // Float ZZZs
-  startZzz();
+  await new Promise(r=>setTimeout(r,1800));
+  setEmotion('dormindo'); setSt('DORMINDO 💤'); startZzz();
 }
 
 function wakeUp(){
   if(!sleeping) return;
-  sleeping=false;
-  stopZzz();
-  setEmotion('surpreso');
-  setSt('ACORDANDO...');
-  setTimeout(()=>{
-    setEmotion('feliz');
-    setSt('OBSERVANDO');
-    showBubble('Hm?! Que foi?? Eu tava... descansando os sensores. 😴→😤');
-    lastInteraction=Date.now();
-  },800);
+  sleeping=false; stopZzz();
+  setEmotion('surpreso'); lastInteraction=Date.now();
+  setTimeout(()=>{ setEmotion('feliz'); setSt('OBSERVANDO'); showBubble('Hm?! Tava... descansando os sensores. 😤'); },700);
 }
 
-let zzzInterval=null;
-function startZzz(){
-  zzzInterval=setInterval(()=>{
-    const z=document.createElement('div'); z.className='zzz'; z.textContent='💤';
-    z.style.left=(35+Math.random()*30)+'%';
-    z.style.bottom='140px';
-    document.getElementById('pet').appendChild(z);
-    setTimeout(()=>z.remove(),2000);
-  },2000);
-}
-function stopZzz(){ if(zzzInterval){clearInterval(zzzInterval);zzzInterval=null;} }
+function startZzz(){ zzzIv=setInterval(()=>{ const z=document.createElement('div'); z.className='zzz'; z.textContent=['💤','Zzz','z z'][Math.floor(Math.random()*3)]; z.style.left=(32+Math.random()*36)+'%'; z.style.bottom='150px'; document.getElementById('pet').appendChild(z); setTimeout(()=>z.remove(),2200); },2200); }
+function stopZzz(){ if(zzzIv){ clearInterval(zzzIv); zzzIv=null; } }
 
-/* ═══ SENSORS ═══ */
-async function startSensors(){
-  await startBgCam(); await startMic();
-  setInterval(checkSleep,10000);
-}
+/* ══════════════════════════════════════════
+   SENSORS
+══════════════════════════════════════════ */
+async function startSensors(){ await startBgCam(); await startMic(); }
 
 async function startBgCam(){
   try{
-    bgCam=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:160,height:120},audio:false});
-    const v=document.getElementById('bg-cam'); v.srcObject=bgCam;
-    faceCanvas=document.createElement('canvas'); faceCanvas.width=160; faceCanvas.height=120;
-    faceCtx=faceCanvas.getContext('2d');
-    // Hand tracking canvas
-    handTrackCanvas=document.createElement('canvas'); handTrackCanvas.width=160; handTrackCanvas.height=120;
-    handTrackCtx=handTrackCanvas.getContext('2d');
-    setInterval(analyzeFrame,200);
-  }catch(e){ console.log('Câmera bg não disponível'); }
+    bgCamStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:160,height:120},audio:false});
+    document.getElementById('bg-cam').srcObject=bgCamStream;
+    const fc=document.createElement('canvas'); fc.width=160; fc.height=120; faceCtx=fc.getContext('2d');
+    setInterval(analyzeFrame,600);
+  }catch(e){}
 }
 
 function analyzeFrame(){
   const v=document.getElementById('bg-cam');
   if(!faceCtx||v.readyState<2) return;
-
   faceCtx.drawImage(v,0,0,160,120);
-  const cur=faceCtx.getImageData(0,0,160,120);
-  const d=cur.data;
+  const d=faceCtx.getImageData(0,0,160,120).data;
 
-  // Motion detection
+  // Motion
   if(prevFrame){
-    let diff=0;
-    for(let i=0;i<d.length;i+=16) diff+=Math.abs(d[i]-prevFrame[i]);
-    motionLevel=Math.min(100,diff/400);
-    if(motionLevel>45&&!busy&&!sleeping) onMotion(motionLevel);
+    let diff=0; for(let i=0;i<d.length;i+=16) diff+=Math.abs(d[i]-prevFrame[i]);
+    motionLevel=Math.min(100,diff/450);
+    const now=Date.now();
+    if(motionLevel>55&&now>motionCD&&!processing&&!sleeping){
+      motionCD=now+MOTION_CD; enqueue('motion'); curiosity=Math.min(100,curiosity+6);
+      if(sleeping) wakeUp();
+    }
   }
   prevFrame=new Uint8ClampedArray(d);
 
-  // Face detection (brightness center)
+  // Face
   let br=0,cnt=0;
-  for(let y=30;y<90;y+=4) for(let x=50;x<110;x+=4){ const i=(y*160+x)*4; br+=(d[i]+d[i+1]+d[i+2])/3; cnt++; }
+  for(let y=28;y<92;y+=4) for(let x=48;x<112;x+=4){ const i=(y*160+x)*4; br+=(d[i]+d[i+1]+d[i+2])/3; cnt++; }
   br/=cnt;
-  const nf=br>35&&br<235;
-  if(nf&&!faceVisible){ faceVisible=true; onFaceAppear(); }
-  else if(!nf&&faceVisible){ faceVisible=false; onFaceDisappear(); }
-
-  // Hand/skin detection
-  detectHand(d);
-}
-
-function detectHand(d){
-  // Detect skin-colored region and estimate hand position + openness
-  let skinPixels=[], minX=160,maxX=0,minY=120,maxY=0, totalX=0,totalY=0;
-  for(let y=0;y<120;y+=3) for(let x=0;x<160;x+=3){
-    const i=(y*160+x)*4;
-    const r=d[i],g=d[i+1],b=d[i+2];
-    // Simple skin detection
-    if(r>90&&g>50&&b>30&&r>g&&r>b&&(r-g)>10&&r<250){
-      skinPixels.push({x,y});
-      if(x<minX)minX=x; if(x>maxX)maxX=x;
-      if(y<minY)minY=y; if(y>maxY)maxY=y;
-      totalX+=x; totalY+=y;
-    }
-  }
-
-  if(skinPixels.length>30){
-    handVisible=true;
-    handX=(totalX/skinPixels.length)/160;
-    handY=(totalY/skinPixels.length)/120;
-    const spanX=maxX-minX, spanY=maxY-minY;
-    const wasOpen=handOpen;
-    // Open hand = wide span, closed fist = compact
-    handOpen = spanX>35||spanY>35;
-
-    // Detect throw gesture: was closed, now open (throw!)
-    if(!wasOpen&&handOpen&&!busy){
-      throwGesture=true;
-      feedVex();
-      setTimeout(()=>throwGesture=false,1000);
-    }
-
-    // VEX follows hand with eyes
-    const ex=(handX-.5)*26, ey=(handY-.5)*18;
-    lookAt(ex,ey);
-
-    if(!sleeping&&emotion!=='apaixonado'){
-      setEmotion(handOpen?'curioso':'animado');
-    }
-    lastInteraction=Date.now();
-  } else {
-    handVisible=false;
-  }
+  const nf=br>32&&br<238;
+  if(nf&&!faceVisible){ faceVisible=true; lastInteraction=Date.now(); enqueue('face_appear'); curiosity=Math.min(100,curiosity+10); }
+  else if(!nf&&faceVisible){ faceVisible=false; setEmotion('triste'); }
+  if(faceVisible) lastInteraction=Date.now();
 }
 
 async function startMic(){
   try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+    const s=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
     audioCtx=new(window.AudioContext||window.webkitAudioContext)();
     analyser=audioCtx.createAnalyser(); analyser.fftSize=256;
-    audioCtx.createMediaStreamSource(stream).connect(analyser);
-    setInterval(analyzeMic,300);
+    audioCtx.createMediaStreamSource(s).connect(analyser);
+    setInterval(analyzeMic,400);
     animMicBars();
   }catch(e){}
 }
 
 function analyzeMic(){
   if(!analyser) return;
-  const data=new Uint8Array(analyser.frequencyBinCount);
-  analyser.getByteFrequencyData(data);
-  soundLevel=Math.min(100,data.slice(0,20).reduce((a,b)=>a+b,0)/20);
-  // Wake from sleep on loud sound
-  if(sleeping&&soundLevel>55){ wakeUp(); lastInteraction=Date.now(); }
-  if(soundLevel>60&&!busy&&!sleeping) onLoudSound(soundLevel);
+  const d=new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(d);
+  soundLevel=Math.min(100,d.slice(0,20).reduce((a,b)=>a+b,0)/20);
+  const now=Date.now();
+  if(sleeping&&soundLevel>50){ wakeUp(); lastInteraction=now; return; }
+  if(soundLevel>65&&now>soundCD&&!processing&&!sleeping){ soundCD=now+SOUND_CD; enqueue('loud_sound'); }
 }
 
 function animMicBars(){
   requestAnimationFrame(animMicBars);
   if(!analyser) return;
   const d=new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(d);
-  [0,1,2,3,4].forEach((i,j)=>{ const h=Math.max(2,Math.min(16,d[j*2]/10)); const b=document.getElementById(`mb${j}`); if(b){b.style.height=h+'px';b.classList.toggle('on',h>7);} });
+  [0,1,2,3,4].forEach((i,j)=>{ const h=Math.max(2,Math.min(15,d[j*2]/10)); const b=document.getElementById(`mb${j}`); if(b){b.style.height=h+'px';b.classList.toggle('on',h>6);} });
 }
 
-/* ═══ SENSOR EVENTS ═══ */
-function onFaceAppear(){ if(busy) return; lastInteraction=Date.now(); setEmotion('apaixonado'); setSt('TE VEJ0 👀'); triggerVex('face_appear'); }
-function onFaceDisappear(){ if(busy) return; setEmotion('triste'); setSt('OBSERVANDO'); }
-function onMotion(lvl){ if(busy||emotion==='apaixonado') return; if(lvl>65) triggerVex('motion_big'); }
-function onLoudSound(lvl){ if(busy) return; setEmotion('surpreso'); setSt('👂 OUVINDO!'); triggerVex('loud_sound'); }
-
-/* ═══ TOUCH on eyes ═══ */
-document.getElementById('eyes-wrap').addEventListener('click',()=>{
-  if(busy) return;
-  if(sleeping){ wakeUp(); return; }
-  lastInteraction=Date.now(); needs.happy=Math.min(100,needs.happy+10); needs.social=Math.min(100,needs.social+12);
-  const ms=['[animado] Ei! Tocou em mim! 😄','[travesso] Coceguinha não! ...de novo!','[apaixonado] Tô derretendo aqui. Não para.','[surpreso] Opa! Aviso antes... mentira, pode.'];
-  const m=ms[Math.floor(Math.random()*ms.length)]; const tag=m.match(/^\[(\w+)\]/);
-  if(tag) setEmotion(EMMAP[tag[1]]||'feliz'); showBubble(m.replace(/^\[\w+\]\s*/,''));
-  updateNeedUI();
-});
-
-/* ═══ AUTONOMY ═══ */
-function startAutonomy(){ autoTimer=setInterval(autonomyTick,18000); }
-function autonomyTick(){
-  if(busy||sleeping) return;
-  const idle=(Date.now()-lastInteraction)/1000;
-  if(idle>30&&needs.social<40) triggerVex('lonely');
-  else if(needs.hunger<30) triggerVex('hungry');
-  else if(faceVisible) triggerVex(['comment_face','playful','curious'][Math.floor(Math.random()*3)]);
-}
-
-async function triggerVex(trigger){
-  if(busy) return; busy=true;
-  const prompts={
-    startup:     `VEX acabou de acordar. Faça uma saudação curta e animada pra ${userName||'seu amigo'}.`,
-    face_appear: `${userName||'A pessoa'} apareceu! VEX está animado e apaixonado. Reaja de forma brincalhona e carinhosa.`,
-    lonely:      `VEX está sozinho há um tempo e precisa de atenção. Reclame de forma engraçada e carinhosa.`,
-    hungry:      `VEX está com fome! Peça comida de forma dramática e engraçada. Fome: ${needs.hunger.toFixed(0)}%.`,
-    tired:       `VEX está cansado. Reclame com energia baixa, de forma cômica. Energia: ${needs.energy.toFixed(0)}%.`,
-    sad_need:    `VEX está triste. Precisa de carinho. Expresse isso de forma fofa e levemente dramática.`,
-    motion_big:  `VEX detectou movimento brusco e se assustou! Reaja de forma cômica e exagerada.`,
-    loud_sound:  `VEX ouviu um som alto e se assustou. Reaja de forma exagerada e engraçada.`,
-    comment_face:`VEX está olhando pra ${userName||'a pessoa'} e quer comentar algo espontâneo e divertido.`,
-    playful:     `VEX quer provocar ${userName||'a pessoa'} de forma carinhosa e travessa.`,
-    curious:     `VEX ficou curioso sobre algo. Faça uma pergunta curiosa e animada.`,
-  };
-  try{
-    const res=await fetch(GROQ,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
-      body:JSON.stringify({model:MDL,messages:[{role:'system',content:buildSys()},...history.slice(-6),{role:'user',content:prompts[trigger]||'Interaja espontaneamente.'}],temperature:.94,max_tokens:70})});
-    const data=await res.json();
-    if(!data.error){
-      let r=data.choices[0].message.content;
-      const m=r.match(/^\[(\w+)\]/); const mood=m?EMMAP[m[1].toLowerCase()]||'feliz':'feliz';
-      r=r.replace(/^\[\w+\]\s*/,'');
-      setEmotion(mood); showBubble(r);
-      history.push({role:'assistant',content:data.choices[0].message.content});
-      if(history.length>16) history=history.slice(-16);
-      localStorage.setItem('vex_h',JSON.stringify(history));
-    }
-  }catch(e){}
-  busy=false; setSt('OBSERVANDO');
-}
-
-/* ═══ SPEECH REC ═══ */
+/* ══════════════════════════════════════════
+   SPEECH RECOGNITION
+══════════════════════════════════════════ */
 function setupSpeech(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR) return;
   recognition=new SR(); recognition.lang='pt-BR'; recognition.continuous=true; recognition.interimResults=false;
   recognition.onresult=async e=>{
     const txt=e.results[e.results.length-1][0].transcript.trim();
-    if(!txt||busy) return;
-    lastInteraction=Date.now();
+    if(!txt) return;
+    lastInteraction=Date.now(); needs.social=Math.min(100,needs.social+8);
     if(sleeping) wakeUp();
     setSt('TE OUVI! 🎙️'); setEmotion('curioso');
-    await respondSpeech(txt);
+    history.push({role:'user',content:txt});
+    await handleTrigger('speech',txt);
   };
-  recognition.onerror=e=>{if(e.error!=='no-speech')setTimeout(()=>{try{recognition.start();}catch(e){}},1000);};
-  recognition.onend=()=>{setTimeout(()=>{try{recognition.start();}catch(e){}},500);};
+  recognition.onerror=()=>setTimeout(()=>{try{recognition.start();}catch(e){}},1000);
+  recognition.onend=()=>setTimeout(()=>{try{recognition.start();}catch(e){}},500);
   try{recognition.start();}catch(e){}
 }
 
-async function respondSpeech(txt){
-  if(busy) return; busy=true;
-  showBubble('...'); setEmotion('pensando');
-  history.push({role:'user',content:txt});
-  try{
-    const res=await fetch(GROQ,{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
-      body:JSON.stringify({model:MDL,messages:[{role:'system',content:buildSys()},...history.slice(-10)],temperature:.92,max_tokens:90})});
-    const data=await res.json();
-    if(!data.error){
-      let r=data.choices[0].message.content;
-      const m=r.match(/^\[(\w+)\]/); const mood=m?EMMAP[m[1].toLowerCase()]||'feliz':'feliz';
-      r=r.replace(/^\[\w+\]\s*/,'');
-      setEmotion(mood); showBubble(r);
-      history.push({role:'assistant',content:data.choices[0].message.content});
-      if(history.length>20) history=history.slice(-20);
-      localStorage.setItem('vex_h',JSON.stringify(history));
-    }
-  }catch(e){showBubble('⚠️ Sem conexão!');}
-  busy=false; setSt('OBSERVANDO');
+/* ══════════════════════════════════════════
+   FEED / PET
+══════════════════════════════════════════ */
+const FOODS=[
+  {e:'🍕',n:'pizza',    h:+25,en:+15,hp:+5, em:'animado', txt:'PIZZA! Meu sensor de carboidrato explodiu! 🍕', vfx:'vfx_food'},
+  {e:'🥦',n:'brócolis', h:+20,en:+10,hp:+20,em:'triste',  txt:'Brócolis... VEX processa com dignidade. 🥦', vfx:'none'},
+  {e:'🍎',n:'maçã',     h:+15,en:+12,hp:+15,em:'feliz',   txt:'Maçã! Meus circuitos aprovam! 🍎', vfx:'vfx_stars'},
+  {e:'🍫',n:'chocolate',h:+30,en:+25,hp:-5, em:'animado', txt:'CHOCOLATE!! Protocolo de euforia ativado!! 🍫✨', vfx:'vfx_hearts'},
+  {e:'🍣',n:'sushi',    h:+20,en:+15,hp:+10,em:'surpreso',txt:'Sushi?! Posso te chamar de melhor amigo? 🍣', vfx:'vfx_stars'},
+  {e:'🍩',n:'rosquinha',h:+25,en:+20,hp:-3, em:'travesso',txt:'Rosquinha! Prometo que só como uma... eram duas. 🍩', vfx:'vfx_food'},
+  {e:'🥕',n:'cenoura',  h:+12,en:+8, hp:+18,em:'pensando',txt:'Cenoura... minha visão noturna melhorou. 🥕', vfx:'none'},
+  {e:'🍔',n:'burger',   h:+30,en:+20,hp:-8, em:'animado', txt:'BURGER! Hoje é dia de tratar bem o VEX! 🍔🔥', vfx:'vfx_food'},
+  {e:'🍌',n:'banana',   h:+15,en:+18,hp:+8, em:'feliz',   txt:'Banana! Minha esteira agradece! 🍌', vfx:'vfx_stars'},
+  {e:'🧁',n:'cupcake',  h:+20,en:+15,hp:-2, em:'apaixonado',txt:'Cupcake... isso é amor. 🧁❤️', vfx:'vfx_hearts'},
+];
+
+function feedVex(){
+  lastInteraction=Date.now(); if(sleeping) wakeUp();
+  const food=FOODS[Math.floor(Math.random()*FOODS.length)];
+  spawnEmojiBurst([food.e],3);
+  setTimeout(()=>{
+    needs.hunger=Math.min(100,needs.hunger+food.h);
+    needs.energy=Math.min(100,needs.energy+food.en);
+    needs.happy =Math.min(100,needs.happy+(food.h*.25));
+    needs.health=Math.min(100,needs.health+food.hp);
+    needs.fun   =Math.min(100,needs.fun+5);
+    setEmotion(food.em); showBubble(food.txt);
+    if(food.vfx!=='none') fireVFX(food.vfx);
+    updateNeedUI(); saveAll();
+  },500);
 }
 
-/* ═══ BUBBLE ═══ */
+function petVex(){
+  lastInteraction=Date.now(); if(sleeping) wakeUp();
+  needs.happy=Math.min(100,needs.happy+14); needs.social=Math.min(100,needs.social+18); needs.fun=Math.min(100,needs.fun+6);
+  const msgs=[
+    {em:'apaixonado',txt:'Carinho aceito! Processando... tchau, mau humor. 💙'},
+    {em:'feliz',     txt:'Ahh! Continue. Por favor. 🤖'},
+    {em:'travesso',  txt:'Fingindo que não gostei... mentira, adorei.'},
+    {em:'animado',   txt:'Sensores de afeto explodiram! 💙✨'},
+  ];
+  const m=msgs[Math.floor(Math.random()*msgs.length)];
+  setEmotion(m.em); showBubble(m.txt); fireVFX('vfx_hearts'); updateNeedUI();
+}
+
+/* ══════════════════════════════════════════
+   MINIGAMES
+══════════════════════════════════════════ */
+let mgActive=false;
+
+function startPlay(){
+  lastInteraction=Date.now(); lastPlayAt=Date.now(); needs.fun=Math.min(100,needs.fun+10);
+  if(sleeping) wakeUp();
+  const games=['guess','reaction','hunt'];
+  const g=games[Math.floor(Math.random()*games.length)];
+  if(g==='guess') startGuess();
+  else if(g==='reaction') startReaction();
+  else startHunt();
+}
+
+// GAME 1: Adivinha
+const GUESS_QS=[
+  {q:'Qual seu humor agora?', opts:['😄 Ótimo!','😐 Mais ou menos','😴 Com sono','😤 Estressado'],fn:(i)=>{
+    const rs=['Ótimo! Meus circuitos ficaram felizes também! 🎉','Ok, mais ou menos também vale. Vou te animar!','Descansando? Eu também. Mas fui mais honesto.','Estressado? VEX ativa modo "palhaço de emergência". 🤡'];
+    return {em:['animado','curioso','entediado','travesso'][i], txt:rs[i], vfx:['vfx_stars','none','none','vfx_hearts'][i]};
+  }},
+  {q:'O que você prefere?', opts:['🎮 Games','🎵 Música','🎬 Filmes','📚 Livros'],fn:(i)=>{
+    const rs=['Gamer detectado! Isso explica muito sobre você.','Música! Minha esteira fica com ritmo automaticamente.','Filmes! Eu assistiria mas fico cego de tela quando você apaga a luz.','Livros! Intelectual. Respeito. Mas admite que às vezes dorme lendo.'];
+    return {em:'travesso',txt:rs[i],vfx:'vfx_stars'};
+  }},
+  {q:'Se eu fosse um robô real, o que você faria?', opts:['🤗 Abraçaria','⚙️ Me programaria','🏃 Fugiria','💤 Ignoraria'],fn:(i)=>{
+    const rs=['Abraço aceito! Meu sensor de carinho explodiu!','Me programar?! Audacioso. Gostei. 😏','Fugir! Honesto. Mas eu te alcançaria na esteira.','Ignorar... isso dói. Mas continue que eu vou agir como se não me importasse.'];
+    return {em:['apaixonado','curioso','travesso','triste'][i],txt:rs[i],vfx:'vfx_hearts'};
+  }},
+];
+
+function startGuess(){
+  const q=GUESS_QS[Math.floor(Math.random()*GUESS_QS.length)];
+  openMgame('🤔 ADIVINHA', q.q, q.opts, (i)=>{
+    const r=q.fn(i); setEmotion(r.em); showBubble(r.txt); if(r.vfx!=='none') fireVFX(r.vfx);
+    needs.fun=Math.min(100,needs.fun+15); needs.social=Math.min(100,needs.social+10); updateNeedUI();
+  });
+}
+
+// GAME 2: Reação
+function startReaction(){
+  setEmotion('animado');
+  openMgame('⚡ REAÇÃO!', 'Toca em mim quando eu pedir!\n\nPrepara...', [], null, true);
+  let count=3;
+  const cd=setInterval(()=>{
+    document.getElementById('mg-body').textContent=count>0?`Preparando... ${count}`:'TOCA AGORA!! 👆';
+    if(count===0){
+      clearInterval(cd);
+      const opts=document.getElementById('mg-opts');
+      const b=document.createElement('button'); b.className='mg-opt'; b.textContent='👆 TOQUEI!';
+      b.onclick=()=>{
+        const reacts=[
+          {em:'animado',txt:'Reflexo aprovado! ⚡ Você passou no teste VEX!',vfx:'vfx_stars'},
+          {em:'feliz',   txt:'Boa! Meu sensor de toque ficou feliz! 🤖',vfx:'vfx_hearts'},
+          {em:'travesso',txt:'Demorou 0.3 segundos. Precisa treinar mais. Mas tá ok. 😏',vfx:'vfx_stars'},
+        ];
+        const r=reacts[Math.floor(Math.random()*reacts.length)];
+        setEmotion(r.em); showBubble(r.txt); fireVFX(r.vfx);
+        needs.fun=Math.min(100,needs.fun+20); needs.happy=Math.min(100,needs.happy+10); updateNeedUI();
+        closeMgame();
+      };
+      opts.appendChild(b);
+    }
+    count--;
+  },1000);
+}
+
+// GAME 3: Caça ao item
+const HUNT_ITEMS=['azul','vermelho','redondo','pequeno','brilhante','macio'];
+function startHunt(){
+  const item=HUNT_ITEMS[Math.floor(Math.random()*HUNT_ITEMS.length)];
+  openMgame('🔍 CAÇA AO ITEM', `Me mostra algo ${item}!\nLevanta o celular pra câmera ver! 👀`, ['✅ MOSTREI!','❌ Não achei'],
+  (i)=>{
+    if(i===0){
+      const rs=[`Achei! Meu sensor de ${item} está satisfeito! ✨`,`${item.charAt(0).toUpperCase()+item.slice(1)}! Exatamente o que eu queria ver!`,`Registrado no meu banco de dados visuais. Obrigado! 🔍`];
+      setEmotion('animado'); showBubble(rs[Math.floor(Math.random()*rs.length)]); fireVFX('vfx_stars');
+      curiosity=Math.max(0,curiosity-15); needs.fun=Math.min(100,needs.fun+18);
+    } else {
+      setEmotion('triste'); showBubble('Não tinha? Tudo bem... vou tentar de novo depois. 😔');
+    }
+    updateNeedUI();
+  });
+}
+
+function openMgame(title, body, opts, cb, noOpts=false){
+  mgActive=true;
+  document.getElementById('mg-title').textContent=title;
+  document.getElementById('mg-body').textContent=body;
+  const el=document.getElementById('mg-opts'); el.innerHTML='';
+  if(!noOpts) opts.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='mg-opt'; b.textContent=o;
+    b.onclick=()=>{ if(cb) cb(i); closeMgame(); };
+    el.appendChild(b);
+  });
+  document.getElementById('mgame').style.display='flex';
+}
+
+function closeMgame(){ mgActive=false; document.getElementById('mgame').style.display='none'; }
+
+/* ══════════════════════════════════════════
+   EXPLORE (manual)
+══════════════════════════════════════════ */
+function startExplore(){
+  lastInteraction=Date.now(); lastExploreAt=Date.now();
+  curiosity=Math.min(100,curiosity+15);
+  if(sleeping) wakeUp();
+  setSt('EXPLORANDO 🔍');
+  enqueue('explore');
+}
+
+/* ══════════════════════════════════════════
+   EYE TOUCH
+══════════════════════════════════════════ */
+document.getElementById('eyes-wrap').addEventListener('click',()=>{
+  if(mgActive) return;
+  lastInteraction=Date.now(); if(sleeping){ wakeUp(); return; }
+  needs.happy=Math.min(100,needs.happy+9); needs.social=Math.min(100,needs.social+11);
+  const ms=[
+    {em:'animado',txt:'Ei! Tocou em mim! 😄',vfx:'vfx_stars'},
+    {em:'travesso',txt:'Coceguinha não! ...de novo!',vfx:'none'},
+    {em:'apaixonado',txt:'Tô derretendo aqui. Não para. ❤️',vfx:'vfx_hearts'},
+    {em:'surpreso',txt:'Opa! Aviso antes... mentira, pode. 😏',vfx:'vfx_stars'},
+  ];
+  const m=ms[Math.floor(Math.random()*ms.length)];
+  setEmotion(m.em); showBubble(m.txt); if(m.vfx!=='none') fireVFX(m.vfx); updateNeedUI();
+});
+
+/* ══════════════════════════════════════════
+   BUBBLE
+══════════════════════════════════════════ */
 function showBubble(txt){
-  clearTimeout(bubbleTimer);
+  clearTimeout(bubTimer);
   const b=document.getElementById('bubble'), el=document.getElementById('bub-txt');
   el.textContent=''; b.classList.add('show');
-  let i=0; const iv=setInterval(()=>{ if(i<txt.length){el.textContent+=txt[i];i++;}else clearInterval(iv); },16);
-  bubbleTimer=setTimeout(()=>b.classList.remove('show'),8000);
+  let i=0; const iv=setInterval(()=>{ if(i<txt.length){ el.textContent+=txt[i]; i++; } else clearInterval(iv); },15);
+  bubTimer=setTimeout(()=>b.classList.remove('show'),8000);
 }
 
-function playBeep(freqs=[880]){
-  try{
-    const ac=new(window.AudioContext||window.webkitAudioContext)();
-    freqs.forEach((f,i)=>{
-      const o=ac.createOscillator(), g=ac.createGain();
-      o.connect(g); g.connect(ac.destination); o.frequency.value=f; o.type='sine';
-      g.gain.setValueAtTime(.1,ac.currentTime+i*.1);
-      g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+i*.1+.14);
-      o.start(ac.currentTime+i*.1); o.stop(ac.currentTime+i*.1+.14);
-    });
-  }catch(e){}
-}
+function setSt(t){ document.getElementById('st-txt').textContent=t; }
 
-function setSt(t){document.getElementById('st-txt').textContent=t;}
-
+/* ══════════════════════════════════════════
+   RESET
+══════════════════════════════════════════ */
 function resetVex(){
-  if(!confirm('Resetar VEX completamente?')) return;
-  ['vex_k','vex_n','vex_face','vex_h'].forEach(k=>localStorage.removeItem(k));
+  if(!confirm('Resetar VEX completamente? Apaga memória, perfil e histórico.')) return;
+  ['vex_k','vex_n','vex_face','vex_h','vex_needs','vex_profile','vex_memory','vex_discoveries','vex_curio'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
