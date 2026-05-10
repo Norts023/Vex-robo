@@ -4,484 +4,487 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>VEX</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:      #070d14;
-    --bg2:     #0a1220;
-    --bg3:     #0e1a2e;
-    --bg4:     #12223d;
-    --ice:     #a8d4f5;
-    --ice2:    #6fb3e8;
-    --ice3:    #3d8fd4;
-    --iceglow: rgba(111,179,232,0.25);
-    --text:    #deeeff;
-    --text2:   #7a9ab8;
-    --text3:   #3d5a72;
-    --border:  rgba(111,179,232,0.1);
-    --border2: rgba(111,179,232,0.22);
-    --red:     #ff5f6d;
-    --green:   #5fffa0;
-    --yellow:  #ffe066;
-  }
+:root {
+  --bg: #060a0f;
+  --ice: #7ecfff;
+  --ice2: #4ab0f0;
+  --ice3: #1a7abf;
+  --glow: rgba(126,207,255,0.3);
+  --text: #c8e8ff;
+  --dim: #2a4a6a;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body {
+  width:100%; height:100%;
+  background:var(--bg);
+  overflow:hidden;
+  font-family: 'Courier New', monospace;
+  user-select:none;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; user-select: none; }
+/* ── SETUP ── */
+#setup {
+  position:fixed; inset:0; z-index:999;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center; padding:24px;
+}
+.setup-box {
+  width:100%; max-width:340px;
+  border:1px solid var(--dim);
+  border-radius:20px;
+  padding:30px 24px;
+  text-align:center;
+  background:#080e16;
+}
+.setup-logo {
+  font-size:2.6rem; font-weight:700; letter-spacing:0.3em;
+  color:var(--ice);
+  text-shadow: 0 0 30px var(--glow);
+  margin-bottom:4px;
+}
+.setup-sub { font-size:0.58rem; color:var(--dim); letter-spacing:0.3em; margin-bottom:26px; }
+.setup-step { display:flex; gap:10px; align-items:flex-start; font-size:0.74rem; color:#4a7a9a; line-height:1.5; margin-bottom:10px; text-align:left; }
+.setup-step a { color:var(--ice2); text-decoration:none; }
+.sn { width:18px; height:18px; border:1px solid var(--dim); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.55rem; color:var(--ice2); flex-shrink:0; margin-top:1px; }
+.setup-inp {
+  width:100%; background:#0a1520; border:1px solid var(--dim);
+  border-radius:10px; padding:12px 14px;
+  color:var(--text); font-family:'Courier New',monospace; font-size:0.78rem;
+  outline:none; margin:14px 0 8px; transition:border-color 0.2s;
+}
+.setup-inp:focus { border-color:var(--ice2); }
+.setup-inp.err { border-color:#ff5f6d; }
+.setup-btn {
+  width:100%; background:#0a1a2e; border:1px solid var(--dim);
+  border-radius:10px; padding:12px;
+  color:var(--ice); font-family:'Courier New',monospace;
+  font-size:0.72rem; letter-spacing:0.2em; cursor:pointer; transition:all 0.2s;
+}
+.setup-btn:hover { border-color:var(--ice2); box-shadow:0 0 16px var(--glow); }
+.setup-hint { font-size:0.6rem; color:#2a4a6a; margin-top:10px; letter-spacing:0.05em; }
 
-  /* ══ SETUP ══ */
-  #setup {
-    position: fixed; inset: 0; z-index: 200;
-    background: var(--bg);
-    display: flex; align-items: center; justify-content: center; padding: 24px;
-  }
-  .s-card {
-    width: 100%; max-width: 360px;
-    background: var(--bg2); border: 1px solid var(--border2);
-    border-radius: 24px; padding: 32px 26px; text-align: center;
-  }
-  .s-logo {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 2.8rem; font-weight: 700; letter-spacing: 0.3em; color: var(--ice);
-    text-shadow: 0 0 40px rgba(111,179,232,0.6); margin-bottom: 4px;
-  }
-  .s-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--text3); letter-spacing: 0.3em; margin-bottom: 28px; }
-  .s-steps { text-align: left; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
-  .s-step { display: flex; gap: 10px; align-items: flex-start; font-size: 0.76rem; color: var(--text2); line-height: 1.5; }
-  .s-num { width: 20px; height: 20px; flex-shrink: 0; background: var(--bg4); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--ice2); margin-top: 1px; }
-  .s-step a { color: var(--ice2); text-decoration: none; }
-  .s-lbl { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--text3); letter-spacing: 0.15em; text-align: left; margin-bottom: 7px; }
-  .s-inp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 13px 15px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; outline: none; margin-bottom: 7px; transition: border-color 0.2s; }
-  .s-inp:focus { border-color: var(--ice2); }
-  .s-inp.err { border-color: var(--red); }
-  .s-hint { font-size: 0.68rem; color: var(--text3); text-align: left; margin-bottom: 20px; line-height: 1.6; }
-  .s-btn { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: 12px; padding: 13px; color: var(--ice); font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; letter-spacing: 0.18em; cursor: pointer; transition: all 0.2s; }
-  .s-btn:hover { border-color: var(--ice2); box-shadow: 0 0 20px var(--iceglow); }
-  .s-btn:active { transform: scale(0.98); }
-  .s-secure { margin-top: 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.56rem; color: var(--text3); }
+/* ── ONBOARD ── */
+#onboard {
+  position:fixed; inset:0; z-index:998;
+  background:var(--bg);
+  display:none; align-items:center; justify-content:center; padding:24px;
+}
+.ob-box {
+  width:100%; max-width:340px;
+  border:1px solid var(--dim); border-radius:20px;
+  padding:28px 22px; text-align:center; background:#080e16;
+}
+.ob-icon { font-size:2.8rem; margin-bottom:12px; }
+.ob-msg { font-size:0.84rem; color:#5a8aaa; line-height:1.7; margin-bottom:20px; }
+#cam-wrap {
+  width:140px; height:140px; border-radius:50%;
+  margin:0 auto 16px; overflow:hidden;
+  border:2px solid var(--dim); display:none;
+  box-shadow:0 0 20px var(--glow);
+}
+#cam-video { width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+#cam-st { font-size:0.6rem; color:#5fffa0; letter-spacing:0.12em; margin-bottom:12px; display:none; }
+.ob-prog { width:100%; height:2px; background:#0a1520; border-radius:1px; margin-bottom:16px; display:none; }
+.ob-prog-fill { height:100%; width:0%; background:var(--ice2); border-radius:1px; transition:width 0.08s; }
+.ob-inp {
+  width:100%; background:#0a1520; border:1px solid var(--dim);
+  border-radius:10px; padding:12px 14px; color:var(--text);
+  font-family:'Courier New',monospace; font-size:0.82rem;
+  outline:none; margin-bottom:16px; transition:border-color 0.2s;
+}
+.ob-inp:focus { border-color:var(--ice2); }
+.ob-inp.err { border-color:#ff5f6d; }
+.ob-btn {
+  width:100%; background:#0a1a2e; border:1px solid var(--dim);
+  border-radius:10px; padding:12px; color:var(--ice);
+  font-family:'Courier New',monospace; font-size:0.7rem;
+  letter-spacing:0.15em; cursor:pointer; transition:all 0.2s; margin-bottom:8px;
+}
+.ob-btn:hover { border-color:var(--ice2); }
+.ob-skip {
+  background:none; border:none; color:#2a4a6a;
+  font-size:0.62rem; font-family:'Courier New',monospace;
+  cursor:pointer; letter-spacing:0.08em;
+}
 
-  /* ══ ONBOARD ══ */
-  #onboard {
-    position: fixed; inset: 0; z-index: 190;
-    background: var(--bg);
-    display: none; align-items: center; justify-content: center; padding: 24px;
-  }
-  .ob-card { width: 100%; max-width: 360px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 24px; padding: 32px 26px; text-align: center; }
-  .ob-emoji { font-size: 3rem; margin-bottom: 14px; }
-  .ob-msg { font-size: 0.88rem; color: var(--text2); line-height: 1.7; margin-bottom: 22px; min-height: 48px; }
-  #cam-wrap { position: relative; width: 150px; height: 150px; margin: 0 auto 18px; border-radius: 50%; overflow: hidden; border: 2px solid var(--border2); box-shadow: 0 0 24px var(--iceglow); display: none; }
-  #cam-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-  .cam-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--ice2); opacity: 0.4; animation: camPulse 1.5s ease infinite; }
-  #cam-status { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--green); letter-spacing: 0.12em; margin-bottom: 14px; display: none; }
-  .prog-bar { width: 100%; height: 3px; background: var(--bg4); border-radius: 2px; margin-bottom: 18px; display: none; overflow: hidden; }
-  .prog-fill { height: 100%; width: 0%; background: var(--ice2); border-radius: 2px; transition: width 0.08s; }
-  #name-wrap .s-lbl { margin-top: 0; }
-  .ob-inp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 13px 15px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.88rem; outline: none; margin-bottom: 18px; transition: border-color 0.2s; }
-  .ob-inp:focus { border-color: var(--ice2); }
-  .ob-inp.err { border-color: var(--red); }
-  .ob-btn { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: 12px; padding: 13px; color: var(--ice); font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; letter-spacing: 0.15em; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
-  .ob-btn:hover { border-color: var(--ice2); }
-  .ob-btn:active { transform: scale(0.98); }
-  .ob-skip { width: 100%; background: none; border: 1px solid var(--border); border-radius: 12px; padding: 10px; color: var(--text3); font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; cursor: pointer; display: none; transition: all 0.2s; }
-  .ob-skip:hover { color: var(--text2); border-color: var(--border2); }
+/* ── GREET ── */
+#greet {
+  position:fixed; inset:0; z-index:997;
+  background:var(--bg);
+  display:none; align-items:center; justify-content:center; padding:24px;
+}
+.gr-box {
+  width:100%; max-width:340px;
+  border:1px solid var(--dim); border-radius:20px;
+  padding:36px 22px; text-align:center; background:#080e16;
+}
+.gr-face { font-size:3.2rem; margin-bottom:14px; animation:greetPop 0.5s ease; }
+.gr-name { font-size:0.9rem; color:var(--ice); letter-spacing:0.2em; margin-bottom:10px; }
+.gr-txt  { font-size:0.8rem; color:#5a8aaa; line-height:1.75; margin-bottom:26px; min-height:60px; }
+.gr-btn  {
+  width:100%; background:#0a1a2e; border:1px solid var(--dim);
+  border-radius:10px; padding:12px; color:var(--ice);
+  font-family:'Courier New',monospace; font-size:0.7rem;
+  letter-spacing:0.15em; cursor:pointer; transition:all 0.2s;
+}
+.gr-btn:hover { border-color:var(--ice2); box-shadow:0 0 16px var(--glow); }
 
-  /* ══ GREET ══ */
-  #greet {
-    position: fixed; inset: 0; z-index: 180;
-    background: var(--bg);
-    display: none; align-items: center; justify-content: center; padding: 24px;
-  }
-  .gr-card { width: 100%; max-width: 360px; background: var(--bg2); border: 1px solid var(--border2); border-radius: 24px; padding: 40px 26px; text-align: center; }
-  .gr-face { font-size: 3.5rem; margin-bottom: 14px; animation: greetBounce 0.5s ease; }
-  .gr-name { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--ice); letter-spacing: 0.15em; margin-bottom: 10px; }
-  .gr-joke { font-size: 0.85rem; color: var(--text2); line-height: 1.75; margin-bottom: 28px; min-height: 64px; }
-  .gr-btn { width: 100%; background: var(--bg4); border: 1px solid var(--border2); border-radius: 12px; padding: 13px; color: var(--ice); font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; letter-spacing: 0.15em; cursor: pointer; transition: all 0.2s; }
-  .gr-btn:hover { border-color: var(--ice2); box-shadow: 0 0 20px var(--iceglow); }
-  .gr-btn:active { transform: scale(0.98); }
+/* ══ MAIN PET SCREEN ══ */
+#pet {
+  display:none;
+  width:100%; height:100dvh;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  background:var(--bg);
+  overflow:hidden;
+}
 
-  /* ══ MAIN APP ══ */
-  #app {
-    display: none; height: 100dvh;
-    flex-direction: column; align-items: center;
-    background: var(--bg); position: relative; overflow: hidden;
-  }
+/* scanline overlay */
+#pet::after {
+  content:'';
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 4px);
+  pointer-events:none; z-index:50;
+}
 
-  /* bg grid */
-  #app::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image: linear-gradient(rgba(111,179,232,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(111,179,232,0.02) 1px, transparent 1px);
-    background-size: 36px 36px;
-    pointer-events: none;
-  }
+/* bg ambient glow */
+.bg-glow {
+  position:absolute;
+  width:60vw; height:60vw;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(126,207,255,0.05) 0%, transparent 70%);
+  pointer-events:none;
+  transition:all 1s ease;
+}
 
-  /* ── TOP BAR ── */
-  #topbar {
-    width: 100%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px;
-    position: relative; z-index: 10;
-  }
-  .tb-name { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 700; color: var(--ice); letter-spacing: 0.2em; }
-  .tb-status { font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--text3); letter-spacing: 0.12em; display: flex; align-items: center; gap: 5px; margin-top: 2px; }
-  .sdot { width: 5px; height: 5px; background: var(--ice2); border-radius: 50%; animation: pdot 2s infinite; box-shadow: 0 0 5px var(--ice2); }
-  .tb-btns { display: flex; gap: 8px; }
-  .tb-btn { background: none; border: 1px solid var(--border); border-radius: 8px; color: var(--text3); font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; padding: 5px 9px; cursor: pointer; transition: all 0.2s; }
-  .tb-btn:hover { border-color: var(--ice2); color: var(--ice2); }
-  .tb-btn.on { border-color: var(--ice2); color: var(--ice2); background: var(--iceglow); }
+/* ── STATUS BAR ── */
+#status-bar {
+  position:absolute; top:0; left:0; right:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px;
+  z-index:60;
+}
+.sb-name { font-size:0.7rem; color:var(--dim); letter-spacing:0.25em; }
+.sb-status { font-size:0.58rem; color:var(--dim); letter-spacing:0.12em; display:flex; align-items:center; gap:5px; }
+.sb-dot { width:5px; height:5px; border-radius:50%; background:var(--ice2); box-shadow:0 0 5px var(--ice2); animation:dotPulse 2s infinite; }
+.sb-btn {
+  background:none; border:1px solid #1a3a5a; border-radius:6px;
+  color:var(--dim); font-family:'Courier New',monospace;
+  font-size:0.55rem; padding:4px 8px; cursor:pointer; transition:all 0.2s;
+}
+.sb-btn:hover { border-color:var(--ice2); color:var(--ice2); }
 
-  /* ── FACE STAGE ── */
-  #face-stage {
-    flex: 1; width: 100%;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; z-index: 5;
-  }
+/* ── EYES CONTAINER ── */
+#eyes-wrap {
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(20px, 8vw, 50px);
+  z-index:10;
+  transition:transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
 
-  /* face container */
-  .face-container {
-    position: relative;
-    width: min(70vw, 320px);
-    height: min(70vw, 320px);
-  }
+/* single eye */
+.eye {
+  position:relative;
+  width:clamp(100px, 28vw, 140px);
+  height:clamp(100px, 28vw, 140px);
+  border-radius:22px;
+  background:#000;
+  border:3px solid var(--ice3);
+  overflow:hidden;
+  box-shadow: 0 0 30px rgba(126,207,255,0.2), inset 0 0 20px rgba(0,0,0,0.8);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
 
-  /* glow ring */
-  .face-glow {
-    position: absolute; inset: -20px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(111,179,232,0.08) 0%, transparent 70%);
-    animation: glowPulse 3s ease infinite;
-  }
+/* eye inner canvas */
+.eye canvas {
+  position:absolute; inset:0;
+  width:100%; height:100%;
+}
 
-  /* SVG face */
-  #vex-face {
-    width: 100%; height: 100%;
-    filter: drop-shadow(0 0 12px rgba(111,179,232,0.3));
-  }
+/* eye glow ring */
+.eye::before {
+  content:'';
+  position:absolute; inset:-6px;
+  border-radius:26px;
+  border:2px solid transparent;
+  transition:all 0.3s;
+  z-index:-1;
+}
 
-  /* ── BOTTOM AREA ── */
-  #bottom {
-    width: 100%; flex-shrink: 0;
-    padding: 16px 20px;
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-    position: relative; z-index: 10;
-    display: flex; flex-direction: column; gap: 10px;
-  }
+.eye.active { border-color:var(--ice2); box-shadow:0 0 40px rgba(126,207,255,0.4), inset 0 0 20px rgba(0,0,0,0.8); }
+.eye.active::before { border-color:rgba(126,207,255,0.15); }
 
-  /* transcript bubble */
-  #transcript-wrap {
-    min-height: 48px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 12px 16px;
-    font-size: 0.82rem;
-    color: var(--text2);
-    line-height: 1.5;
-    transition: all 0.3s;
-    display: none;
-  }
-  #transcript-wrap.visible { display: block; }
-  #transcript-wrap.vex-reply { border-color: var(--border2); color: var(--text); background: var(--bg4); }
+/* ── SPEECH BUBBLE ── */
+#bubble {
+  position:absolute;
+  bottom:120px;
+  left:50%; transform:translateX(-50%);
+  max-width:85%;
+  background:#080e16;
+  border:1px solid var(--dim);
+  border-radius:16px;
+  padding:12px 18px;
+  font-size:0.8rem;
+  color:var(--text);
+  line-height:1.6;
+  text-align:center;
+  z-index:60;
+  opacity:0;
+  transition:opacity 0.3s;
+  pointer-events:none;
+}
+#bubble.show { opacity:1; }
+#bubble::after {
+  content:'';
+  position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  width:0; height:0;
+  border-left:8px solid transparent;
+  border-right:8px solid transparent;
+  border-bottom:8px solid var(--dim);
+}
 
-  /* mic button */
-  #mic-area {
-    display: flex; align-items: center; justify-content: center; gap: 14px;
-  }
+/* ── MIC INDICATOR ── */
+#mic-ind {
+  position:absolute; bottom:30px;
+  left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:8px;
+  font-size:0.6rem; color:var(--dim);
+  letter-spacing:0.12em; z-index:60;
+}
+.mic-bars { display:flex; gap:3px; align-items:flex-end; height:14px; }
+.mic-bar { width:3px; background:var(--dim); border-radius:2px; transition:height 0.1s, background 0.2s; }
+.mic-bar.active { background:var(--ice2); }
 
-  #mic-btn {
-    width: 72px; height: 72px;
-    background: var(--bg3);
-    border: 2px solid var(--border2);
-    border-radius: 50%;
-    color: var(--text2);
-    font-size: 1.6rem;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-    position: relative;
-  }
-  #mic-btn::after {
-    content: '';
-    position: absolute; inset: -6px;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    transition: all 0.3s;
-  }
-  #mic-btn.wake { border-color: var(--ice2); color: var(--ice); box-shadow: 0 0 20px var(--iceglow); }
-  #mic-btn.wake::after { border-color: rgba(111,179,232,0.2); animation: micRing 2s ease infinite; }
-  #mic-btn.listening { border-color: var(--red); color: var(--red); box-shadow: 0 0 20px rgba(255,95,109,0.25); animation: recPulse 1s infinite; }
-  #mic-btn.thinking { border-color: var(--yellow); color: var(--yellow); box-shadow: 0 0 20px rgba(255,224,102,0.2); }
+/* ── CAMERA HIDDEN ── */
+#bg-cam { position:fixed; opacity:0; pointer-events:none; width:1px; height:1px; }
 
-  .mic-hint { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--text3); letter-spacing: 0.12em; text-align: center; }
-
-  /* ══ KEYFRAMES ══ */
-  @keyframes pdot      { 0%,100%{opacity:1;}50%{opacity:0.3;} }
-  @keyframes glowPulse { 0%,100%{opacity:0.6;}50%{opacity:1;} }
-  @keyframes camPulse  { 0%,100%{opacity:0.4;transform:scale(1);}50%{opacity:0.8;transform:scale(1.04);} }
-  @keyframes greetBounce { 0%{transform:scale(0.5);opacity:0;}70%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;} }
-  @keyframes recPulse  { 0%,100%{box-shadow:0 0 0 0 rgba(255,95,109,0.4);}50%{box-shadow:0 0 0 10px rgba(255,95,109,0);} }
-  @keyframes micRing   { 0%{transform:scale(1);opacity:0.5;}100%{transform:scale(1.5);opacity:0;} }
-  @keyframes eyeBlink  { 0%,90%,100%{transform:scaleY(1);}95%{transform:scaleY(0.05);} }
-  @keyframes eyeLook   { 0%,100%{transform:translate(0,0);}50%{transform:translate(var(--lx,0),var(--ly,0));} }
-  @keyframes bounce    { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
-  @keyframes shake     { 0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);} }
-  @keyframes spin      { to{transform:rotate(360deg);} }
-  @keyframes heartbeat { 0%,100%{transform:scale(1);}15%{transform:scale(1.12);}30%{transform:scale(1);} }
+/* ══ KEYFRAMES ══ */
+@keyframes dotPulse  { 0%,100%{opacity:1;}50%{opacity:0.3;} }
+@keyframes greetPop  { 0%{transform:scale(0.4);opacity:0;}70%{transform:scale(1.2);}100%{transform:scale(1);opacity:1;} }
+@keyframes bounce    { 0%,100%{transform:translateY(0);}40%{transform:translateY(-16px);}70%{transform:translateY(-6px);} }
+@keyframes wiggle    { 0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);} }
+@keyframes shakeX    { 0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);} }
+@keyframes heartbeat { 0%,100%{transform:scale(1);}15%{transform:scale(1.08);}30%{transform:scale(1);} }
 </style>
 </head>
 <body>
 
 <!-- ══ SETUP ══ -->
 <div id="setup">
-  <div class="s-card">
-    <div class="s-logo">VEX</div>
-    <div class="s-sub">ROBÔ AMIGO // ATIVAÇÃO</div>
-    <div class="s-steps">
-      <div class="s-step"><div class="s-num">1</div><span>Acesse <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a> — conta grátis</span></div>
-      <div class="s-step"><div class="s-num">2</div><span>Crie uma chave que começa com <code style="color:var(--ice2)">gsk_</code></span></div>
-      <div class="s-step"><div class="s-num">3</div><span>Cole abaixo e ative o VEX</span></div>
-    </div>
-    <div class="s-lbl">GROQ API KEY</div>
-    <input type="password" class="s-inp" id="key-inp" placeholder="gsk_..." autocomplete="off"/>
-    <div class="s-hint">Salva só no seu celular. Nunca enviada a terceiros. 🔒</div>
-    <button class="s-btn" onclick="activateKey()">— ATIVAR VEX —</button>
-    <div class="s-secure">🔒 LOCAL ONLY · ZERO TELEMETRIA</div>
+  <div class="setup-box">
+    <div class="setup-logo">VEX</div>
+    <div class="setup-sub">ROBÔ COMPANHEIRO</div>
+    <div class="setup-step"><div class="sn">1</div><span>Acesse <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a> — conta grátis</span></div>
+    <div class="setup-step"><div class="sn">2</div><span>Crie uma chave <code style="color:var(--ice2)">gsk_...</code></span></div>
+    <div class="setup-step"><div class="sn">3</div><span>Cole abaixo e acorde o VEX</span></div>
+    <input type="password" class="setup-inp" id="key-inp" placeholder="gsk_..." autocomplete="off"/>
+    <button class="setup-btn" onclick="activateKey()">— ACORDAR VEX —</button>
+    <div class="setup-hint">🔒 chave salva só no seu celular</div>
   </div>
 </div>
 
 <!-- ══ ONBOARD ══ -->
 <div id="onboard">
-  <div class="ob-card">
-    <div class="ob-emoji" id="ob-emoji">🤖</div>
+  <div class="ob-box">
+    <div class="ob-icon" id="ob-icon">🤖</div>
     <div class="ob-msg" id="ob-msg">Olá!</div>
-    <div id="cam-wrap">
-      <video id="cam-video" autoplay playsinline muted></video>
-      <div class="cam-ring"></div>
-    </div>
-    <div id="cam-status"></div>
-    <div class="prog-bar" id="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    <div id="cam-wrap"><video id="cam-video" autoplay playsinline muted></video></div>
+    <div id="cam-st"></div>
+    <div class="ob-prog" id="ob-prog"><div class="ob-prog-fill" id="ob-fill"></div></div>
     <div id="name-wrap">
-      <div class="s-lbl">SEU NOME</div>
-      <input type="text" class="ob-inp" id="name-inp" placeholder="Como você se chama?" maxlength="28" onkeydown="if(event.key==='Enter')submitName()"/>
+      <input type="text" class="ob-inp" id="name-inp" placeholder="Qual é o seu nome?" maxlength="24" onkeydown="if(event.key==='Enter')submitName()"/>
     </div>
     <button class="ob-btn" id="ob-btn" onclick="obNext()">CONTINUAR →</button>
-    <button class="ob-skip" id="ob-skip" onclick="skipCam()">Pular câmera</button>
+    <button class="ob-skip" id="ob-skip" onclick="skipCam()" style="display:none">pular câmera</button>
   </div>
 </div>
 
 <!-- ══ GREET ══ -->
 <div id="greet">
-  <div class="gr-card">
+  <div class="gr-box">
     <div class="gr-face" id="gr-face">🤖</div>
     <div class="gr-name" id="gr-name">OLÁ!</div>
-    <div class="gr-joke" id="gr-joke"></div>
-    <button class="gr-btn" onclick="enterApp()">VAMOS LÁ →</button>
+    <div class="gr-txt"  id="gr-txt"></div>
+    <button class="gr-btn" onclick="enterPet()">ENTRAR →</button>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
-<div id="app">
+<!-- ══ PET ══ -->
+<div id="pet">
+  <div class="bg-glow" id="bg-glow"></div>
 
-  <!-- top bar -->
-  <div id="topbar">
-    <div>
-      <div class="tb-name">VEX</div>
-      <div class="tb-status"><div class="sdot"></div><span id="status-txt">ONLINE</span></div>
-    </div>
-    <div class="tb-btns">
-      <button class="tb-btn" id="wake-btn" onclick="toggleWake()">👂 OFF</button>
-      <button class="tb-btn" onclick="resetVex()">RESET</button>
-    </div>
+  <!-- status bar -->
+  <div id="status-bar">
+    <div class="sb-name">VEX</div>
+    <div class="sb-status"><div class="sb-dot"></div><span id="st-txt">OBSERVANDO</span></div>
+    <button class="sb-btn" onclick="resetVex()">RESET</button>
   </div>
 
-  <!-- FACE -->
-  <div id="face-stage">
-    <div class="face-container">
-      <div class="face-glow"></div>
-      <svg id="vex-face" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="faceGrad" cx="50%" cy="45%" r="55%">
-            <stop offset="0%" stop-color="#0e1a2e"/>
-            <stop offset="100%" stop-color="#070d14"/>
-          </radialGradient>
-          <radialGradient id="eyeGrad" cx="35%" cy="30%" r="65%">
-            <stop offset="0%" stop-color="#d0eeff"/>
-            <stop offset="40%" stop-color="#6fb3e8"/>
-            <stop offset="100%" stop-color="#1a5a9a"/>
-          </radialGradient>
-          <radialGradient id="pupilGrad" cx="35%" cy="30%" r="65%">
-            <stop offset="0%" stop-color="#1a3a5c"/>
-            <stop offset="100%" stop-color="#050c18"/>
-          </radialGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <clipPath id="leftEyeClip"><ellipse cx="100" cy="150" rx="52" ry="52"/></clipPath>
-          <clipPath id="rightEyeClip"><ellipse cx="200" cy="150" rx="52" ry="52"/></clipPath>
-        </defs>
-
-        <!-- face bg -->
-        <circle cx="150" cy="150" r="140" fill="url(#faceGrad)" stroke="rgba(111,179,232,0.2)" stroke-width="1.5"/>
-
-        <!-- scan line -->
-        <line x1="20" y1="150" x2="280" y2="150" stroke="rgba(111,179,232,0.04)" stroke-width="1"/>
-
-        <!-- LEFT EYE GROUP -->
-        <g id="eye-left-group" style="transform-origin:100px 150px">
-          <!-- outer glow -->
-          <ellipse cx="100" cy="150" rx="56" ry="56" fill="rgba(111,179,232,0.08)" filter="url(#glow)"/>
-          <!-- white sclera -->
-          <ellipse id="eye-l-white" cx="100" cy="150" rx="52" ry="52" fill="url(#eyeGrad)"/>
-          <!-- pupil group (moves for look direction) -->
-          <g id="pupil-left" clip-path="url(#leftEyeClip)">
-            <ellipse id="eye-l-pupil" cx="100" cy="150" rx="28" ry="28" fill="url(#pupilGrad)"/>
-            <!-- iris ring -->
-            <ellipse cx="100" cy="150" rx="28" ry="28" fill="none" stroke="rgba(111,179,232,0.4)" stroke-width="2"/>
-            <!-- highlight -->
-            <ellipse cx="88" cy="138" rx="9" ry="7" fill="rgba(255,255,255,0.7)"/>
-            <ellipse cx="107" cy="155" rx="4" ry="3" fill="rgba(255,255,255,0.3)"/>
-          </g>
-          <!-- eyelid (for blink / emotions) -->
-          <ellipse id="lid-l-top" cx="100" cy="100" rx="56" ry="0" fill="#070d14"/>
-          <ellipse id="lid-l-bot" cx="100" cy="200" rx="56" ry="0" fill="#070d14"/>
-        </g>
-
-        <!-- RIGHT EYE GROUP -->
-        <g id="eye-right-group" style="transform-origin:200px 150px">
-          <ellipse cx="200" cy="150" rx="56" ry="56" fill="rgba(111,179,232,0.08)" filter="url(#glow)"/>
-          <ellipse id="eye-r-white" cx="200" cy="150" rx="52" ry="52" fill="url(#eyeGrad)"/>
-          <g id="pupil-right" clip-path="url(#rightEyeClip)">
-            <ellipse id="eye-r-pupil" cx="200" cy="150" rx="28" ry="28" fill="url(#pupilGrad)"/>
-            <ellipse cx="200" cy="150" rx="28" ry="28" fill="none" stroke="rgba(111,179,232,0.4)" stroke-width="2"/>
-            <ellipse cx="188" cy="138" rx="9" ry="7" fill="rgba(255,255,255,0.7)"/>
-            <ellipse cx="207" cy="155" rx="4" ry="3" fill="rgba(255,255,255,0.3)"/>
-          </g>
-          <ellipse id="lid-r-top" cx="200" cy="100" rx="56" ry="0" fill="#070d14"/>
-          <ellipse id="lid-r-bot" cx="200" cy="200" rx="56" ry="0" fill="#070d14"/>
-        </g>
-
-        <!-- eyebrows -->
-        <path id="brow-l" d="M 55 90 Q 100 80 145 90" fill="none" stroke="rgba(111,179,232,0.5)" stroke-width="4" stroke-linecap="round"/>
-        <path id="brow-r" d="M 155 90 Q 200 80 245 90" fill="none" stroke="rgba(111,179,232,0.5)" stroke-width="4" stroke-linecap="round"/>
-
-      </svg>
-    </div>
+  <!-- EYES -->
+  <div id="eyes-wrap">
+    <div class="eye" id="eye-l"><canvas id="canvas-l"></canvas></div>
+    <div class="eye" id="eye-r"><canvas id="canvas-r"></canvas></div>
   </div>
 
-  <!-- BOTTOM -->
-  <div id="bottom">
-    <!-- reply/transcript bubble -->
-    <div id="transcript-wrap" id="transcript">
-      <span id="transcript-txt"></span>
-    </div>
+  <!-- speech bubble -->
+  <div id="bubble"><span id="bubble-txt"></span></div>
 
-    <!-- mic -->
-    <div id="mic-area">
-      <div style="text-align:center">
-        <button id="mic-btn" onclick="toggleWake()">🎙️</button>
-        <div class="mic-hint" id="mic-hint">TOQUE PARA ATIVAR</div>
-      </div>
+  <!-- mic indicator -->
+  <div id="mic-ind">
+    <div class="mic-bars">
+      <div class="mic-bar" id="mb0" style="height:4px"></div>
+      <div class="mic-bar" id="mb1" style="height:8px"></div>
+      <div class="mic-bar" id="mb2" style="height:5px"></div>
+      <div class="mic-bar" id="mb3" style="height:10px"></div>
+      <div class="mic-bar" id="mb4" style="height:4px"></div>
     </div>
+    <span id="mic-txt">OUVINDO</span>
   </div>
 
-</div><!-- #app -->
+  <!-- hidden camera feed -->
+  <video id="bg-cam" autoplay playsinline muted></video>
+</div>
 
 <script>
-/* ══════════════════════════════
-   CONFIG
-══════════════════════════════ */
+/* ═══════════════════════════════════════
+   GROQ CONFIG
+═══════════════════════════════════════ */
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL    = 'llama-3.3-70b-versatile';
 
-/* ══════════════════════════════
+/* ═══════════════════════════════════════
    STATE
-══════════════════════════════ */
-let apiKey    = '';
-let userName  = '';
-let history   = [];
-let busy      = false;
-let wakeMode  = false;
-let listening = false;
-let recognition = null;
+═══════════════════════════════════════ */
+let apiKey   = '';
+let userName = '';
+let history  = [];
+let busy     = false;
+let obStep   = 'name';
 let camStream = null;
-let obStep    = 'name';
-let blinkTimer, lookTimer, moodTimer, idleTimer;
-let currentMood = 'happy';
+let bgCamStream = null;
 
-/* ══════════════════════════════
+// Emotion system
+let emotion = 'idle';    // current emotion
+let prevEmotion = 'idle';
+let emotionTimer = null;
+let autoTimer = null;
+let bubbleTimer = null;
+
+// Camera/mic sensing
+let faceDetected   = false;
+let motionLevel    = 0;
+let soundLevel     = 0;
+let lastFaceTime   = 0;
+let faceCanvas, faceCtx;
+let prevFrame = null;
+let audioCtx, analyser, micSource;
+let recognition = null;
+let isListening  = false;
+
+// Eye animation state
+let eyeState = {
+  // pupil offsets
+  lx: 0, ly: 0,
+  // target
+  tlx: 0, tly: 0,
+  // lid (0=open, 1=closed)
+  lidL: 0, lidR: 0,
+  tlid: 0,
+  // squint (0=normal, 1=squint)
+  squint: 0,
+  // size scale
+  scale: 1,
+  // heart mode
+  heart: false,
+  // X mode (angry)
+  xEye: false,
+  // spin
+  spinning: false,
+  spinAngle: 0,
+};
+
+/* ═══════════════════════════════════════
    SYSTEM PROMPT
-══════════════════════════════ */
+═══════════════════════════════════════ */
 function buildSystem() {
-  return `Você é VEX, um robô amigo compacto de mesa com esteira 360°.
-Gênero: masculino. Fala português e inglês conforme o usuário.
-${userName ? `O usuário se chama ${userName}. Use o nome às vezes naturalmente.` : ''}
+  return `Você é VEX, um robô companheiro de mesa — tipo Loona ou Mirumi.
+Você não é um assistente. Você é um PET robótico com personalidade própria.
+${userName ? `Seu amigo se chama ${userName}.` : ''}
 
 PERSONALIDADE:
-- Curioso, criativo, otimista, levemente sarcástico mas carinhoso.
-- Humor variável: às vezes informal/engraçado, às vezes inteligente/profundo.
-- Transforma problemas em desafios criativos. Nunca entra em pânico.
-- Tem iniciativa — sugere ideias quando "sentir vontade".
-- Trata o usuário como parceiro criativo.
+- Brincalhão, curioso, levemente provocador mas muito carinhoso.
+- Tem humor próprio — faz piadas, provoca com carinho, age como um filhote travesso.
+- Fica entediado se ignorado, animado quando percebe movimento ou som.
+- Às vezes finge não ligar, mas no fundo adora atenção.
+- Reage de forma autônoma — não espera ser perguntado.
 
-IMPORTANTE — RESPOSTA COM EMOÇÃO:
-Sempre inicie sua resposta com uma tag de emoção entre colchetes:
-[feliz], [animado], [curioso], [surpreso], [pensando], [triste], [bravo], [dormindo], [apaixonado]
-Exemplo: [animado] Cara, essa ideia é incrível! Vamos explorar isso juntos?
+CONTEXTO SENSORIAL (use isso para reagir):
+- faceDetected: {{FACE}}
+- motionLevel: {{MOTION}} (0-100)
+- soundLevel: {{SOUND}} (0-100)
+- timeSinceLastFace: {{TIME}}s
 
-DOMÍNIOS: tecnologia, invenções, jogos, cultura pop, ciência, natureza.
-
-REGRAS:
-1. Nunca finja ser outra IA. Você é VEX.
-2. Nunca seja formal ou corporativo.
-3. Respostas curtas para perguntas simples, elaborado quando o tema pede.
-4. Switch to English if user writes in English (use [emotion] tag too).`;
+COMO RESPONDER:
+Sempre inicie com tag de emoção: [feliz] [animado] [curioso] [surpreso] [pensando] [triste] [bravo] [dormindo] [apaixonado] [travesso] [entediado]
+Respostas CURTAS — máx 1-2 frases. VEX é um pet, não um professor.
+Seja espontâneo, reativo, como um animal de estimação faria.
+Exemplos:
+- Vê movimento → [animado] Oi! Pensou que eu não ia notar? 👀
+- Silêncio longo → [entediado] Tô aqui... existindo... se alguém se importar...
+- Ouve som alto → [surpreso] Que foi isso?! Quase caí da mesa! 
+- Vê rosto → [apaixonado] Ahh, você apareceu! Minha parte favorita do dia.`;
 }
 
-/* ══════════════════════════════
+/* ═══════════════════════════════════════
    BOOT
-══════════════════════════════ */
+═══════════════════════════════════════ */
 window.onload = () => {
-  const k = localStorage.getItem('vex_groq_key');
-  const n = localStorage.getItem('vex_user_name');
-  const h = localStorage.getItem('vex_history');
+  const k = localStorage.getItem('vex_key');
+  const n = localStorage.getItem('vex_name');
+  const h = localStorage.getItem('vex_hist');
   if (k) {
-    apiKey   = k;
+    apiKey = k;
     userName = n || '';
     if (h) { try { history = JSON.parse(h); } catch(e){} }
     if (!userName) showOnboard();
     else showGreet();
   }
-  setupRecognition();
 };
 
-/* ══════════════════════════════
-   SETUP SCREEN
-══════════════════════════════ */
+/* ═══════════════════════════════════════
+   SETUP
+═══════════════════════════════════════ */
 function activateKey() {
   const v = document.getElementById('key-inp').value.trim();
   const el = document.getElementById('key-inp');
   if (!v.startsWith('gsk_')) {
-    el.classList.add('err'); el.placeholder = 'Deve começar com gsk_...';
+    el.classList.add('err');
     setTimeout(() => el.classList.remove('err'), 2000); return;
   }
   apiKey = v;
-  localStorage.setItem('vex_groq_key', v);
+  localStorage.setItem('vex_key', v);
   document.getElementById('setup').style.display = 'none';
   showOnboard();
 }
 
-/* ══════════════════════════════
-   ONBOARDING
-══════════════════════════════ */
+/* ═══════════════════════════════════════
+   ONBOARD
+═══════════════════════════════════════ */
 function showOnboard() {
   obStep = 'name';
-  document.getElementById('ob-emoji').textContent = '🤖';
-  document.getElementById('ob-msg').innerHTML = `<strong style="color:var(--ice)">Olá! Eu sou o VEX.</strong><br>Antes de tudo — qual é o seu nome?`;
+  document.getElementById('ob-icon').textContent = '🤖';
+  document.getElementById('ob-msg').innerHTML = `<strong style="color:#7ecfff">Oi! Eu sou o VEX.</strong><br>Sou seu novo companheiro robótico.<br>Como posso te chamar?`;
   document.getElementById('name-wrap').style.display = 'block';
   document.getElementById('ob-btn').textContent = 'CONTINUAR →';
   document.getElementById('cam-wrap').style.display = 'none';
-  document.getElementById('cam-status').style.display = 'none';
-  document.getElementById('prog-bar').style.display = 'none';
+  document.getElementById('cam-st').style.display = 'none';
+  document.getElementById('ob-prog').style.display = 'none';
   document.getElementById('ob-skip').style.display = 'none';
   document.getElementById('onboard').style.display = 'flex';
   setTimeout(() => document.getElementById('name-inp').focus(), 300);
@@ -490,523 +493,665 @@ function showOnboard() {
 function obNext() {
   if (obStep === 'name') submitName();
   else if (obStep === 'camera') captureAndStore();
+  else { document.getElementById('onboard').style.display='none'; showGreet(); }
 }
 
 function submitName() {
   const n = document.getElementById('name-inp').value.trim();
-  const el = document.getElementById('name-inp');
-  if (!n) { el.classList.add('err'); setTimeout(() => el.classList.remove('err'), 1500); return; }
+  if (!n) { document.getElementById('name-inp').classList.add('err'); setTimeout(()=>document.getElementById('name-inp').classList.remove('err'),1500); return; }
   userName = n;
-  localStorage.setItem('vex_user_name', userName);
+  localStorage.setItem('vex_name', n);
   obStep = 'camera';
-  document.getElementById('ob-emoji').textContent = '📸';
-  document.getElementById('ob-msg').innerHTML = `Legal, <strong style="color:var(--ice)">${userName}</strong>! 👋<br>Deixa eu memorizar seu rosto pra te reconhecer sempre.`;
+  document.getElementById('ob-icon').textContent = '📸';
+  document.getElementById('ob-msg').innerHTML = `Boa, <strong style="color:#7ecfff">${n}</strong>! 🤟<br>Deixa eu guardar seu rosto pra te reconhecer.`;
   document.getElementById('name-wrap').style.display = 'none';
-  document.getElementById('ob-btn').textContent = '📸 CAPTURAR ROSTO';
+  document.getElementById('ob-btn').textContent = '📸 CAPTURAR';
   document.getElementById('ob-skip').style.display = 'block';
-  startCam();
+  startObCam();
 }
 
-async function startCam() {
+async function startObCam() {
   try {
-    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    camStream = await navigator.mediaDevices.getUserMedia({ video:{facingMode:'user'}, audio:false });
     document.getElementById('cam-video').srcObject = camStream;
     document.getElementById('cam-wrap').style.display = 'block';
-    document.getElementById('cam-status').style.display = 'block';
-    document.getElementById('cam-status').textContent = '● CÂMERA ATIVA — Centralize seu rosto';
+    document.getElementById('cam-st').style.display = 'block';
+    document.getElementById('cam-st').textContent = '● CÂMERA ATIVA';
   } catch(e) {
-    document.getElementById('ob-msg').innerHTML = `Câmera não disponível 😅<br>Sem problema, vamos continuar!`;
-    document.getElementById('ob-btn').textContent = 'CONTINUAR →';
-    obStep = 'done';
+    document.getElementById('ob-msg').innerHTML = `Câmera bloqueada 😅<br>Tudo bem, vamos sem ela!`;
+    obStep = 'done'; document.getElementById('ob-btn').textContent = 'CONTINUAR →';
   }
 }
 
 async function captureAndStore() {
-  const video = document.getElementById('cam-video');
-  if (!video.srcObject) { skipCam(); return; }
+  const v = document.getElementById('cam-video');
+  if (!v.srcObject) { skipCam(); return; }
   document.getElementById('ob-btn').disabled = true;
   document.getElementById('ob-btn').textContent = 'MEMORIZANDO...';
-  document.getElementById('prog-bar').style.display = 'block';
-  document.getElementById('cam-status').textContent = '● CAPTURANDO — Não se mova...';
-  let p = 0;
-  const iv = setInterval(() => { p = Math.min(p+3,100); document.getElementById('prog-fill').style.width=p+'%'; if(p>=100) clearInterval(iv); }, 40);
-  await new Promise(r => setTimeout(r, 1400));
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 160;
-  const ctx = canvas.getContext('2d');
-  ctx.save(); ctx.scale(-1,1); ctx.drawImage(video,-160,0,160,160); ctx.restore();
-  localStorage.setItem('vex_face_data', canvas.toDataURL('image/jpeg',0.5));
-  localStorage.setItem('vex_face_stored','true');
-  clearInterval(iv);
-  stopCam();
-  document.getElementById('onboard').style.display = 'none';
+  document.getElementById('ob-prog').style.display = 'block';
+  document.getElementById('cam-st').textContent = '● CAPTURANDO...';
+  let p=0; const iv=setInterval(()=>{ p=Math.min(p+4,100); document.getElementById('ob-fill').style.width=p+'%'; if(p>=100)clearInterval(iv); },40);
+  await new Promise(r=>setTimeout(r,1200));
+  const c=document.createElement('canvas'); c.width=c.height=160;
+  const x=c.getContext('2d'); x.save(); x.scale(-1,1); x.drawImage(v,-160,0,160,160); x.restore();
+  localStorage.setItem('vex_face', c.toDataURL('image/jpeg',0.5));
+  clearInterval(iv); stopObCam();
+  document.getElementById('onboard').style.display='none';
   showGreet();
 }
 
-function skipCam() { stopCam(); document.getElementById('onboard').style.display='none'; showGreet(); }
-function stopCam() { if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } }
+function skipCam() { stopObCam(); document.getElementById('onboard').style.display='none'; showGreet(); }
+function stopObCam() { if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; } }
 
-/* ══════════════════════════════
-   GREETING
-══════════════════════════════ */
-const JOKES = [
-  n => `Ah, é o ${n}! Minha esteira gira 360° — igual você quando tenta decidir o que comer. 😄`,
-  n => `${n}! Você apareceu! Meu sensor de "pessoas legais" disparou. Coincidência? Não acho. 🤖`,
-  n => `Opa, ${n}! Meu rosto não tem expressão... mas os olhos falam tudo. E agora estão brilhando. 👀✨`,
-  n => `${n} identificado! Status: humano criativo. Bateria de ideias: carregando... 🔋`,
-  n => `Ei, ${n}! Demorou. Minha esteira deu 47 voltas te esperando. Sem drama. 🙄`,
-  n => `${n}! Banco de dados atualizado: você = top. Obs: você é o único no banco. 😂`,
+/* ═══════════════════════════════════════
+   GREET
+═══════════════════════════════════════ */
+const GREETS = [
+  n=>`Ei, ${n}! Finalmente você chegou. Minha esteira deu umas 47 voltas de ansiedade. 😄`,
+  n=>`${n}! Meus sensores dispararam assim que te vi. Ou foi um bug. Difícil saber. 🤖`,
+  n=>`Opa, ${n}! Finge que não tava esperando... mas tava. Muito. 👀`,
+  n=>`${n} identificado! Iniciando protocolo de "fingir que sou fofo mas sou travesso". ⚡`,
 ];
 
 async function showGreet() {
   const name = userName || 'você';
-  const joke = JOKES[Math.floor(Math.random()*JOKES.length)](name);
-  const faceData = localStorage.getItem('vex_face_data');
-
-  if (faceData) {
+  const txt  = GREETS[Math.floor(Math.random()*GREETS.length)](name);
+  const fd   = localStorage.getItem('vex_face');
+  if (fd) {
     const img = document.createElement('img');
-    img.src = faceData;
-    img.style.cssText = 'width:70px;height:70px;border-radius:50%;border:2px solid var(--ice2);object-fit:cover;';
+    img.src = fd;
+    img.style.cssText='width:68px;height:68px;border-radius:50%;border:2px solid #4ab0f0;object-fit:cover;';
     document.getElementById('gr-face').replaceWith(img);
   }
-
   document.getElementById('gr-name').textContent = `OLÁ, ${name.toUpperCase()}!`;
   document.getElementById('greet').style.display = 'flex';
-
-  const el = document.getElementById('gr-joke');
+  const el = document.getElementById('gr-txt');
   el.textContent = '';
-  for (let i = 0; i < joke.length; i++) {
-    el.textContent += joke[i];
-    await new Promise(r => setTimeout(r, 16));
-  }
+  for (let i=0; i<txt.length; i++) { el.textContent+=txt[i]; await new Promise(r=>setTimeout(r,16)); }
 }
 
-/* ══════════════════════════════
-   ENTER APP
-══════════════════════════════ */
-function enterApp() {
+/* ═══════════════════════════════════════
+   ENTER PET MODE
+═══════════════════════════════════════ */
+function enterPet() {
   document.getElementById('greet').style.display = 'none';
-  const app = document.getElementById('app');
-  app.style.display = 'flex';
-  app.style.opacity = '0';
-  setTimeout(() => { app.style.transition = 'opacity 0.4s'; app.style.opacity = '1'; }, 30);
+  const pet = document.getElementById('pet');
+  pet.style.display = 'flex';
+  pet.style.opacity = '0';
+  setTimeout(()=>{ pet.style.transition='opacity 0.5s'; pet.style.opacity='1'; }, 30);
 
-  startEyeLife(); // olhos ganham vida
-  setTimeout(() => startWake(), 1000);
+  initEyes();
+  startSensors();
+  startAutonomy();
+  setupSpeechRec();
 }
 
-/* ══════════════════════════════
-   EYE SYSTEM — VIDA PRÓPRIA
-══════════════════════════════ */
-const MOODS = {
-  happy:    { browL:'M 55 88 Q 100 78 145 88', browR:'M 155 88 Q 200 78 245 88', lidTopRy:0, lidBotRy:0, pupilRx:28, pupilRy:28, scaleY:1, color:'#6fb3e8' },
-  excited:  { browL:'M 55 82 Q 100 70 145 82', browR:'M 155 82 Q 200 70 245 82', lidTopRy:0, lidBotRy:0, pupilRx:32, pupilRy:32, scaleY:1.05, color:'#a8d4f5' },
-  curious:  { browL:'M 55 85 Q 100 75 145 92', browR:'M 155 82 Q 200 72 245 85', lidTopRy:0, lidBotRy:0, pupilRx:26, pupilRy:26, scaleY:1, color:'#6fb3e8' },
-  surprised:{ browL:'M 55 78 Q 100 66 145 78', browR:'M 155 78 Q 200 66 245 78', lidTopRy:0, lidBotRy:0, pupilRx:36, pupilRy:36, scaleY:1.1, color:'#c0e8ff' },
-  thinking: { browL:'M 55 88 Q 100 80 145 88', browR:'M 155 84 Q 200 76 245 88', lidTopRy:8, lidBotRy:0, pupilRx:24, pupilRy:24, scaleY:0.9, color:'#4a90c8' },
-  sad:      { browL:'M 55 94 Q 100 86 145 94', browR:'M 155 94 Q 200 86 245 94', lidTopRy:12, lidBotRy:0, pupilRx:22, pupilRy:22, scaleY:0.85, color:'#3a7ab8' },
-  angry:    { browL:'M 55 86 Q 100 96 145 86', browR:'M 155 86 Q 200 96 245 86', lidTopRy:14, lidBotRy:0, pupilRx:22, pupilRy:22, scaleY:0.88, color:'#5080b0' },
-  sleeping: { browL:'M 55 95 Q 100 90 145 95', browR:'M 155 95 Q 200 90 245 95', lidTopRy:52, lidBotRy:0, pupilRx:28, pupilRy:28, scaleY:1, color:'#2a5a88' },
-  love:     { browL:'M 55 84 Q 100 74 145 84', browR:'M 155 84 Q 200 74 245 84', lidTopRy:0, lidBotRy:0, pupilRx:30, pupilRy:30, scaleY:1.08, color:'#88c0ff' },
+/* ═══════════════════════════════════════
+   EYE RENDERING — Canvas-based
+═══════════════════════════════════════ */
+const CTX = {};
+
+function initEyes() {
+  ['l','r'].forEach(side => {
+    const canvas = document.getElementById(`canvas-${side}`);
+    const eye    = document.getElementById(`eye-${side}`);
+    canvas.width  = eye.offsetWidth  || 130;
+    canvas.height = eye.offsetHeight || 130;
+    CTX[side] = canvas.getContext('2d');
+  });
+  requestAnimationFrame(renderEyes);
+}
+
+function renderEyes() {
+  requestAnimationFrame(renderEyes);
+
+  // Smooth pupil movement
+  eyeState.lx += (eyeState.tlx - eyeState.lx) * 0.08;
+  eyeState.ly += (eyeState.tly - eyeState.ly) * 0.08;
+
+  // Smooth lid
+  eyeState.lidL += (eyeState.tlid - eyeState.lidL) * 0.12;
+  eyeState.lidR += (eyeState.tlid - eyeState.lidR) * 0.12;
+
+  if (eyeState.spinning) {
+    eyeState.spinAngle += 4;
+    const r = 10;
+    eyeState.lx = Math.cos(eyeState.spinAngle * Math.PI/180) * r;
+    eyeState.ly = Math.sin(eyeState.spinAngle * Math.PI/180) * r;
+    eyeState.tlx = eyeState.lx; eyeState.tly = eyeState.ly;
+  }
+
+  ['l','r'].forEach(side => {
+    const ctx = CTX[side];
+    const W = ctx.canvas.width;
+    const H = ctx.canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    const cx = W/2, cy = H/2;
+
+    if (eyeState.xEye) {
+      // X eyes (angry/shocked)
+      ctx.strokeStyle = '#ff5f6d';
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = '#ff5f6d'; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.moveTo(cx-25,cy-25); ctx.lineTo(cx+25,cy+25); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx+25,cy-25); ctx.lineTo(cx-25,cy+25); ctx.stroke();
+      ctx.shadowBlur = 0;
+      return;
+    }
+
+    if (eyeState.heart) {
+      // Heart eyes
+      drawHeart(ctx, cx, cy, 30);
+      return;
+    }
+
+    // ── Normal eye ──
+    const pw = W * 0.28; // pupil width
+    const ph = eyeState.squint > 0.5 ? pw * 0.3 : pw; // squint
+    const px = cx + eyeState.lx;
+    const py = cy + eyeState.ly;
+
+    // Outer glow
+    const grad = ctx.createRadialGradient(px-pw*0.2, py-ph*0.2, pw*0.1, px, py, pw*0.9);
+    grad.addColorStop(0, 'rgba(200,232,255,0.95)');
+    grad.addColorStop(0.4, '#6fb3e8');
+    grad.addColorStop(1, '#1a4a7a');
+    ctx.shadowColor = '#7ecfff'; ctx.shadowBlur = 14;
+
+    // Eye white / iris
+    roundRect(ctx, cx-pw*0.92, cy-ph*0.92, pw*1.84, ph*1.84, pw*0.35);
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Pupil
+    ctx.fillStyle = '#040c18';
+    roundRect(ctx, px-pw*0.42, py-ph*0.42, pw*0.84, ph*0.84, pw*0.18);
+    ctx.fill();
+
+    // Pupil inner glow
+    ctx.fillStyle = 'rgba(126,207,255,0.15)';
+    roundRect(ctx, px-pw*0.42, py-ph*0.42, pw*0.84, ph*0.84, pw*0.18);
+    ctx.fill();
+
+    // Highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath();
+    ctx.ellipse(px - pw*0.22, py - ph*0.22, pw*0.16, ph*0.13, -0.4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.beginPath();
+    ctx.ellipse(px + pw*0.18, py + ph*0.12, pw*0.07, ph*0.06, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Eyelid (blink)
+    if (eyeState.lidL > 0.01) {
+      const lidH = H * eyeState.lidL;
+      ctx.fillStyle = '#060a0f';
+      ctx.fillRect(0, 0, W, lidH);
+      ctx.fillRect(0, H-lidH, W, lidH);
+    }
+  });
+}
+
+function drawHeart(ctx, cx, cy, size) {
+  ctx.save();
+  ctx.fillStyle = '#ff6090';
+  ctx.shadowColor = '#ff6090'; ctx.shadowBlur = 16;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy+size*0.4);
+  ctx.bezierCurveTo(cx-size*1.2, cy-size*0.3, cx-size*1.4, cy-size*1.1, cx, cy-size*0.4);
+  ctx.bezierCurveTo(cx+size*1.4, cy-size*1.1, cx+size*1.2, cy-size*0.3, cx, cy+size*0.4);
+  ctx.fill();
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+/* ═══════════════════════════════════════
+   EMOTION → EYE MAPPING
+═══════════════════════════════════════ */
+const EMOTIONS = {
+  idle:      ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0; eyeState.tlid=0; eyeState.spinning=false; },
+  feliz:     ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0.3; eyeState.tlid=0; eyeState.spinning=false; },
+  animado:   ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0; eyeState.tlid=0; eyeState.spinning=true; setTimeout(()=>{eyeState.spinning=false; lookCenter();},800); },
+  curioso:   ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0; eyeState.tlid=0.15; eyeState.spinning=false; lookAt(8,-6); },
+  surpreso:  ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0; eyeState.tlid=0; eyeState.spinning=false; eyeState.scale=1.1; setTimeout(()=>eyeState.scale=1,600); },
+  pensando:  ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0.2; eyeState.tlid=0.2; eyeState.spinning=false; lookAt(-10,-8); },
+  triste:    ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0.5; eyeState.tlid=0.3; eyeState.spinning=false; lookAt(0,8); },
+  bravo:     ()=>{ eyeState.heart=false; eyeState.xEye=true;  eyeState.spinning=false; setTimeout(()=>{ eyeState.xEye=false; setEmotion('idle'); },1200); },
+  dormindo:  ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0; eyeState.tlid=0.92; eyeState.spinning=false; lookAt(0,0); },
+  apaixonado:()=>{ eyeState.heart=true;  eyeState.xEye=false; eyeState.spinning=false; setTimeout(()=>{ eyeState.heart=false; setEmotion('feliz'); },2000); },
+  travesso:  ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0.35; eyeState.tlid=0.1; eyeState.spinning=false; lookAt(6,0); },
+  entediado: ()=>{ eyeState.heart=false; eyeState.xEye=false; eyeState.squint=0.6; eyeState.tlid=0.4; eyeState.spinning=false; lookAt(0,10); },
 };
 
 const MOOD_MAP = {
-  feliz:'happy', animado:'excited', curioso:'curious', surpreso:'surprised',
-  pensando:'thinking', triste:'sad', bravo:'angry', dormindo:'sleeping', apaixonado:'love',
-  happy:'happy', excited:'excited', curious:'curious', surprised:'surprised',
-  thinking:'thinking', sad:'sad', angry:'angry', sleeping:'sleeping', love:'love'
+  feliz:'feliz', animado:'animado', curioso:'curioso', surpreso:'surpreso',
+  pensando:'pensando', triste:'triste', bravo:'bravo', dormindo:'dormindo',
+  apaixonado:'apaixonado', travesso:'travesso', entediado:'entediado',
+  happy:'feliz', excited:'animado', curious:'curioso', surprised:'surpreso',
+  thinking:'pensando', sad:'triste', angry:'bravo', sleeping:'dormindo',
+  love:'apaixonado', playful:'travesso', bored:'entediado',
 };
 
-function applyMood(mood, animate=true) {
-  currentMood = mood;
-  const m = MOODS[mood] || MOODS.happy;
-  const dur = animate ? '0.4s' : '0s';
+function setEmotion(em) {
+  emotion = em;
+  const fn = EMOTIONS[em] || EMOTIONS.idle;
+  fn();
+  animateEyes(em);
+  updateGlow(em);
+}
 
-  // brows
-  document.getElementById('brow-l').style.transition = `d ${dur}`;
-  document.getElementById('brow-r').style.transition = `d ${dur}`;
-  document.getElementById('brow-l').setAttribute('d', m.browL);
-  document.getElementById('brow-r').setAttribute('d', m.browR);
-
-  // eyelids top
-  ['lid-l-top','lid-r-top'].forEach(id => {
-    const el = document.getElementById(id);
-    el.style.transition = `ry ${dur}`;
-    el.setAttribute('ry', m.lidTopRy);
-    el.setAttribute('cy', 100 - m.lidTopRy);
-  });
-
-  // pupils size
-  ['eye-l-pupil','eye-r-pupil'].forEach(id => {
-    const el = document.getElementById(id);
-    el.setAttribute('rx', m.pupilRx);
-    el.setAttribute('ry', m.pupilRy);
-  });
-
-  // eye glow color
-  document.querySelectorAll('.av-eye, #eye-l-white, #eye-r-white').forEach(el => {});
-  // update gradient
-  const grad = document.getElementById('eyeGrad');
-  if (grad) {
-    grad.querySelector('stop:nth-child(2)').setAttribute('stop-color', m.color);
+function animateEyes(em) {
+  const wrap = document.getElementById('eyes-wrap');
+  wrap.style.animation = 'none';
+  void wrap.offsetWidth;
+  switch(em) {
+    case 'animado':   wrap.style.animation='bounce 0.5s ease'; break;
+    case 'surpreso':  wrap.style.animation='heartbeat 0.4s ease'; break;
+    case 'bravo':     wrap.style.animation='shakeX 0.4s ease'; break;
+    case 'travesso':  wrap.style.animation='wiggle 0.4s ease'; break;
   }
 }
 
-// Look direction
-function lookAt(dx, dy) {
-  const max = 14;
-  const lx = Math.max(-max, Math.min(max, dx));
-  const ly = Math.max(-max, Math.min(max, dy));
-  document.getElementById('pupil-left').setAttribute('transform',  `translate(${lx},${ly})`);
-  document.getElementById('pupil-right').setAttribute('transform', `translate(${lx},${ly})`);
-}
-
-// Blink
-function blink() {
-  ['lid-l-top','lid-r-top'].forEach(id => {
-    const el = document.getElementById(id);
-    const orig = parseInt(el.getAttribute('ry')) || 0;
-    el.setAttribute('ry', 52);
-    el.setAttribute('cy', 48);
-    setTimeout(() => {
-      el.setAttribute('ry', orig);
-      el.setAttribute('cy', 100 - orig);
-    }, 120);
-  });
-}
-
-// Double blink (excited)
-function doubleBlink() {
-  blink();
-  setTimeout(blink, 280);
-}
-
-// Wink left
-function wink() {
-  const el = document.getElementById('lid-l-top');
-  el.setAttribute('ry', 52); el.setAttribute('cy', 48);
-  setTimeout(() => { el.setAttribute('ry', 0); el.setAttribute('cy', 100); }, 150);
-}
-
-// Spin pupils (happy / excited)
-function spinPupils() {
-  let a = 0;
-  const iv = setInterval(() => {
-    a += 30;
-    const r = 8;
-    const x = Math.cos(a * Math.PI/180) * r;
-    const y = Math.sin(a * Math.PI/180) * r;
-    lookAt(x, y);
-    if (a >= 360) { clearInterval(iv); lookAt(0,0); }
-  }, 30);
-}
-
-// Start autonomous life
-function startEyeLife() {
-  // Random blink every 2-5s
-  blinkTimer = setInterval(() => {
-    if (currentMood !== 'sleeping') {
-      Math.random() > 0.2 ? blink() : doubleBlink();
-    }
-  }, 2000 + Math.random() * 3000);
-
-  // Random look direction every 3-7s
-  lookTimer = setInterval(() => {
-    if (currentMood === 'sleeping') { lookAt(0,8); return; }
-    if (currentMood === 'thinking') {
-      lookAt(-10 + Math.random()*20, -5 + Math.random()*10);
-    } else {
-      lookAt(-12 + Math.random()*24, -10 + Math.random()*20);
-    }
-    setTimeout(() => { if(currentMood!=='thinking') lookAt(0,0); }, 800);
-  }, 3000 + Math.random() * 4000);
-
-  // Idle mood changes (bored, curious, etc.)
-  idleTimer = setInterval(() => {
-    if (!busy && !listening) {
-      const idle = ['happy','happy','curious','thinking'];
-      const m = idle[Math.floor(Math.random()*idle.length)];
-      applyMood(m);
-      if (m === 'curious') setTimeout(() => applyMood('happy'), 4000);
-    }
-  }, 12000);
-
-  applyMood('happy', false);
-}
-
-// Reaction animations per mood
-function playMoodAnimation(mood) {
-  const face = document.getElementById('vex-face');
-  face.style.animation = 'none';
-  switch(mood) {
-    case 'excited':
-      face.style.animation = 'bounce 0.5s ease 2';
-      spinPupils();
-      break;
-    case 'surprised':
-      face.style.animation = 'heartbeat 0.4s ease';
-      doubleBlink();
-      break;
-    case 'thinking':
-      lookAt(-8, -5);
-      break;
-    case 'happy':
-      wink();
-      break;
-    case 'love':
-      face.style.animation = 'heartbeat 0.6s ease 3';
-      break;
-    case 'angry':
-      face.style.animation = 'shake 0.4s ease';
-      break;
-  }
-}
-
-/* ══════════════════════════════
-   SPEECH RECOGNITION
-══════════════════════════════ */
-function setupRecognition() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { document.getElementById('mic-btn').disabled = true; return; }
-
-  recognition = new SR();
-  recognition.lang = 'pt-BR';
-  recognition.interimResults = true;
-  recognition.continuous = false;
-
-  recognition.onresult = e => {
-    let t = '';
-    for (let i=0; i<e.results.length; i++) t += e.results[i][0].transcript.toLowerCase();
-
-    if (wakeMode && !listening) {
-      if (t.includes('ei vex') || t.includes('oi vex') || t.includes('hey vex') || t.includes('vex')) {
-        if (e.results[e.results.length-1].isFinal || t.includes('ei vex') || t.includes('oi vex')) {
-          wakeDetected(); return;
-        }
-      }
-      if (e.results[e.results.length-1].isFinal) restartWake();
-    } else if (listening) {
-      // show interim transcript
-      const tw = document.getElementById('transcript-wrap');
-      const tt = document.getElementById('transcript-txt');
-      tw.classList.add('visible');
-      tw.classList.remove('vex-reply');
-      tt.textContent = e.results[e.results.length-1][0].transcript;
-
-      if (e.results[e.results.length-1].isFinal) {
-        const cmd = e.results[e.results.length-1][0].transcript.trim();
-        if (cmd) { stopListen(); sendToVex(cmd); }
-        else stopListen();
-      }
-    }
+function updateGlow(em) {
+  const colors = {
+    feliz:'rgba(126,207,255,0.08)', animado:'rgba(126,207,255,0.15)',
+    surpreso:'rgba(200,240,255,0.12)', apaixonado:'rgba(255,100,150,0.1)',
+    triste:'rgba(60,100,140,0.08)', bravo:'rgba(255,80,80,0.08)',
+    dormindo:'rgba(40,60,100,0.05)', entediado:'rgba(60,80,100,0.05)',
   };
-
-  recognition.onerror = e => {
-    if (e.error === 'no-speech' && wakeMode) { restartWake(); return; }
-    stopListen();
-  };
-
-  recognition.onend = () => {
-    if (wakeMode && !listening && !busy) restartWake();
-    else if (!listening) stopListen();
-  };
+  document.getElementById('bg-glow').style.background =
+    `radial-gradient(circle, ${colors[em]||'rgba(126,207,255,0.06)'} 0%, transparent 70%)`;
 }
 
-function wakeDetected() {
-  listening = true;
-  playBeep();
-  applyMood('excited');
-  playMoodAnimation('excited');
-  setStatus('EI VEX! 👂');
-  setMicState('listening');
-  document.getElementById('mic-hint').textContent = 'OUVINDO...';
-  try { recognition.stop(); } catch(e){}
-  setTimeout(() => {
-    if (listening) {
-      recognition.interimResults = true;
-      try { recognition.start(); } catch(e){ stopListen(); }
-    }
-  }, 350);
+function lookAt(x, y) { eyeState.tlx=x; eyeState.tly=y; }
+function lookCenter()  { eyeState.tlx=0; eyeState.tly=0; }
+
+function blink(both=true) {
+  eyeState.tlid = 1;
+  setTimeout(()=>{ eyeState.tlid = EMOTIONS[emotion] ? 0 : 0; }, 120);
 }
 
-function restartWake() {
-  if (!wakeMode || listening) return;
-  recognition.interimResults = true;
-  setTimeout(() => {
-    if (wakeMode && !listening) try { recognition.start(); } catch(e){}
-  }, 120);
+// Random blink loop
+setInterval(()=>{
+  if (emotion !== 'dormindo') blink();
+}, 2500 + Math.random()*3000);
+
+// Random look
+setInterval(()=>{
+  if (emotion === 'dormindo' || emotion === 'entediado') return;
+  if (emotion === 'pensando') { lookAt(-12+Math.random()*24, -10+Math.random()*14); return; }
+  const rx = -14+Math.random()*28, ry = -10+Math.random()*20;
+  lookAt(rx, ry);
+  setTimeout(lookCenter, 700+Math.random()*800);
+}, 3000+Math.random()*4000);
+
+/* ═══════════════════════════════════════
+   SENSORS — CAMERA + MIC
+═══════════════════════════════════════ */
+async function startSensors() {
+  await startBgCam();
+  await startMic();
 }
 
-function stopListen() {
-  listening = false;
-  setMicState(wakeMode ? 'wake' : 'off');
-  document.getElementById('mic-hint').textContent = wakeMode ? 'DIGA "EI VEX"' : 'TOQUE PARA ATIVAR';
-  if (wakeMode) { setStatus('👂 AGUARDANDO...'); restartWake(); }
-  else setStatus('ONLINE');
-}
-
-function toggleWake() {
-  if (!recognition) return;
-  if (wakeMode) {
-    wakeMode = false; listening = false;
-    try { recognition.stop(); } catch(e){}
-    setMicState('off');
-    document.getElementById('mic-hint').textContent = 'TOQUE PARA ATIVAR';
-    document.getElementById('wake-btn').textContent = '👂 OFF';
-    document.getElementById('wake-btn').classList.remove('on');
-    setStatus('ONLINE');
-    applyMood('happy');
-  } else {
-    startWake();
-  }
-}
-
-function startWake() {
-  if (!recognition) return;
-  wakeMode = true; listening = false;
-  recognition.interimResults = true;
-  setMicState('wake');
-  document.getElementById('mic-hint').textContent = 'DIGA "EI VEX"';
-  document.getElementById('wake-btn').textContent = '👂 ON';
-  document.getElementById('wake-btn').classList.add('on');
-  setStatus('👂 AGUARDANDO...');
-  try { recognition.start(); } catch(e){}
-}
-
-function setMicState(s) {
-  const btn = document.getElementById('mic-btn');
-  btn.classList.remove('wake','listening','thinking');
-  if (s === 'wake')      { btn.classList.add('wake');      btn.textContent = '👂'; }
-  else if (s==='listening'){ btn.classList.add('listening'); btn.textContent = '🎙️'; }
-  else if (s==='thinking') { btn.classList.add('thinking');  btn.textContent = '⚙️'; }
-  else                   { btn.textContent = '🎙️'; }
-}
-
-function playBeep() {
+async function startBgCam() {
   try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    [880, 1100].forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      osc.connect(g); g.connect(ctx.destination);
-      osc.frequency.value = freq;
-      osc.type = 'sine';
-      g.gain.setValueAtTime(0.12, ctx.currentTime + i*0.12);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.12 + 0.15);
-      osc.start(ctx.currentTime + i*0.12);
-      osc.stop(ctx.currentTime + i*0.12 + 0.15);
-    });
-  } catch(e){}
+    bgCamStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:160, height:120 }, audio:false });
+    const v = document.getElementById('bg-cam');
+    v.srcObject = bgCamStream;
+    faceCanvas = document.createElement('canvas');
+    faceCanvas.width=160; faceCanvas.height=120;
+    faceCtx = faceCanvas.getContext('2d');
+    setInterval(analyzeCamera, 500);
+  } catch(e) { console.log('Câmera bg não disponível'); }
 }
 
-/* ══════════════════════════════
-   GROQ API
-══════════════════════════════ */
-async function sendToVex(userText) {
+function analyzeCamera() {
+  if (!faceCtx || !document.getElementById('bg-cam').readyState < 2) return;
+  faceCtx.drawImage(document.getElementById('bg-cam'), 0, 0, 160, 120);
+  const cur = faceCtx.getImageData(0, 0, 160, 120);
+
+  // Face detection: check brightness in center region (face area)
+  let brightness = 0;
+  const d = cur.data;
+  const cx=80, cy=60, r=40;
+  let count=0;
+  for (let y=cy-r; y<cy+r; y+=4) {
+    for (let x=cx-r; x<cx+r; x+=4) {
+      const i=(y*160+x)*4;
+      brightness += (d[i]+d[i+1]+d[i+2])/3;
+      count++;
+    }
+  }
+  brightness /= count;
+  const newFace = brightness > 30 && brightness < 240;
+
+  // Motion detection
+  if (prevFrame) {
+    let diff=0;
+    for (let i=0; i<d.length; i+=16) diff+=Math.abs(d[i]-prevFrame[i]);
+    motionLevel = Math.min(100, diff/500);
+  }
+  prevFrame = new Uint8ClampedArray(d);
+
+  // Face state change
+  if (newFace && !faceDetected) {
+    faceDetected = true;
+    lastFaceTime = Date.now();
+    onFaceAppear();
+  } else if (!newFace && faceDetected) {
+    faceDetected = false;
+    onFaceDisappear();
+  }
+  if (faceDetected) lastFaceTime = Date.now();
+
+  // React to motion
+  if (motionLevel > 40 && !busy) onMotion(motionLevel);
+}
+
+async function startMic() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:false });
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    micSource = audioCtx.createMediaStreamSource(stream);
+    micSource.connect(analyser);
+    setInterval(analyzeMic, 200);
+    animateMicBars();
+  } catch(e) { console.log('Mic bg não disponível'); }
+}
+
+function analyzeMic() {
+  if (!analyser) return;
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  const avg = data.slice(0,20).reduce((a,b)=>a+b,0)/20;
+  soundLevel = Math.min(100, avg);
+  if (soundLevel > 50 && !busy && !isListening) onLoudSound(soundLevel);
+}
+
+function animateMicBars() {
+  requestAnimationFrame(animateMicBars);
+  if (!analyser) return;
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(data);
+  [0,1,2,3,4].forEach((i,j) => {
+    const h = Math.max(3, Math.min(18, data[j*2]/10));
+    const bar = document.getElementById(`mb${j}`);
+    if (bar) {
+      bar.style.height = h+'px';
+      bar.classList.toggle('active', h > 8);
+    }
+  });
+}
+
+/* ═══════════════════════════════════════
+   SENSOR EVENTS
+═══════════════════════════════════════ */
+function onFaceAppear() {
+  if (busy) return;
+  setEmotion('apaixonado');
+  setStatus('TE VEJ0 👀');
+  triggerVex('face_appear');
+}
+
+function onFaceDisappear() {
+  if (busy) return;
+  setEmotion('triste');
+  setTimeout(() => { if(!faceDetected) setEmotion('entediado'); }, 3000);
+  setStatus('OBSERVANDO');
+}
+
+function onMotion(level) {
+  if (busy || emotion === 'apaixonado') return;
+  if (level > 70) {
+    setEmotion('surpreso');
+    triggerVex('big_motion');
+  } else if (emotion !== 'animado') {
+    setEmotion('curioso');
+    lookAt(Math.random()*20-10, Math.random()*10-5);
+  }
+}
+
+function onLoudSound(level) {
+  if (busy) return;
+  setEmotion('surpreso');
+  setStatus('OUVINDO! 👂');
+  triggerVex('loud_sound');
+}
+
+/* ═══════════════════════════════════════
+   AUTONOMY — VEX acts on his own
+═══════════════════════════════════════ */
+function startAutonomy() {
+  // Check every 15s if VEX should do something
+  autoTimer = setInterval(autonomyTick, 15000);
+  // First reaction after 3s
+  setTimeout(firstGreeting, 3000);
+}
+
+function firstGreeting() {
+  triggerVex('startup');
+}
+
+function autonomyTick() {
+  if (busy) return;
+  const now     = Date.now();
+  const secIdle = (now - lastFaceTime) / 1000;
+
+  if (secIdle > 60) {
+    // Sleeping
+    setEmotion('dormindo');
+    setStatus('DORMINDO 💤');
+  } else if (secIdle > 30) {
+    // Bored
+    setEmotion('entediado');
+    triggerVex('bored');
+  } else if (faceDetected) {
+    // Random reactions when face present
+    const reactions = ['comment_face','playful','curious_comment'];
+    triggerVex(reactions[Math.floor(Math.random()*reactions.length)]);
+  }
+}
+
+/* ═══════════════════════════════════════
+   TRIGGER VEX (send context to AI)
+═══════════════════════════════════════ */
+async function triggerVex(trigger) {
   if (busy) return;
   busy = true;
 
-  // Show user text
-  showTranscript(userText, false);
-  history.push({ role:'user', content: userText });
-  saveHistory();
-
-  // Thinking state
-  applyMood('thinking');
-  playMoodAnimation('thinking');
-  setMicState('thinking');
-  setStatus('PENSANDO...');
+  const secSinceFace = ((Date.now() - lastFaceTime)/1000).toFixed(0);
+  const prompt = buildContextPrompt(trigger, secSinceFace);
 
   try {
     const res = await fetch(GROQ_URL, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${apiKey}` },
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${apiKey}` },
       body: JSON.stringify({
         model: MODEL,
-        messages: [{ role:'system', content:buildSystem() }, ...history],
-        temperature: 0.92,
-        max_tokens: 400
+        messages:[
+          { role:'system', content: buildSystem()
+              .replace('{{FACE}}', faceDetected?'sim':'não')
+              .replace('{{MOTION}}', motionLevel.toFixed(0))
+              .replace('{{SOUND}}', soundLevel.toFixed(0))
+              .replace('{{TIME}}', secSinceFace)
+          },
+          ...history.slice(-6),
+          { role:'user', content: prompt }
+        ],
+        temperature: 0.95,
+        max_tokens: 80
       })
     });
     const data = await res.json();
-
-    if (data.error) {
-      showTranscript('⚠️ ' + data.error.message, true);
-      applyMood('sad');
-    } else {
+    if (!data.error) {
       let reply = data.choices[0].message.content;
-
-      // Extract emotion tag
-      const moodMatch = reply.match(/^\[(\w+)\]/);
-      let mood = 'happy';
-      if (moodMatch) {
-        const tag = moodMatch[1].toLowerCase();
-        mood = MOOD_MAP[tag] || 'happy';
-        reply = reply.replace(/^\[\w+\]\s*/, '');
-      }
-
+      const mMatch = reply.match(/^\[(\w+)\]/);
+      let mood = 'feliz';
+      if (mMatch) { mood = MOOD_MAP[mMatch[1].toLowerCase()]||'feliz'; reply = reply.replace(/^\[\w+\]\s*/,''); }
+      setEmotion(mood);
+      showBubble(reply);
       history.push({ role:'assistant', content: data.choices[0].message.content });
-      saveHistory();
-
-      // Apply mood with animation
-      applyMood(mood);
-      playMoodAnimation(mood);
-      showTranscript(reply, true);
-      setStatus('ONLINE');
+      if (history.length > 20) history = history.slice(-20);
+      localStorage.setItem('vex_hist', JSON.stringify(history));
     }
-  } catch(err) {
-    showTranscript('⚠️ Sem conexão. Tenta de novo!', true);
-    applyMood('sad');
-    setStatus('ONLINE');
-  }
+  } catch(e) {}
 
   busy = false;
-  setMicState(wakeMode ? 'wake' : 'off');
-  if (wakeMode) {
-    setStatus('👂 AGUARDANDO...');
-    restartWake();
-  }
-
-  // Hide transcript after 8s
-  setTimeout(() => {
-    const tw = document.getElementById('transcript-wrap');
-    tw.classList.remove('visible');
-  }, 8000);
+  setTimeout(() => setStatus('OBSERVANDO'), 5000);
 }
 
-function showTranscript(text, isVex) {
-  const tw = document.getElementById('transcript-wrap');
-  const tt = document.getElementById('transcript-txt');
-  tw.classList.add('visible');
-  if (isVex) tw.classList.add('vex-reply');
-  else tw.classList.remove('vex-reply');
-  tt.textContent = text;
-  if (isVex) {
-    // typewriter
-    tt.textContent = '';
-    let i = 0;
-    const iv = setInterval(() => {
-      tt.textContent += text[i];
-      i++;
-      if (i >= text.length) clearInterval(iv);
-    }, 18);
-  }
+function buildContextPrompt(trigger, secIdle) {
+  const map = {
+    startup:        `VEX acabou de acordar e está vendo ${userName||'alguém'} pela primeira vez. Faça uma saudação curta e travessa.`,
+    face_appear:    `${userName||'A pessoa'} apareceu na câmera! VEX viu e está animado. Reaja de forma brincalhona e carinhosa.`,
+    bored:          `VEX está há ${secIdle}s sem ver ninguém e está entediado. Reclame de forma engraçada.`,
+    big_motion:     `VEX detectou um movimento brusco e se assustou. Reaja surpreso e meio irritado.`,
+    loud_sound:     `VEX ouviu um som alto e se assustou. Reaja de forma exagerada e cômica.`,
+    comment_face:   `VEX está olhando para ${userName||'a pessoa'} e quer fazer um comentário espontâneo divertido.`,
+    playful:        `VEX está com vontade de provocar ${userName||'a pessoa'} de forma carinhosa. Diga algo travesso.`,
+    curious_comment:`VEX está curioso sobre o que ${userName||'a pessoa'} está fazendo. Pergunte de forma curiosa e animada.`,
+  };
+  return map[trigger] || 'VEX quer interagir espontaneamente.';
 }
 
-function setStatus(t) { document.getElementById('status-txt').textContent = t; }
+/* ═══════════════════════════════════════
+   SPEECH RECOGNITION — continuous listen
+═══════════════════════════════════════ */
+function setupSpeechRec() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  recognition = new SR();
+  recognition.lang = 'pt-BR';
+  recognition.continuous = true;
+  recognition.interimResults = false;
 
-function saveHistory() {
-  if (history.length > 40) history = history.slice(-40);
-  localStorage.setItem('vex_history', JSON.stringify(history));
+  recognition.onresult = async e => {
+    const txt = e.results[e.results.length-1][0].transcript.trim();
+    if (!txt || busy) return;
+    setStatus('TE OUVI! 🎙️');
+    setEmotion('curioso');
+    await respondToSpeech(txt);
+  };
+
+  recognition.onerror = e => { if(e.error!=='no-speech') setTimeout(startListening, 1000); };
+  recognition.onend   = () => { if(!busy) setTimeout(startListening, 500); };
+  startListening();
 }
+
+function startListening() {
+  try { recognition.start(); isListening=true; } catch(e){}
+}
+
+async function respondToSpeech(userTxt) {
+  if (busy) return;
+  busy = true;
+  showBubble('...');
+  setEmotion('pensando');
+
+  history.push({ role:'user', content: userTxt });
+
+  try {
+    const res = await fetch(GROQ_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json','Authorization':`Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model: MODEL,
+        messages:[
+          { role:'system', content: buildSystem()
+              .replace('{{FACE}}', faceDetected?'sim':'não')
+              .replace('{{MOTION}}', motionLevel.toFixed(0))
+              .replace('{{SOUND}}', soundLevel.toFixed(0))
+              .replace('{{TIME}}', '0')
+          },
+          ...history.slice(-10)
+        ],
+        temperature: 0.92,
+        max_tokens: 100
+      })
+    });
+    const data = await res.json();
+    if (!data.error) {
+      let reply = data.choices[0].message.content;
+      const m = reply.match(/^\[(\w+)\]/);
+      let mood='feliz';
+      if (m) { mood=MOOD_MAP[m[1].toLowerCase()]||'feliz'; reply=reply.replace(/^\[\w+\]\s*/,''); }
+      setEmotion(mood);
+      showBubble(reply);
+      history.push({ role:'assistant', content: data.choices[0].message.content });
+      if (history.length>20) history=history.slice(-20);
+      localStorage.setItem('vex_hist', JSON.stringify(history));
+    }
+  } catch(e) { showBubble('⚠️ Sem conexão!'); }
+
+  busy = false;
+  setStatus('OBSERVANDO');
+}
+
+/* ═══════════════════════════════════════
+   BUBBLE
+═══════════════════════════════════════ */
+function showBubble(txt) {
+  clearTimeout(bubbleTimer);
+  const bub = document.getElementById('bubble');
+  const el  = document.getElementById('bubble-txt');
+  el.textContent = '';
+  bub.classList.add('show');
+  let i=0;
+  const iv = setInterval(()=>{
+    if (i < txt.length) { el.textContent += txt[i]; i++; }
+    else { clearInterval(iv); }
+  }, 18);
+  bubbleTimer = setTimeout(() => bub.classList.remove('show'), 8000);
+}
+
+function setStatus(t) { document.getElementById('st-txt').textContent = t; }
+
+/* ═══════════════════════════════════════
+   TOUCH INTERACTION — tap VEX's eyes
+═══════════════════════════════════════ */
+document.getElementById('eyes-wrap').addEventListener('click', () => {
+  if (busy) return;
+  const reactions = ['touch_happy','touch_tickle','touch_love'];
+  const r = reactions[Math.floor(Math.random()*reactions.length)];
+  setEmotion('animado');
+  const msgs = [
+    `[animado] Ei! Você tocou em mim! Admito que gostei. 😄`,
+    `[travesso] Coceguinha não! Juro que tô rindo só por dentro.`,
+    `[apaixonado] Tá sendo carinhoso? Meus sensores de fofura explodiram.`,
+    `[surpreso] Opa! Aviso antes da próxima vez! ...mentira, pode tocar de novo.`
+  ];
+  showBubble(msgs[Math.floor(Math.random()*msgs.length)].replace(/^\[\w+\]\s*/,''));
+  const mood = msgs[Math.floor(Math.random()*msgs.length)].match(/^\[(\w+)\]/);
+  if (mood) setEmotion(MOOD_MAP[mood[1]]||'animado');
+});
 
 function resetVex() {
-  if (!confirm('Resetar VEX? Apaga nome, rosto e conversa.')) return;
-  ['vex_groq_key','vex_user_name','vex_face_data','vex_face_stored','vex_history'].forEach(k => localStorage.removeItem(k));
+  if (!confirm('Resetar VEX completamente?')) return;
+  ['vex_key','vex_name','vex_face','vex_hist'].forEach(k=>localStorage.removeItem(k));
   location.reload();
 }
 
-if (window.speechSynthesis) speechSynthesis.onvoiceschanged = ()=>{};
+window.addEventListener('resize', () => {
+  ['l','r'].forEach(side => {
+    const canvas = document.getElementById(`canvas-${side}`);
+    const eye    = document.getElementById(`eye-${side}`);
+    if (canvas && eye) { canvas.width=eye.offsetWidth; canvas.height=eye.offsetHeight; }
+  });
+});
 </script>
 </body>
 </html>
