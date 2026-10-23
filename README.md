@@ -6,9 +6,18 @@ Aplicação web de finanças pessoais com IA. Organiza extratos, dívidas e plan
 
 **Stack:** Next.js (App Router) · TypeScript · Tailwind CSS · Supabase (autenticação e Postgres) · Vercel
 
-**Status:** Fase 1 concluída (base, login, cadastro, recuperação de senha, banco com RLS, dashboard protegido e exclusão de conta).
+**Status:** Fase 1 concluída (base, login, banco com RLS). Fase 2 concluída (importação de CSV, categorização, gráficos, plano de quitação de dívidas e diagnóstico com IA).
 
 ---
+
+## Funcionalidades da Fase 2
+
+- **Importar extrato (`/importar`):** envie um CSV, confira a prévia, ajuste o mapeamento das colunas e escolha como o banco mostra despesas (valor negativo ou positivo). Linhas com erro são listadas e ignoradas. Lançamentos já existentes são detectados e não entram de novo.
+- **Categorização:** automática por palavras-chave (`lib/finance/categorias.ts`). Correção manual em `/lancamentos`.
+- **Painel (`/dashboard`):** receitas, despesas e saldo do mês, gastos por categoria e despesas dos últimos 12 meses.
+- **Dívidas (`/dividas`):** cadastro de dívidas e comparação entre bola de neve e avalanche, com tempo estimado e total de juros.
+- **Diagnóstico com IA:** o servidor envia à API da Anthropic um resumo numérico (sem descrições de lançamentos nem nomes de dívidas) e recebe um diagnóstico e até 3 dicas.
+- **Aviso:** o app oferece educação financeira e organização. Não é recomendação de investimentos.
 
 ## Índice
 
@@ -121,6 +130,8 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000).
 
+Para rodar os testes da lógica financeira: `npm test`.
+
 ### Roteiro de teste da Fase 1
 
 1. **Cadastro:** em `/cadastro`, crie uma conta com nome, e-mail e senha (mínimo 8 caracteres, com letra e número).
@@ -152,7 +163,7 @@ Todas ficam em `.env.local` (desenvolvimento) ou em **Vercel → Settings → En
 | `NEXT_PUBLIC_SITE_URL` | Sim | Servidor | URL pública do app. Usada nos links de e-mail. |
 | `NEXT_PUBLIC_SUPABASE_URL` | Sim | Navegador e servidor | *Project URL* do Supabase |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Sim | Navegador e servidor | Chave pública (*anon*/*publishable*). O RLS protege os dados. |
-| `ANTHROPIC_API_KEY` | Fase 2 | **Somente servidor** | Análises com IA |
+| `ANTHROPIC_API_KEY` | Não (só para o diagnóstico) | **Somente servidor** | Diagnóstico com IA (modelo `claude-haiku-5-5`, definido em `lib/ai/diagnostico.ts`) |
 | `MERCADOPAGO_ACCESS_TOKEN` | Fase 4 | **Somente servidor** | Pagamentos |
 
 Nunca coloque chaves secretas em variáveis com prefixo `NEXT_PUBLIC_`, porque elas vão para o navegador.
@@ -191,8 +202,11 @@ app/
   cadastro/              Tela de cadastro
   recuperar-senha/       Pede o link de recuperação
   redefinir-senha/       Define a nova senha
-  dashboard/             Página protegida
-components/              Formulários e elementos de interface
+  (app)/                 Telas autenticadas: painel, importar, lançamentos, dívidas, conta
+  (app)/*/actions.ts     Server Actions de cada tela (validam tudo no servidor)
+components/              Formulários, importador CSV, diagnóstico com IA
+lib/finance/            Lógica pura e testada: dinheiro, CSV, categorias, dívidas, resumos
+lib/ai/                 Cliente da API da Anthropic (somente servidor)
 lib/
   supabase/              Clientes do Supabase (servidor e proxy) e configuração
   validations/auth.ts   Regras de validação (Zod), usadas no servidor
