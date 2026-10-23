@@ -1,0 +1,15 @@
+# dependências e build
+node_modules/
+.next/
+out/
+build/
+
+# variáveis de ambiente (nunca versionar segredos)
+.env
+.env*.local
+
+# outros
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+.DS_Store
