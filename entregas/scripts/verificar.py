@@ -129,6 +129,8 @@ dj = json.load(open(os.path.join(P.BASE, "14_modelo_3d", "dados_modelo.json"), e
 ok(dj["hash"] == hsh, "[fonte] 3D (dados_modelo.json) usa o mesmo hash")
 html = open(os.path.join(P.BASE, "14_modelo_3d", "index.html"), encoding="utf-8").read()
 ok(f'"hash": "{hsh}"' in html, "[fonte] 3D (index.html) embute o mesmo hash")
+exp = open(os.path.join(P.BASE, "14_modelo_3d", "experiencia.html"), encoding="utf-8").read()
+ok(f'"hash": "{hsh}"' in exp, "[fonte] experiencia 3D (experiencia.html) embute o mesmo hash")
 for a in dj["ambientes"]:
     ok(abs(a["area_bruta"] - idx[a["id"]]["area_bruta"]) < 1e-9, f"[fonte] 3D {a['id']} = CSV")
 for f in ("02_planta_terreo.dxf", "03_planta_superior.dxf"):

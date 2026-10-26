@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Experiência 3D — Casa EPS Cajamar/SP (estudo conceitual)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{--bg:rgba(20,22,26,.78);--fg:#f2efe9;--ac:#d9a35b}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:DejaVu Sans,Segoe UI,Arial,sans-serif;background:#111}
+  canvas{display:block}
+  .painel{position:absolute;background:var(--bg);color:var(--fg);border-radius:10px;padding:10px 12px;font-size:12px;
+          backdrop-filter:blur(6px);box-shadow:0 4px 18px rgba(0,0,0,.35)}
+  #menu{top:12px;left:12px;width:300px;max-height:calc(100% - 90px);overflow:auto}
+  #menu h1{font-size:15px;margin:0 0 2px;letter-spacing:.3px}
+  #menu h2{font-size:11px;margin:10px 0 4px;color:var(--ac);text-transform:uppercase;letter-spacing:1px}
+  #menu .sub{color:#bbb;font-size:11px;margin-bottom:6px}
+  button{margin:2px 2px 2px 0;padding:5px 8px;font-size:11px;border:1px solid #666;background:#2c2f35;color:#eee;border-radius:5px;cursor:pointer}
+  button:hover{border-color:var(--ac)} button.on{background:var(--ac);color:#111;border-color:var(--ac)}
+  input[type=range]{width:100%;accent-color:var(--ac)}
+  .lin{display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .val{color:var(--ac);font-weight:bold;white-space:nowrap}
+  #info{right:12px;top:12px;width:270px;display:none}
+  #info h3{margin:0 0 4px;font-size:14px;color:var(--ac)}
+  #info table{width:100%;border-collapse:collapse} #info td{padding:2px 0;border-bottom:1px solid #444}
+  #hud{left:50%;transform:translateX(-50%);bottom:58px;text-align:center;display:none;font-size:13px}
+  #mira{position:absolute;left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;display:none;pointer-events:none}
+  #mira:before,#mira:after{content:"";position:absolute;background:rgba(255,255,255,.8)}
+  #mira:before{left:6px;top:0;width:2px;height:14px} #mira:after{top:6px;left:0;height:2px;width:14px}
+  #mapa{position:absolute;right:12px;bottom:58px;border-radius:8px;background:rgba(245,242,236,.92);box-shadow:0 4px 18px rgba(0,0,0,.35)}
+  #fase{left:50%;transform:translateX(-50%);top:12px;text-align:center;display:none;min-width:320px}
+  #fase b{font-size:15px;color:var(--ac)}
+  #aviso{left:12px;right:12px;bottom:10px;font-size:11px;padding:6px 10px;color:#f5d7d7}
+  #ajuda{left:50%;top:50%;transform:translate(-50%,-50%);display:none;text-align:center;font-size:13px;line-height:1.6}
+  .hide{display:none!important}
+</style>
+</head>
+<body>
+<div id="menu" class="painel">
+  <h1>Casa EPS · Cajamar/SP</h1>
+  <div class="sub">Experiência 3D do estudo conceitual. Gerada a partir de <code>dados/ambientes.csv</code> (hash <b id="hash"></b>)</div>
+
+  <h2>Navegar</h2>
+  <button id="bOrb" class="on">Órbita</button><button id="bAnd">🚶 Passeio</button><button id="bTour">🎬 Tour guiado</button>
+
+  <h2>Sol real (lat. −23,3°)</h2>
+  <div class="lin"><span>Hora</span><span class="val" id="vHora"></span></div>
+  <input type="range" id="sHora" min="5.5" max="19.5" step="0.05" value="10">
+  <div class="lin"><span>Data</span><span class="val" id="vDia"></span></div>
+  <input type="range" id="sDia" min="1" max="365" step="1" value="172">
+  <div class="lin"><span>Norte (hipótese)</span><span class="val" id="vNorte"></span></div>
+  <input type="range" id="sNorte" min="0" max="315" step="45" value="0">
+  <button id="bAnimSol">▶ animar dia</button><button id="bNoite">🌙 Noite + LEDs</button>
+
+  <h2>Obra (sequência aproximada)</h2>
+  <div class="lin"><span id="vFaseNome"></span><span class="val" id="vFase"></span></div>
+  <input type="range" id="sFase" min="0" max="8" step="1" value="8">
+  <button id="bAnimObra">▶ construir</button>
+
+  <h2>Análise</h2>
+  <div class="lin"><span>Explodir pavimentos</span><span class="val" id="vExp"></span></div>
+  <input type="range" id="sExp" min="0" max="1" step="0.01" value="0">
+  <div class="lin"><span>Corte longitudinal (y)</span><span class="val" id="vCorte"></span></div>
+  <input type="range" id="sCorte" min="0" max="20.5" step="0.05" value="20.5">
+  <div class="lin"><span>Corte horizontal (altura)</span><span class="val" id="vAlt"></span></div>
+  <input type="range" id="sAlt" min="0.5" max="8" step="0.05" value="8">
+  <button id="bRot">Rótulos</button><button id="bRaio">Raio-X</button>
+  <div class="sub" style="margin-top:6px">Clique em um piso para ver a ficha do ambiente.</div>
+</div>
+<div id="info" class="painel"></div>
+<div id="fase" class="painel"></div>
+<div id="hud" class="painel"></div>
+<div id="ajuda" class="painel">Clique na tela para entrar no passeio<br><b>W A S D</b> andar · <b>mouse</b> olhar · <b>Shift</b> correr · <b>Esc</b> sair<br>
+  suba a escada em U andando por ela</div>
+<div id="mira"></div>
+<canvas id="mapa" width="128" height="352"></canvas>
+<div id="aviso" class="painel">ESTUDO CONCEITUAL: medidas aproximadas, não executivas. Norte, recuos e TO/TP são hipóteses. A sequência de obra e a posição solar
+  são aproximadas. Não substitui projeto executivo, cálculo estrutural, ART/RRT nem aprovação municipal.</div>
+
+<script src="three.min.js"></script>
+<script>
+'use strict';
+const D = /*__DADOS__*/null;
+const Q = new URLSearchParams(location.search);
+document.getElementById('hash').textContent = D.hash;
+const $ = id => document.getElementById(id);
+
+// ============================================================ renderer / cena
+const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.localClippingEnabled = true;
+document.body.prepend(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.05, 400);
+scene.fog = new THREE.Fog(0xcfd8e0, 60, 180);
+
+const hemi = new THREE.HemisphereLight(0xdfeaff, 0xc2b39c, 0.9); scene.add(hemi);
+const sol = new THREE.DirectionalLight(0xfff1dc, 3.0);
+sol.castShadow = true; sol.shadow.mapSize.set(2048, 2048); sol.shadow.bias = -0.0004; sol.shadow.normalBias = 0.02;
+Object.assign(sol.shadow.camera, {left:-15, right:15, top:15, bottom:-15, near:1, far:90});
+scene.add(sol, sol.target); sol.target.position.set(3.5, 0, -10);
+
+// planos de corte
+const corteY = new THREE.Plane(new THREE.Vector3(0, 0, 1), 20.5);    // mantem y_planta <= c
+const corteZ = new THREE.Plane(new THREE.Vector3(0, -1, 0), 8);      // mantem altura <= c
+const CORTES = [corteY, corteZ];   // aplicados so na casa (terreno e rua ficam inteiros)
+
+// ============================================================ texturas procedurais (canvas)
+function tex(desenho, w = 512, h = 512) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  desenho(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+let semente = 7; const rnd = () => (semente = (semente * 16807) % 2147483647) / 2147483647;
+function ruido(k, w, h, base, amp, n = 9000, r = 2) {
+  k.fillStyle = base; k.fillRect(0, 0, w, h);
+  for (let i = 0; i < n; i++) { const v = (rnd() - .5) * amp; k.fillStyle = `rgba(${v > 0 ? 255 : 0},${v > 0 ? 255 : 0},${v > 0 ? 255 : 0},${Math.abs(v)})`;
+    k.fillRect(rnd() * w, rnd() * h, r * rnd() + .5, r * rnd() + .5); }
+}
+const TX = {
+  porcelanato: tex((k, w, h) => { ruido(k, w, h, '#e3d7c4', .06); k.strokeStyle = 'rgba(120,100,80,.25)'; k.lineWidth = 2; k.strokeRect(1, 1, w - 2, h - 2); }),
+  molhado: tex((k, w, h) => { ruido(k, w, h, '#e9e6e1', .05); k.strokeStyle = 'rgba(90,90,90,.25)'; k.lineWidth = 3; k.strokeRect(1, 1, w - 2, h - 2); }),
+  madeira: tex((k, w, h) => { k.fillStyle = '#a77c55'; k.fillRect(0, 0, w, h);
+    for (let r = 0; r < 4; r++) { const y0 = r * h / 4; const tom = 0.85 + rnd() * .3;
+      k.fillStyle = `rgb(${167 * tom | 0},${124 * tom | 0},${85 * tom | 0})`; k.fillRect(0, y0, w, h / 4);
+      for (let i = 0; i < 26; i++) { k.strokeStyle = `rgba(70,40,20,${.08 + rnd() * .12})`; k.lineWidth = 1 + rnd() * 2; k.beginPath();
+        const yy = y0 + rnd() * h / 4; k.moveTo(0, yy); k.bezierCurveTo(w * .3, yy + (rnd() - .5) * 8, w * .7, yy + (rnd() - .5) * 8, w, yy); k.stroke(); }
+      k.fillStyle = 'rgba(40,25,10,.35)'; k.fillRect(0, y0, w, 2); k.fillRect(rnd() * w, y0, 2, h / 4); } }),
+  ripado: tex((k, w, h) => { k.fillStyle = '#7a5134'; k.fillRect(0, 0, w, h);
+    for (let i = 0; i < 40; i++) { k.strokeStyle = `rgba(40,20,5,${.1 + rnd() * .15})`; k.lineWidth = 1 + rnd() * 2; k.beginPath(); const x = rnd() * w; k.moveTo(x, 0); k.lineTo(x + (rnd() - .5) * 10, h); k.stroke(); } }),
+  grama: tex((k, w, h) => { ruido(k, w, h, '#6f9a4a', .18, 30000, 2); }),
+  concreto: tex((k, w, h) => { ruido(k, w, h, '#b9b5ad', .12, 20000, 2); }),
+  terra: tex((k, w, h) => { ruido(k, w, h, '#8a6c4c', .2, 20000, 3); }),
+  brita: tex((k, w, h) => { ruido(k, w, h, '#a9a49a', .35, 30000, 4); }),
+  externo: tex((k, w, h) => { ruido(k, w, h, '#b6aa98', .12, 12000, 3); k.strokeStyle = 'rgba(60,50,40,.3)'; k.lineWidth = 3; k.strokeRect(1, 1, w - 2, h - 2); }),
+  garagem: tex((k, w, h) => { ruido(k, w, h, '#a8a6a2', .08); k.strokeStyle = 'rgba(60,60,60,.3)'; k.lineWidth = 3; k.strokeRect(1, 1, w - 2, h - 2); }),
+  eps: tex((k, w, h) => { ruido(k, w, h, '#f4f6f7', .05, 6000, 3); k.strokeStyle = 'rgba(70,90,110,.55)'; k.lineWidth = 2;
+    for (let i = -h; i < w + h; i += 48) { k.beginPath(); k.moveTo(i, 0); k.lineTo(i + h, h); k.stroke(); k.beginPath(); k.moveTo(i + h, 0); k.lineTo(i, h); k.stroke(); } }),
+  pedra: tex((k, w, h) => { k.fillStyle = '#8f8678'; k.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 24) for (let x = (y / 24 % 2) * 30; x < w; x += 60 + rnd() * 50) { const t = .75 + rnd() * .4;
+      k.fillStyle = `rgb(${150 * t | 0},${140 * t | 0},${125 * t | 0})`; k.fillRect(x, y + 2, 55 + rnd() * 40, 20); } }),
+  rua: tex((k, w, h) => { ruido(k, w, h, '#5d6064', .15, 30000, 2); }),
+};
+function txRep(t, rx, ry) { const c = t.clone(); c.repeat.set(rx, ry); c.needsUpdate = true; return c; }
+
+// ============================================================ materiais
+const M = {};
+function mat(nome, p) { return M[nome] || (M[nome] = new THREE.MeshStandardMaterial(Object.assign({roughness:.85, metalness:0}, p))); }
+const COR = {ext:'#ece7df', int:'#f4f0ea', destaque:'#c9c0b4', grafite:'#3a3d42', preto:'#18191b', vidro:'#8fb3c4',
+             concreto:'#b4b0a8', muro:'#d6cbb9', madeira:'#8b5e3c'};
+const mVidro = new THREE.MeshPhysicalMaterial({color:COR.vidro, roughness:.05, metalness:0, transparent:true, opacity:.28, depthWrite:false});
+const mVidroBox = mVidro.clone(); mVidroBox.opacity = .18;
+const mEPS = new THREE.MeshStandardMaterial({map:txRep(TX.eps, 1, 1), roughness:.9});
+const mConcreto = new THREE.MeshStandardMaterial({map:txRep(TX.concreto, 2, 2), roughness:.95});
+
+// ============================================================ estrutura de cena
+const G = {T:new THREE.Group(), S:new THREE.Group(), COB:new THREE.Group(), EXT:new THREE.Group(), ROT:new THREE.Group(), LUZ:new THREE.Group()};
+Object.values(G).forEach(g => scene.add(g));
+const zP = p => D.pav[p].z, pdP = p => D.pav[p].pd;
+const objs = [];     // todos os meshes com fase
+// faseMin: etapa em que aparece | faseMax: some depois | matFinal / matObra: troca no revestimento
+function caixa(g, x0, y0, x1, y1, z0, z1, material, o = {}) {
+  const w = Math.abs(x1 - x0), d = Math.abs(y1 - y0), h = Math.abs(z1 - z0);
+  if (w < 1e-4 || d < 1e-4 || h < 1e-4) return null;
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  m.position.set((x0 + x1) / 2, (z0 + z1) / 2, -(y0 + y1) / 2);
+  const sombra = o.sombra !== false && !material.transparent;
+  m.castShadow = sombra; m.receiveShadow = true;
+  m.userData = Object.assign({fase:8, faseMax:99}, o);
+  g.add(m); objs.push(m); return m;
+}
+const solidos = a => ['fechado', 'coberto'].includes(a.tipo);
+const A = Object.fromEntries(D.ambientes.map(a => [a.id, a]));
+const L = D.lote[0], P = D.lote[1];
+
+// ----- entorno: rua, vizinhos (volumes neutros), terreno
+caixa(G.EXT, -30, -14, L + 30, 0, -0.08, -0.02, new THREE.MeshStandardMaterial({map:txRep(TX.rua, 12, 4), roughness:1}), {fase:0, sombra:false});
+caixa(G.EXT, -30, -2.2, L + 30, 0, -0.02, 0.12, mConcreto, {fase:0});   // calcada (fora do orcamento)
+caixa(G.EXT, -30, 0, L + 30, P + 14, -0.12, -0.01, new THREE.MeshStandardMaterial({color:'#c8ccbf', roughness:1}), {fase:0, sombra:false});
+caixa(G.EXT, 0, 0, L, P, -0.04, 0.0, new THREE.MeshStandardMaterial({map:txRep(TX.terra, 4, 10)}), {fase:0, sombra:false});
+// vizinhos omitidos de proposito (nao ha informacao sobre eles)
+const mMuro = new THREE.MeshStandardMaterial({color:COR.muro, roughness:.9});
+caixa(G.EXT, -0.12, 0, 0, P + 0.12, 0, 2.2, mMuro, {fase:0}); caixa(G.EXT, L, 0, L + 0.12, P + 0.12, 0, 2.2, mMuro, {fase:0});
+caixa(G.EXT, -0.12, P, L + 0.12, P + 0.12, 0, 2.2, mMuro, {fase:0});
+// muro frontal + portao de laminas (fora do orcamento, contexto)
+caixa(G.EXT, 0, -0.14, 0.55, 0, 0, 1.6, mMuro, {fase:8}); caixa(G.EXT, 6.35, -0.14, L, 0, 0, 1.6, mMuro, {fase:8});
+const mPreto = mat('preto', {color:COR.preto, roughness:.6, metalness:.3});
+for (let x = 0.6; x < 6.3; x += 0.11) caixa(G.EXT, x, -0.1, x + 0.045, -0.04, 0.05, 1.8, mPreto, {fase:8});
+
+// ----- superficies externas (paisagismo)
+for (const e of D.externas) {
+  const w = e.x1 - e.x0, d = e.y1 - e.y0;
+  const t = e.id.startsWith('R_TR') ? TX.concreto : (e.id === 'R_CAM' || e.id === 'P_PISO') ? TX.externo : e.id === 'P_BRITA' ? TX.brita : TX.grama;
+  caixa(G.EXT, e.x0, e.y0, e.x1, e.y1, 0, 0.035, new THREE.MeshStandardMaterial({map:txRep(t, w, d), roughness:1}), {fase:8, sombra:false});
+}
+function arvore(x, y, h, r, cor = '#557f3e') {
+  const tr = new THREE.Mesh(new THREE.CylinderGeometry(.05, .09, h * .55, 8), mat('tronco', {color:'#5e4632'}));
+  tr.position.set(x, h * .275, -y); tr.castShadow = true; tr.userData = {fase:8, faseMax:99}; G.EXT.add(tr); objs.push(tr);
+  for (let i = 0; i < 5; i++) {
+    const c = new THREE.Mesh(new THREE.IcosahedronGeometry(r * (.55 + rnd() * .35), 1), mat('copa' + cor, {color:cor, flatShading:true}));
+    c.position.set(x + (rnd() - .5) * r, h * .62 + (rnd() - .3) * r * .6, -y + (rnd() - .5) * r); c.castShadow = true;
+    c.userData = {fase:8, faseMax:99}; G.EXT.add(c); objs.push(c);
+  }
+}
+function moita(g, x, y, z, r, cor = '#6a9448', fase = 8) {
+  const c = new THREE.Mesh(new THREE.IcosahedronGeometry(r, 1), mat('moita' + cor, {color:cor, flatShading:true}));
+  c.position.set(x, z + r * .7, -y); c.scale.y = .8; c.castShadow = true; c.userData = {fase, faseMax:99}; g.add(c); objs.push(c);
+}
+arvore(6.1, 18.5, 3.8, .95); arvore(0.35, 1.0, 2.8, .6, '#6b8f3f');
+[[6.7, 1.0], [6.7, 2.1], [6.7, 3.2], [0.3, 2.4], [0.3, 3.4], [5.7, 11.7], [6.6, 12.4], [6.6, 10.9], [5.6, 17.3], [6.6, 17.2], [5.5, 19.6]]
+  .forEach(([x, y]) => moita(G.EXT, x, y, .03, .27 + rnd() * .1));
+
+// ----- pisos: contrapiso (fase 1) + acabamento (fase 7)
+const acab = id => ({GAR:[TX.garagem, .6], GOURMET:[TX.externo, .6], SACADA:[TX.externo, .6], LAVABO:[TX.molhado, .6], LAVAND:[TX.molhado, .6],
+  BWC_SOC:[TX.molhado, .6], BWC_SUI:[TX.molhado, .6], SUITE:[TX.madeira, 1.2], QUARTO:[TX.madeira, 1.2], ESCRIT:[TX.madeira, 1.2],
+  CLOSET:[TX.madeira, 1.2], HALL_S:[TX.madeira, 1.2], ESC_S:[TX.madeira, 1.2]})[id] || [TX.porcelanato, .9];
+const pisos = [];   // para clique / HUD
+function piso(a, z, comLaje) {
+  const g = G[a.pav];
+  const [t, s] = acab(a.id);
+  const ret = a.id === 'ESC_S' ? [0.15, 11.895, 2.0, 12.725] : [a.x0, a.y0, a.x1, a.y1];
+  const [x0, y0, x1, y1] = ret;
+  if (comLaje) caixa(g, x0, y0, x1, y1, z - D.laje, z - 0.02, mConcreto, {fase:2});
+  else caixa(g, x0, y0, x1, y1, 0, z - 0.02, mConcreto, {fase:1});
+  const m = caixa(g, x0, y0, x1, y1, z - 0.02, z, new THREE.MeshStandardMaterial({map:txRep(t, (x1 - x0) / s, (y1 - y0) / s), roughness:.55}), {fase:7, amb:a.id, sombra:false});
+  if (m) pisos.push(m);
+}
+for (const a of D.ambientes) {
+  if (a.pav === 'T' && solidos(a)) piso(a, zP('T'), false);
+  if (a.pav === 'S' && (solidos(a) || a.id === 'SACADA')) piso(a, zP('S'), true);
+}
+// laje de cobertura da gourmet
+const gm = A.GOURMET;
+caixa(G.S, gm.x0, gm.y0, gm.x1, gm.y1, zP('S') - D.laje, zP('S') - 0.02, mConcreto, {fase:2});
+caixa(G.S, gm.x0, gm.y1 - 0.15, gm.x1, gm.y1, zP('S') - .02, zP('S') + 0.35, mat('ext', {color:COR.ext}), {fase:4});
+caixa(G.S, gm.x1 - 0.15, gm.y0, gm.x1, gm.y1, zP('S') - .02, zP('S') + 0.35, mat('ext', {color:COR.ext}), {fase:4});
+
+// ----- fundacao: baldrame sob paredes do terreo (fase 1)
+for (const w of D.paredes.T) if (w.z0 === 0) caixa(G.T, w.x0 - .05, w.y0 - .05, w.x1 + .05, w.y1 + .05, -0.35, zP('T'), mConcreto, {fase:1, faseMax:3, sombra:false});
+
+// ----- estrutura complementar (fase 2; embutida a partir do revestimento)
+const linhasY = [4.0, 5.5, 9.3, 12.8, 16.9];
+for (const y of linhasY) for (const x of [0, L - 0.2]) {
+  const yy = Math.min(y, P - 0.3);
+  caixa(G.T, x, yy - .15, x + .2, yy + .15, zP('T'), zP('S'), mConcreto, {fase:2, faseMax:3});
+  if (y >= 5.5) caixa(G.S, x, yy - .15, x + .2, yy + .15, zP('S'), zP('S') + pdP('S'), mConcreto, {fase:2, faseMax:4});
+}
+[[0, 19.7], [gm.x1 - .2, 19.7]].forEach(([x, y]) => caixa(G.T, x, y, x + .2, y + .3, zP('T'), zP('S') - D.laje, mConcreto, {fase:2, faseMax:3}));
+for (const y of linhasY) {
+  caixa(G.T, 0, y - .1, L, y + .1, zP('S') - D.laje - .45, zP('S') - D.laje, mConcreto, {fase:2, faseMax: y === 4.0 ? 3 : 3});
+  if (y >= 5.5) caixa(G.COB, 0, y - .1, L, y + .1, zP('S') + pdP('S') - .35, zP('S') + pdP('S'), mConcreto, {fase:2, faseMax:3});
+}
+
+// ----- paredes: paineis EPS (fase 3) -> revestidas (fase 4)
+const mExt = mat('ext', {color:COR.ext}), mInt = mat('int', {color:COR.int});
+const mPedra = new THREE.MeshStandardMaterial({map:txRep(TX.pedra, 2, 2), roughness:.9});
+for (const p of ['T', 'S']) for (const w of D.paredes[p]) {
+  let fin = w.tipo === 'externa' ? mExt : mInt;
+  // parede de destaque em pedra no lavabo (lado do hall)
+  if (p === 'T' && Math.abs(w.x0 - 3.325) < .01 && w.y0 >= 9.3 && w.y1 <= 10.75) fin = mPedra;
+  const m = caixa(G[p], w.x0, w.y0, w.x1, w.y1, zP(p) + w.z0, zP(p) + w.z1, mEPS, {fase:3, matFinal:fin, parede:true, pav:p, z0:w.z0, z1:w.z1});
+}
+// ----- cobertura (fase 5)
+const zC = zP('S') + pdP('S');
+const mLaje = mat('laje', {color:'#d5d0c7'});
+for (const a of D.ambientes.filter(a => a.pav === 'S' && solidos(a))) {
+  if (a.id === 'ESC_S' || a.id === 'HALL_S') continue;
+  caixa(G.COB, a.x0, a.y0, a.x1, a.y1, zC, zC + D.laje, mConcreto, {fase:5, matFinal:mLaje});
+}
+[[0, 9.3, .3, 12.8], [3.7, 9.3, 4.0, 12.8], [.3, 9.3, 3.7, 9.6], [.3, 12.5, 3.7, 12.8]].forEach(r => caixa(G.COB, ...r, zC, zC + D.laje, mConcreto, {fase:5, matFinal:mLaje}));
+caixa(G.COB, .3, 9.6, 3.7, 12.5, zC + D.laje, zC + D.laje + .03, mVidro, {fase:6, sombra:false});                   // claraboia
+caixa(G.COB, .3, 5.6, 6.9, 16.8, zC + D.laje + .25, zC + D.laje + .32, mat('telha', {color:'#8d9096', metalness:.4, roughness:.5}), {fase:5}); // telha embutida
+for (const w of D.paredes.S.filter(w => w.tipo === 'externa' && w.z1 >= pdP('S') - .01))
+  caixa(G.COB, w.x0, w.y0, w.x1, w.y1, zC, zC + .85, mEPS, {fase:5, matFinal:mExt});
+// porticos e elementos de fachada (revestimento, fase 4)
+const mGraf = mat('graf', {color:COR.grafite, roughness:.55, metalness:.15});
+caixa(G.COB, 0, 4.0, .15, 5.5, zP('S'), zC + .85, mGraf, {fase:4});
+caixa(G.COB, L - .15, 4.0, L, 5.5, zP('S'), zC + .85, mGraf, {fase:4});
+caixa(G.COB, 0, 4.0, L, 4.3, zC + .35, zC + .85, mGraf, {fase:4});
+caixa(G.T, 0, 3.95, L, 4.15, zP('T') + 2.40, zP('S'), mGraf, {fase:4});
+const mRip = new THREE.MeshStandardMaterial({map:txRep(TX.ripado, 1, 3), roughness:.7});
+for (let x = 2.65; x < 4.15; x += .1) caixa(G.S, x, 5.36, x + .05, 5.45, zP('S'), zC + .85, mRip, {fase:7});
+for (let x = 2.0; x < 3.6; x += .1) if (x < 2.35 || x > 3.4) caixa(G.T, x, 9.13, x + .05, 9.225, zP('T'), zP('T') + 2.7, mRip, {fase:7});
+
+// ----- esquadrias (fase 6)
+const mPorta = new THREE.MeshStandardMaterial({map:txRep(TX.ripado, 1, 2), roughness:.6});
+for (const o of D.aberturas) {
+  const z = zP(o.pav), g = G[o.pav];
+  const pane = (a, b, z0, z1, m, e = .025) => o.eixo === 'y' ? caixa(g, a, o.coord - e, b, o.coord + e, z + z0, z + z1, m, {fase:6, sombra:false})
+                                                           : caixa(g, o.coord - e, a, o.coord + e, b, z + z0, z + z1, m, {fase:6, sombra:false});
+  const caix = (a, b, z0, z1) => pane(a, b, z0, z1, mPreto, .045);
+  if (o.tipo === 'janela') {
+    pane(o.a, o.b, o.peitoril, o.peitoril + o.altura, mVidro);
+    caix(o.a, o.b, o.peitoril, o.peitoril + .04); caix(o.a, o.b, o.peitoril + o.altura - .04, o.peitoril + o.altura);
+    caix(o.a, o.a + .04, o.peitoril, o.peitoril + o.altura); caix(o.b - .04, o.b, o.peitoril, o.peitoril + o.altura);
+  } else if (o.tipo === 'porta_correr') {
+    const m = (o.a + o.b) / 2;                      // uma folha aberta (sobreposta), para poder passar
+    pane(o.a, m + .03, 0, o.altura, mVidro); caix(o.a, o.b, o.altura - .05, o.altura); caix(o.a, o.b, 0, .03);
+    caix(o.a, o.a + .05, 0, o.altura); caix(m - .02, m + .03, 0, o.altura);
+  } else if (o.tipo === 'porta_pivotante') {        // porta alta entreaberta
+    const piv = new THREE.Mesh(new THREE.BoxGeometry(o.b - o.a, o.altura, .05), mPorta);
+    piv.geometry.translate((o.b - o.a) / 2, o.altura / 2, 0);
+    piv.position.set(o.a + .15, z, -o.coord); piv.rotation.y = -0.9; piv.castShadow = true;
+    piv.userData = {fase:6, faseMax:99}; g.add(piv); objs.push(piv);
+  }
+}
+// guarda-corpos
+caixa(G.S, .15, 3.98, L - .15, 4.04, zP('S'), zP('S') + 1.10, mVidro, {fase:6, sombra:false});
+caixa(G.S, .15, 3.97, L - .15, 4.05, zP('S') + 1.06, zP('S') + 1.10, mPreto, {fase:6});
+caixa(G.S, 1.97, 9.3, 2.03, 11.9, zP('S'), zP('S') + 1.10, mVidro, {fase:6, sombra:false});
+
+// ----- escada em U (mesma geometria da planta): 16 espelhos, pisos de 0,27 m
+const mDeg = new THREE.MeshStandardMaterial({map:txRep(TX.madeira, .5, .5), roughness:.5});
+const zT = zP('T'), esp = 0.18, pis = 0.27;
+for (let i = 1; i <= 8; i++) caixa(G.T, 1.15, 12.725 - i * pis, 2.0, 12.725 - (i - 1) * pis, zT + i * esp - .05, zT + i * esp, mDeg, {fase:7});
+caixa(G.T, .15, 9.375, 2.0, 10.565, zT + 9 * esp - .15, zT + 9 * esp, mDeg, {fase:7});
+for (let j = 1; j <= 6; j++) caixa(G.T, .15, 10.275 + (j - 1) * pis, 1.0, 10.275 + j * pis, zT + (9 + j) * esp - .05, zT + (9 + j) * esp, mDeg, {fase:7});
+caixa(G.T, 1.0, 10.565, 1.15, 12.725, zT, zT + 1.9, mPreto, {fase:2});
+caixa(G.T, .15, 9.375, 2.0, 10.4, zT, zT + 1.40, mat('dep', {color:'#b9a58e'}), {fase:7});
+
+// ----- mobiliario (fase 7)
+const mAlt = {};
+for (const m of D.mobiliario) {
+  const z = zP(m.pav), g = G[m.pav];
+  if (m.id.startsWith('JARD')) {
+    caixa(g, m.x0, m.y0, m.x1, m.y1, z, z + m.altura, mGraf, {fase:7});
+    for (let y = m.y0 + .22; y < m.y1; y += .4) moita(g, (m.x0 + m.x1) / 2, y, z + m.altura - .1, .25, '#5f8f43', 8);
+    continue;
+  }
+  const mm = m.id.startsWith('BOX') ? mVidroBox : (mAlt[m.cor] || (mAlt[m.cor] = new THREE.MeshStandardMaterial({color:m.cor, roughness:.7})));
+  caixa(g, m.x0, m.y0, m.x1, m.y1, z, z + m.altura, mm, {fase: m.id.startsWith('CAR') || m.id === 'MOTO' ? 8 : 7, mob:m.nome});
+  if (m.id.startsWith('CAR')) caixa(g, m.x0 + .12, m.y0 + 1.1, m.x1 - .12, m.y1 - 1.0, z + m.altura, z + m.altura + .42, mVidro, {fase:8, sombra:false});
+}
+// detalhes que reforcam a leitura: armarios superiores, coifas, cabeceira, painel TV, tapete
+caixa(G.T, 4.4, 12.875, 6.25, 13.225, zT + 1.55, zT + 2.55, mat('fendi', {color:'#cbbba5'}), {fase:7});
+caixa(G.T, 4.85, 12.875, 5.65, 13.35, zT + 2.0, zT + 2.7, mat('inox', {color:'#a5a5a5', metalness:.7, roughness:.3}), {fase:7});
+caixa(G.T, .15, 19.25, 1.15, 19.85, zT + 2.2, zT + 2.7, mPreto, {fase:7});
+caixa(G.T, .15, 13.6, .22, 16.7, zT, zT + 2.7, mRip, {fase:7});                                   // painel TV amadeirado
+caixa(G.T, .7, 14.1, 2.5, 16.2, zT, zT + .015, mat('tapete', {color:'#d8cfc0'}), {fase:7, sombra:false});
+caixa(G.T, .25, 14.5, .30, 15.9, zT + 1.0, zT + 1.75, mat('tv', {color:'#0d0d0d', roughness:.2}), {fase:7});
+caixa(G.S, .15, 13.7, .23, 16.0, zP('S'), zP('S') + 2.7, mRip, {fase:7});                         // parede destaque suite
+caixa(G.S, .23, 13.95, .33, 15.75, zP('S') + .4, zP('S') + 1.25, mat('cab', {color:'#cdbfa8'}), {fase:7});
+caixa(G.S, 3.62, 15.9, 3.65, 16.75, zP('S') + .3, zP('S') + 2.1, mat('espelho', {color:'#cfd8dc', metalness:.9, roughness:.05}), {fase:7}); // espelho corpo inteiro
+caixa(G.T, 3.42, 9.55, 3.45, 10.55, zT + 1.0, zT + 2.0, mat('espelho', {}), {fase:7});            // espelho lavabo
+
+// ============================================================ luzes noturnas (plano 07_iluminacao)
+const quente = 0xffb46b, neutra = 0xffe2c0;
+const luzes = [];
+function luz(x, y, z, cor, int, dist = 7) {
+  const l = new THREE.PointLight(cor, 0, dist, 2); l.position.set(x, z, -y); l.userData.max = int; G.LUZ.add(l); luzes.push(l); return l;
+}
+const mLed = new THREE.MeshStandardMaterial({color:'#2a2520', emissive:new THREE.Color(quente), emissiveIntensity:0});
+const mLedN = new THREE.MeshStandardMaterial({color:'#2a2a2a', emissive:new THREE.Color(neutra), emissiveIntensity:0});
+const leds = [mLed, mLedN];
+const led = (g, x0, y0, x1, y1, z0, z1, m = mLed) => caixa(g, x0, y0, x1, y1, z0, z1, m, {fase:7, sombra:false});
+const zs = zP('S');
+// sala (sanca perimetral) / cozinha / gourmet / garagem / hall / lavabo / lavanderia
+luz(1.6, 15.0, zT + 2.5, quente, 9); luz(3.9, 14.6, zT + 2.5, quente, 7); luz(5.6, 14.2, zT + 2.3, neutra, 7);
+[[.25, 12.95, 3.9, 13.0], [.25, 16.75, 4.8, 16.8]].forEach(r => led(G.T, ...r, zT + 2.62, zT + 2.66));
+led(G.T, .3, 13.0, .35, 16.75, zT + 2.62, zT + 2.66);
+led(G.T, 4.45, 13.23, 6.2, 13.26, zT + 1.53, zT + 1.55, mLedN);                         // sob armario superior
+[5.2, 6.2].forEach(x => { const p = new THREE.Mesh(new THREE.CylinderGeometry(.09, .12, .22, 16), mLed); p.position.set(x, zT + 1.85, -14.7);
+  p.userData = {fase:7, faseMax:99}; G.T.add(p); objs.push(p); });
+luz(2.6, 18.4, zT + 2.4, quente, 8); led(G.T, 1.2, 19.2, 3.35, 19.24, zT + .85, zT + .88);
+luz(3.5, 6.8, zT + 2.5, neutra, 8, 8);
+for (const [x, y] of [[1.6, 5.5], [5.4, 5.5], [1.6, 8.2], [5.4, 8.2]]) led(G.T, x - .06, y - .06, x + .06, y + .06, zT + 2.66, zT + 2.69, mLedN);
+for (const y of [4.6, 5.8, 7.0, 8.2]) led(G.T, 2.62, y, 2.7, y + .08, zT, zT + .35);     // balizadores da faixa central
+luz(2.7, 10.6, zT + 2.4, quente, 4, 4); luz(4.4, 10.0, zT + 2.3, quente, 2.5, 3); luz(4.4, 11.7, zT + 2.3, neutra, 3, 3.5);
+for (let i = 1; i <= 8; i++) led(G.T, 1.95, 12.725 - i * pis + .1, 1.99, 12.725 - i * pis + .2, zT + (i - 1) * esp + .05, zT + (i - 1) * esp + .09);
+// superior
+luz(1.8, 14.8, zs + 2.4, quente, 5, 5); led(G.S, .24, 13.95, .26, 15.75, zs + 1.27, zs + 1.30);   // cabeceira indireta
+luz(5.2, 7.4, zs + 2.4, quente, 5, 5); luz(1.5, 7.4, zs + 2.4, neutra, 5, 5); led(G.S, .16, 6.4, .2, 7.9, zs + 1.6, zs + 1.63, mLedN);
+luz(3.0, 11.0, zs + 2.4, quente, 3, 4); luz(5.3, 13.9, zs + 2.3, quente, 3, 3.5); luz(5.3, 15.9, zs + 2.3, neutra, 3, 3.5);
+luz(4.7, 10.9, zs + 2.3, neutra, 2.5, 3);
+// sacada, fachada, jardim
+luz(3.5, 4.8, zs + 1.0, quente, 5, 5);
+led(G.S, .16, 4.06, .76, 4.1, zs + .6, zs + .62); led(G.S, 6.24, 4.06, 6.84, 4.1, zs + .6, zs + .62);
+led(G.COB, .15, 4.3, L - .15, 4.34, zC + .33, zC + .35);                                  // fita no portico
+led(G.COB, .15, 4.0, .19, 5.5, zs, zC + .35); led(G.COB, L - .19, 4.0, L - .15, 5.5, zs, zC + .35);
+luz(3.4, 4.6, zT + 2.3, quente, 4, 5);                                                    // spots laje da garagem
+luz(6.1, 17.6, .3, quente, 5, 5); luz(.6, 1.5, .3, quente, 3, 4);                          // uplights jardim
+
+// ============================================================ cortes: todos os materiais da casa
+const clipados = new Set();
+for (const g of [G.T, G.S, G.COB]) g.traverse(o => { if (o.isMesh) { clipados.add(o.material); if (o.userData.matFinal) clipados.add(o.userData.matFinal); } });
+[mEPS, mConcreto].forEach(m => clipados.add(m));
+clipados.forEach(m => { m.clippingPlanes = CORTES; m.clipShadows = true; });
+
+// ============================================================ rotulos
+function rotulo(a) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 140; const k = c.getContext('2d');
+  k.fillStyle = 'rgba(20,22,26,.82)'; k.beginPath(); k.roundRect(4, 4, 504, 132, 24); k.fill();
+  k.fillStyle = '#f2efe9'; k.font = 'bold 40px DejaVu Sans, Arial'; k.textAlign = 'center';
+  k.fillText(a.nome.split(' (')[0].replace('Sala e cozinha integradas', 'Sala + cozinha').slice(0, 24), 256, 60);
+  k.fillStyle = '#d9a35b'; k.font = '34px DejaVu Sans, Arial'; k.fillText(a.area_util.toFixed(2).replace('.', ',') + ' m² úteis', 256, 110);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c), depthTest:false, transparent:true}));
+  s.scale.set(1.6, .44, 1); s.position.set((a.x0 + a.x1) / 2, zP(a.pav) + 1.9, -(a.y0 + a.y1) / 2); s.renderOrder = 20;
+  s.userData.pav = a.pav; G.ROT.add(s);
+}
+D.ambientes.filter(a => solidos(a) || ['SACADA', 'PATIO'].includes(a.id)).forEach(rotulo);
+G.ROT.visible = false;
+
+// ============================================================ estado: fase, explosao, noite, sol
+const FASES = [
+  ['Terreno', 'mês 0'], ['Fundações + baldrame', 'meses 1–2'], ['Estrutura complementar (pilares, vigas, lajes)', 'meses 2–3'],
+  ['Painéis de EPS + instalações embutidas', 'meses 3–4'], ['Revestimento projetado + fachada', 'meses 4–5'],
+  ['Cobertura, platibanda e impermeabilização', 'meses 5–6'], ['Esquadrias e vidros', 'meses 6–7'],
+  ['Pisos, escada, marcenaria e luminárias', 'meses 7–9'], ['Paisagismo e entrega', 'meses 9–10']];
+const st = {fase:8, exp:0, noite:false, hora:10, dia:172, norte:0, raio:false};
+function aplicaFase(f) {
+  st.fase = f;
+  for (const o of objs) {
+    const u = o.userData; o.visible = u.fase <= f && f <= u.faseMax;
+    if (u.matFinal) o.material = (f >= (u.parede ? 4 : u.fase + 0) && f >= 4) ? u.matFinal : (u.parede ? mEPS : mConcreto);
+  }
+  $('vFase').textContent = FASES[f][1]; $('vFaseNome').textContent = FASES[f][0];
+  const fp = $('fase'); fp.style.display = f < 8 ? 'block' : 'none';
+  fp.innerHTML = `<div>Etapa ${f}/8 · ${FASES[f][1]} (aproximado)</div><b>${FASES[f][0]}</b>` +
+    (f === 2 ? '<div style="color:#ccc;margin-top:3px">O EPS não é estrutura autossuficiente para 2 pavimentos: pilares, vigas de ~7 m e lajes em concreto/aço</div>' : '') +
+    (f === 3 ? '<div style="color:#ccc;margin-top:3px">Painel EPS com malha eletrossoldada; eletrodutos e tubos antes da projeção</div>' : '');
+  atualizaLuzes();
+}
+function aplicaExplosao(e) {
+  st.exp = e; G.S.position.y = e * 3.2; G.COB.position.y = e * 6.4; G.LUZ.children.forEach(l => { if (l.position.y > 2.9) l.position.y = l.userData.y0 + (l.userData.y0 > 5.6 ? e * 6.4 : e * 3.2); });
+  G.ROT.children.forEach(s => s.position.y = s.userData.y0 + (s.userData.pav === 'S' ? e * 3.2 : 0));
+  $('vExp').textContent = Math.round(e * 100) + '%';
+}
+G.LUZ.children.forEach(l => l.userData.y0 = l.position.y);
+G.ROT.children.forEach(s => s.userData.y0 = s.position.y);
+
+const CEU_DIA = new THREE.Color('#9ec3e6'), CEU_TARDE = new THREE.Color('#f2b27a'), CEU_NOITE = new THREE.Color('#0b1424');
+function posSol(hora, dia, norteGraus) {
+  const phi = -23.31 * Math.PI / 180;
+  const dec = -23.44 * Math.PI / 180 * Math.cos(2 * Math.PI / 365 * (dia + 10));
+  const H = (hora - 12) * 15 * Math.PI / 180;
+  const el = Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H));
+  const az = Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(phi) - Math.tan(dec) * Math.cos(phi)) + Math.PI; // a partir do norte, horario
+  const E = Math.cos(el) * Math.sin(az), N = Math.cos(el) * Math.cos(az), U = Math.sin(el);
+  const t = norteGraus * Math.PI / 180;                       // norte da planta: angulo a partir de +y (fundo), horario
+  const px = E * Math.cos(t) + N * Math.sin(t), py = -E * Math.sin(t) + N * Math.cos(t);
+  return {el, az, v:new THREE.Vector3(px, U, -py)};
+}
+function atualizaSol() {
+  const s = posSol(st.hora, st.dia, st.norte);
+  const alto = Math.max(0, Math.sin(s.el));
+  const dia = !st.noite && s.el > 0;
+  sol.position.copy(new THREE.Vector3(3.5, 0, -10).addScaledVector(s.v, 40));
+  sol.intensity = dia ? 3.2 * Math.min(1, alto * 2.2) : 0;
+  const quenteSol = 1 - Math.min(1, alto * 2.5);
+  sol.color.setHSL(0.09, 0.6 * quenteSol + .15, 0.92 - .15 * quenteSol);
+  let ceu = dia ? CEU_DIA.clone().lerp(CEU_TARDE, quenteSol * .8) : CEU_NOITE.clone();
+  if (!st.noite && s.el <= 0) ceu = CEU_NOITE.clone().lerp(CEU_TARDE, Math.max(0, 1 + s.el * 8) * .6);
+  scene.background = ceu; scene.fog.color.copy(ceu);
+  hemi.intensity = st.noite ? 0.12 : 0.25 + 0.75 * Math.min(1, alto * 2 + .1);
+  hemi.color.set(st.noite ? '#4a5f88' : '#dfeaff');
+  renderer.toneMappingExposure = st.noite ? 1.25 : 1.0;
+  const hh = Math.floor(st.hora), mm = Math.round((st.hora - hh) * 60);
+  const dt = new Date(2026, 0, st.dia);
+  $('vHora').textContent = `${String(hh).padStart(2, '0')}:${String(mm % 60).padStart(2, '0')} · sol ${Math.round(s.el * 180 / Math.PI)}°`;
+  $('vDia').textContent = dt.toLocaleDateString('pt-BR', {day:'2-digit', month:'short'}) +
+    (Math.abs(st.dia - 172) < 3 ? ' (inverno)' : Math.abs(st.dia - 355) < 3 ? ' (verão)' : '');
+  $('vNorte').textContent = ['fundo', 'fundo-dir.', 'direita', 'frente-dir.', 'frente', 'frente-esq.', 'esquerda', 'fundo-esq.'][st.norte / 45];
+  atualizaLuzes();
+  desenhaMapa();
+}
+function atualizaLuzes() {
+  const on = st.noite && st.fase >= 7;
+  luzes.forEach(l => l.intensity = on ? l.userData.max : 0);
+  leds.forEach(m => m.emissiveIntensity = on ? 2.2 : 0);
+  mVidro.emissive = new THREE.Color(on ? '#3b2a14' : '#000');
+}
+function aplicaRaio(v) { st.raio = v; mExt.transparent = mInt.transparent = mEPS.transparent = v; mExt.opacity = mInt.opacity = mEPS.opacity = v ? .22 : 1;
+  [mExt, mInt, mEPS].forEach(m => { m.depthWrite = !v; m.needsUpdate = true; }); $('bRaio').classList.toggle('on', v); }
+
+// ============================================================ camera: orbita
+const alvo = new THREE.Vector3(3.5, 2, -10); let raio = 24, teta = -0.6, fi = 1.0;
+function camOrbita() { fi = Math.min(Math.max(fi, .02), Math.PI / 2 + .3);
+  camera.position.set(alvo.x + raio * Math.sin(fi) * Math.sin(teta), alvo.y + raio * Math.cos(fi), alvo.z + raio * Math.sin(fi) * Math.cos(teta)); camera.lookAt(alvo); }
+let modo = 'orbita', drag = null;
+const cv = renderer.domElement;
+cv.addEventListener('pointerdown', e => { if (modo !== 'orbita') return; drag = {x:e.clientX, y:e.clientY, pan:e.shiftKey || e.button === 2, mov:0}; });
+addEventListener('pointerup', e => { if (drag && drag.mov < 4) clique(e); drag = null; });
+addEventListener('contextmenu', e => e.preventDefault());
+addEventListener('pointermove', e => {
+  if (modo === 'passeio' && document.pointerLockElement === cv) { yaw -= e.movementX * .0022; pitch = Math.max(-1.4, Math.min(1.4, pitch - e.movementY * .0022)); return; }
+  if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; drag.mov += Math.abs(dx) + Math.abs(dy);
+  if (drag.pan) { const r = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 0), u = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 1);
+    alvo.addScaledVector(r, -dx * raio / 1000).addScaledVector(u, dy * raio / 1000); }
+  else { teta -= dx * .005; fi -= dy * .005; }
+  camOrbita();
+});
+cv.addEventListener('wheel', e => { if (modo !== 'orbita') return; raio = Math.min(Math.max(raio * (e.deltaY > 0 ? 1.1 : .9), 2), 120); camOrbita(); e.preventDefault(); }, {passive:false});
+
+// ============================================================ passeio em primeira pessoa
+let yaw = 0, pitch = 0; const eu = {x:3.3, y:-1.5, h:0.03}; const OLHO = 1.62;
+const teclas = {};
+addEventListener('keydown', e => { teclas[e.code] = true; if (e.code === 'Escape' && modo === 'tour') setModo('orbita'); });
+addEventListener('keyup', e => teclas[e.code] = false);
+const bloqueios = { T:[], S:[] };
+for (const p of ['T', 'S']) for (const w of D.paredes[p]) if (w.z0 < 1.2) bloqueios[p].push(w);
+bloqueios.T.push({x0:1.0, y0:10.565, x1:1.15, y1:12.725});           // montante central da escada
+D.mobiliario.filter(m => m.altura > .5 && !m.id.startsWith('JARD')).forEach(m => bloqueios[m.pav].push(m));
+const muros = [{x0:-.12, y0:0, x1:0, y1:P}, {x0:L, y0:0, x1:L + .12, y1:P}, {x0:-.12, y0:P, x1:L + .12, y1:P + .12}];
+function pisoS(x, y) {                                          // existe piso no superior?
+  if (x > .15 && x < 2.0 && y > 11.895 && y < 12.8) return true;   // plataforma de chegada
+  if (x < 2.0 && y > 9.3 && y < 12.8) return false;                 // vazio da escada
+  return D.ambientes.some(a => a.pav === 'S' && (solidos(a) || a.id === 'SACADA') && x > a.x0 && x < a.x1 && y > a.y0 && y < a.y1);
+}
+function alturaEscada(x, y, hAtual) {
+  if (!(x > .1 && x < 2.0 && y > 9.35 && y < 12.75)) return null;
+  if (hAtual > 2.4 && y >= 11.86) return zP('S');
+  if (x >= 1.0) { if (y <= 10.565) return zT + 9 * esp; return zT + Math.min(8, Math.max(0, Math.ceil((12.725 - y) / pis))) * esp; }
+  if (y <= 10.275) return zT + 9 * esp;
+  return Math.min(zP('S'), zT + 9 * esp + Math.min(7, Math.ceil((y - 10.275) / pis)) * esp);
+}
+function colide(x, y, h) {
+  const r = .22, lista = h > 2.4 ? bloqueios.S : bloqueios.T;
+  if (h > 2.4 && !pisoS(x, y) && alturaEscada(x, y, h) === null) return true;
+  if (x < -1 || x > L + 1 || y < -12 || y > P + .5) return true;
+  if (h < 2.4 && y > 0 && (x < r || x > L - r)) return true;
+  for (const b of lista.concat(muros)) if (x > b.x0 - r && x < b.x1 + r && y > b.y0 - r && y < b.y1 + r) return true;
+  if (h < .3 && y < 0 && y > -.2 && (x < .6 || x > 6.35)) return true;   // muro frontal
+  return false;
+}
+function passo(dt) {
+  const v = (teclas.ShiftLeft || teclas.ShiftRight ? 3.2 : 1.5) * dt;
+  let f = 0, s = 0;
+  if (teclas.KeyW || teclas.ArrowUp) f += 1; if (teclas.KeyS || teclas.ArrowDown) f -= 1;
+  if (teclas.KeyA || teclas.ArrowLeft) s -= 1; if (teclas.KeyD || teclas.ArrowRight) s += 1;
+  const dx = (Math.sin(-yaw) * f + Math.cos(yaw) * s) * v, dy = (Math.cos(yaw) * f + Math.sin(-yaw) * -s) * v;
+  // plano: yaw=0 olhando para o fundo (+y)
+  for (const [nx, ny] of [[eu.x + dx, eu.y + dy], [eu.x + dx, eu.y], [eu.x, eu.y + dy]]) {
+    const he = alturaEscada(nx, ny, eu.h);
+    const hAlvo = he !== null ? he : (eu.h > 2.4 ? zP('S') : (nx > 0 && nx < L && ny > 4.0 && ny < P && dentroCasaT(nx, ny) ? zT : 0.03));
+    if (Math.abs(hAlvo - eu.h) > .4) continue;
+    if (!colide(nx, ny, hAlvo)) { eu.x = nx; eu.y = ny; eu.h += (hAlvo - eu.h) * Math.min(1, dt * 12); break; }
+  }
+  const he = alturaEscada(eu.x, eu.y, eu.h);
+  if (he !== null) eu.h += (he - eu.h) * Math.min(1, dt * 12);
+  camera.position.set(eu.x, eu.h + OLHO, -eu.y);
+  camera.rotation.order = 'YXZ'; camera.rotation.set(pitch, yaw, 0);   // yaw=0: olhando para o fundo (+y)
+}
+function dentroCasaT(x, y) { return D.ambientes.some(a => a.pav === 'T' && solidos(a) && x >= a.x0 && x <= a.x1 && y >= a.y0 && y <= a.y1); }
+function ambienteEm(x, y, h) {
+  const p = h > 2.4 ? 'S' : 'T';
+  return D.ambientes.find(a => a.pav === p && x >= a.x0 && x < a.x1 && y >= a.y0 && y < a.y1);
+}
+
+// ============================================================ tour guiado
+const K = [ // [x, y, altura do olho] posicao  ->  alvo
+  [[3.5, -9, 1.7], [3.5, 8, 3.2]], [[3.3, -2, 1.65], [3.2, 9, 2.0]], [[3.0, 3.0, 1.65], [3.0, 9.3, 1.6]],
+  [[3.0, 7.8, 1.65], [2.9, 9.3, 1.5]], [[2.8, 10.4, 1.75], [2.8, 14, 1.5]], [[3.7, 13.7, 1.8], [0.8, 15.4, 1.3]],
+  [[4.1, 15.8, 1.8], [5.8, 13.2, 1.3]], [[3.4, 18.1, 1.8], [0.8, 19.5, 1.2]], [[5.6, 18.2, 1.75], [3.5, 14.5, 1.8]],
+  [[1.6, 13.4, 1.8], [1.6, 10.5, 2.8]], [[1.6, 11.0, 3.2], [1.0, 9.6, 3.6]], [[0.6, 10.6, 3.7], [0.6, 12.5, 4.5]],
+  [[0.7, 12.2, 4.7], [3.0, 12.2, 4.6]], [[2.9, 11.6, 4.7], [2.9, 14.5, 4.4]], [[2.8, 14.2, 4.7], [0.6, 14.9, 4.0]],
+  [[3.2, 14.0, 4.7], [6.5, 13.9, 4.4]], [[3.0, 11.6, 4.7], [2.5, 9.0, 4.5]], [[2.5, 8.8, 4.7], [1.0, 6.5, 4.4]],
+  [[3.5, 6.0, 4.7], [3.5, 3.0, 4.2]], [[3.5, 4.6, 4.7], [3.5, -4, 3.6]], [[13, -9, 13], [3.5, 10, 2.5]],
+];
+const curvaPos = new THREE.CatmullRomCurve3(K.map(k => new THREE.Vector3(k[0][0], k[0][2], -k[0][1])), false, 'centripetal');
+const curvaAlvo = new THREE.CatmullRomCurve3(K.map(k => new THREE.Vector3(k[1][0], k[1][2], -k[1][1])), false, 'centripetal');
+let tTour = 0; const DUR_TOUR = 75;
+function tour(dt) {
+  tTour = Math.min(1, tTour + dt / DUR_TOUR);
+  const e = tTour; camera.position.copy(curvaPos.getPointAt(e)); camera.lookAt(curvaAlvo.getPointAt(e));
+  const a = ambienteEm(camera.position.x, -camera.position.z, camera.position.y - OLHO);
+  mostraHud(a); if (tTour >= 1) setModo('orbita');
+}
+
+// ============================================================ HUD, ficha e minimapa
+function mostraHud(a) {
+  const h = $('hud');
+  if (!a) { h.style.display = 'none'; return; }
+  h.style.display = 'block';
+  h.innerHTML = `<b style="color:#d9a35b">${a.nome}</b> · ${a.area_util.toFixed(2).replace('.', ',')} m² úteis · ${a.larg.toFixed(2).replace('.', ',')} × ${a.prof.toFixed(2).replace('.', ',')} m (eixo, aprox.)`;
+}
+function ficha(a) {
+  const i = $('info'); if (!a) { i.style.display = 'none'; return; }
+  const f = v => v.toFixed(2).replace('.', ',');
+  i.style.display = 'block';
+  i.innerHTML = `<h3>${a.nome}</h3><table>
+    <tr><td>Pavimento</td><td>${D.pav[a.pav].nome}</td></tr>
+    <tr><td>Dimensões (eixo)</td><td>${f(a.larg)} × ${f(a.prof)} m</td></tr>
+    <tr><td>Área bruta</td><td>${f(a.area_bruta)} m²</td></tr>
+    <tr><td>Área útil estimada</td><td><b>${f(a.area_util)} m²</b></td></tr>
+    <tr><td>Computa na área</td><td>${a.computa ? 'sim' : 'não (hipótese)'}</td></tr></table>
+    <div style="margin-top:6px;color:#ccc">${a.nota || ''}</div>
+    <div style="margin-top:6px;color:#999;font-size:10px">Mesma fonte da tabela 04 e das plantas. Medidas aproximadas.</div>
+    <button onclick="ficha(null)">fechar</button>`;
+}
+window.ficha = ficha;
+const ray = new THREE.Raycaster();
+function clique(e) {
+  if (modo !== 'orbita' || e.target !== cv) return;
+  ray.setFromCamera(new THREE.Vector2(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1), camera);
+  const hit = ray.intersectObjects(pisos.filter(p => p.visible && p.parent.visible), false)[0];
+  ficha(hit ? A[hit.object.userData.amb] : null);
+}
+const mapa = $('mapa'), mk = mapa.getContext('2d'), ES = 16;
+function desenhaMapa() {
+  const h = modo === 'passeio' ? eu.h : (modo === 'tour' ? camera.position.y - OLHO : 0);
+  const p = h > 2.4 ? 'S' : 'T';
+  mk.clearRect(0, 0, mapa.width, mapa.height);
+  const X = x => 8 + x * ES, Y = y => mapa.height - 8 - y * ES;
+  mk.fillStyle = '#cfe0bf'; mk.fillRect(X(0), Y(P), L * ES, P * ES);
+  for (const a of D.ambientes.filter(a => a.pav === p)) {
+    mk.fillStyle = a.tipo === 'vazio' ? '#fff' : a.tipo === 'descoberto' ? '#cfe0bf' : a.id === 'GAR' ? '#ddd' : '#efe7da';
+    mk.fillRect(X(a.x0), Y(a.y1), (a.x1 - a.x0) * ES, (a.y1 - a.y0) * ES);
+    mk.strokeStyle = '#555'; mk.lineWidth = 1; mk.strokeRect(X(a.x0), Y(a.y1), (a.x1 - a.x0) * ES, (a.y1 - a.y0) * ES);
+  }
+  mk.fillStyle = '#222'; mk.font = 'bold 9px DejaVu Sans'; mk.fillText(p === 'S' ? 'SUPERIOR' : 'TÉRREO', 10, 14);
+  mk.fillText('rua', 52, mapa.height - 1);
+  let px, py, ang;
+  if (modo === 'passeio') { px = eu.x; py = eu.y; ang = yaw; }
+  else { px = camera.position.x; py = -camera.position.z; const d = new THREE.Vector3(); camera.getWorldDirection(d); ang = Math.atan2(-d.x, -d.z); }
+  mk.save(); mk.translate(X(Math.max(-.4, Math.min(L + .4, px))), Y(Math.max(-.4, Math.min(P + .4, py)))); mk.rotate(-ang);
+  mk.fillStyle = 'rgba(217,163,91,.35)'; mk.beginPath(); mk.moveTo(0, 0); mk.arc(0, 0, 26, -Math.PI / 2 - .5, -Math.PI / 2 + .5); mk.fill();
+  mk.fillStyle = '#c0392b'; mk.beginPath(); mk.arc(0, 0, 4, 0, 7); mk.fill(); mk.restore();
+  // seta norte (hipotese)
+  mk.save(); mk.translate(mapa.width - 16, 18); mk.rotate(st.norte * Math.PI / 180); mk.fillStyle = '#000';
+  mk.beginPath(); mk.moveTo(0, -10); mk.lineTo(5, 6); mk.lineTo(0, 3); mk.lineTo(-5, 6); mk.fill(); mk.restore();
+  mk.fillText('N', mapa.width - 20, 38);
+}
+
+// ============================================================ modos e UI
+function setModo(m) {
+  modo = m;
+  ['bOrb', 'bAnd', 'bTour'].forEach(b => $(b).classList.remove('on'));
+  $({orbita:'bOrb', passeio:'bAnd', tour:'bTour'}[m]).classList.add('on');
+  $('mira').style.display = m === 'passeio' ? 'block' : 'none';
+  $('ajuda').style.display = m === 'passeio' && document.pointerLockElement !== cv ? 'block' : 'none';
+  if (m !== 'passeio' && document.pointerLockElement) document.exitPointerLock();
+  if (m === 'orbita') { $('hud').style.display = 'none'; camOrbita(); }
+  if (m === 'tour') { tTour = 0; aplicaExplosao(0); $('sExp').value = 0; G.ROT.visible = false; }
+  if (m === 'passeio') { aplicaExplosao(0); $('sExp').value = 0; camera.fov = 70; } else camera.fov = 50;
+  camera.updateProjectionMatrix();
+}
+$('bOrb').onclick = () => setModo('orbita');
+$('bAnd').onclick = () => setModo('passeio');
+$('bTour').onclick = () => setModo('tour');
+cv.addEventListener('click', () => { if (modo === 'passeio' && document.pointerLockElement !== cv) cv.requestPointerLock(); });
+document.addEventListener('pointerlockchange', () => { $('ajuda').style.display = modo === 'passeio' && document.pointerLockElement !== cv ? 'block' : 'none'; });
+$('sHora').oninput = e => { st.hora = +e.target.value; atualizaSol(); };
+$('sDia').oninput = e => { st.dia = +e.target.value; atualizaSol(); };
+$('sNorte').oninput = e => { st.norte = +e.target.value; atualizaSol(); };
+$('bNoite').onclick = () => { st.noite = !st.noite; $('bNoite').classList.toggle('on', st.noite); atualizaSol(); };
+let animSol = false, animObra = false, tObra = 0;
+$('bAnimSol').onclick = () => { animSol = !animSol; $('bAnimSol').classList.toggle('on', animSol); if (animSol) { st.noite = false; $('bNoite').classList.remove('on'); } };
+$('bAnimObra').onclick = () => { animObra = true; tObra = 0; aplicaFase(0); $('sFase').value = 0; };
+$('sFase').oninput = e => { animObra = false; aplicaFase(+e.target.value); };
+$('sExp').oninput = e => aplicaExplosao(+e.target.value);
+$('sCorte').oninput = e => { corteY.constant = +e.target.value; $('vCorte').textContent = +e.target.value >= 20.5 ? 'sem corte' : 'y = ' + (+e.target.value).toFixed(2).replace('.', ',') + ' m'; };
+$('sAlt').oninput = e => { corteZ.constant = +e.target.value; $('vAlt').textContent = +e.target.value >= 8 ? 'sem corte' : (+e.target.value).toFixed(2).replace('.', ',') + ' m'; };
+$('bRot').onclick = () => { G.ROT.visible = !G.ROT.visible; $('bRot').classList.toggle('on', G.ROT.visible); };
+$('bRaio').onclick = () => aplicaRaio(!st.raio);
+addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+// ============================================================ parametros de URL (para imagens automaticas)
+const num = (k, d) => Q.has(k) ? +Q.get(k) : d;
+st.hora = num('hora', 10); st.dia = num('dia', 172); st.norte = num('norte', 0); st.noite = Q.get('noite') === '1';
+$('sHora').value = st.hora; $('sDia').value = st.dia; $('sNorte').value = st.norte; $('bNoite').classList.toggle('on', st.noite);
+aplicaFase(num('fase', 8)); $('sFase').value = st.fase;
+aplicaExplosao(num('exp', 0)); $('sExp').value = st.exp;
+corteY.constant = num('corte', 20.5); $('sCorte').value = corteY.constant; $('sCorte').oninput({target:$('sCorte')});
+corteZ.constant = num('alt', 8); $('sAlt').value = corteZ.constant; $('sAlt').oninput({target:$('sAlt')});
+if (Q.get('rot') === '1') { G.ROT.visible = true; $('bRot').classList.add('on'); }
+if (Q.get('raio') === '1') aplicaRaio(true);
+if (Q.has('cam')) { const c = Q.get('cam').split(',').map(Number); raio = c[0]; teta = c[1]; fi = c[2]; if (c.length > 3) alvo.set(c[3], c[4], -c[5]); }
+camOrbita();
+if (Q.has('eu')) { const c = Q.get('eu').split(',').map(Number); eu.x = c[0]; eu.y = c[1]; eu.h = c[2]; yaw = c[3] || 0; pitch = c[4] || 0; setModo('passeio'); $('ajuda').style.display = 'none'; }
+if (Q.has('tour')) { setModo('tour'); tTour = num('tour', 0); }
+if (Q.get('ui') === '0') ['menu', 'mapa'].forEach(id => $(id).classList.add('hide'));
+atualizaSol();
+if (Q.has('ficha')) ficha(A[Q.get('ficha')]);
+
+// ============================================================ loop
+let tAnt = performance.now();
+(function loop(t) {
+  const dt = Math.min(.05, (t - tAnt) / 1000 || 0); tAnt = t;
+  if (animSol) { st.hora += dt * 0.9; if (st.hora > 19.5) st.hora = 5.5; $('sHora').value = st.hora; atualizaSol(); }
+  if (animObra) { tObra += dt; const f = Math.min(8, Math.floor(tObra / 1.6)); if (f !== st.fase) { aplicaFase(f); $('sFase').value = f; } if (tObra > 14) animObra = false; }
+  if (modo === 'passeio') { passo(dt); mostraHud(ambienteEm(eu.x, eu.y, eu.h)); desenhaMapa(); }
+  else if (modo === 'tour') { tour(Q.has('tour') ? 0 : dt); desenhaMapa(); }
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
+})(tAnt);
+window.__pronto = true;
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-"""Gera 14_modelo_3d/index.html (Three.js) a partir dos mesmos CSV das plantas e da tabela."""
+"""Gera 14_modelo_3d/index.html e experiencia.html (Three.js) a partir dos mesmos CSV das plantas e da tabela."""
 import json
 import os
 import shutil
@@ -17,7 +17,7 @@ def gerar():
         "laje": LAJE,
         "pav": {k: {"z": v["cota_piso_m"], "pd": v["pe_direito_m"], "nome": v["nome"]} for k, v in pav.items()},
         "ambientes": [{k: a[k] for k in ("id", "pav", "nome", "tipo", "computa", "x0", "y0", "x1", "y1",
-                                         "area_bruta", "area_util")} for a in amb],
+                                         "area_bruta", "area_util", "larg", "prof", "nota")} for a in amb],
         "paredes": {p: P.paredes(amb, p, pav[p]["pe_direito_m"]) for p in pav},
         "aberturas": P.aberturas(),
         "externas": P.externas(),
@@ -32,6 +32,10 @@ def gerar():
     html = tpl.replace("/*__DADOS__*/null", json.dumps(dados, ensure_ascii=False))
     with open(os.path.join(pasta, "index.html"), "w", encoding="utf-8") as fh:
         fh.write(html)
+    # experiencia interativa (passeio, sol, noite, obra, corte) - mesma fonte de dados
+    tpl2 = open(os.path.join(os.path.dirname(__file__), "experiencia_3d_template.html"), encoding="utf-8").read()
+    with open(os.path.join(pasta, "experiencia.html"), "w", encoding="utf-8") as fh:
+        fh.write(tpl2.replace("/*__DADOS__*/null", json.dumps(dados, ensure_ascii=False)))
     return pasta
 
 

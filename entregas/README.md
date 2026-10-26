@@ -20,8 +20,9 @@
 | 11 | `11_prazo_obra.md` | Prazo por etapa |
 | 12 | `12_pendencias.md` | O que confirmar antes de executar |
 | 13 | `13_decisoes_inconsistencias.md` | Decisões I-1 a I-9 |
-| 14 | `14_modelo_3d/index.html` | Modelo 3D (Three.js, funciona offline); abrir no navegador |
-| — | `imagens/*.png` | Vistas conceituais geradas do 3D (fachada, aérea, fundos, sala/cozinha, gourmet, lavanderia, suíte/closet, escritório, sacada, garagem) |
+| 14 | `14_modelo_3d/index.html` | Modelo 3D de consulta (Three.js, offline) |
+| 14 | `14_modelo_3d/experiencia.html` | **Experiência 3D**: passeio em 1ª pessoa, tour guiado, sol real, noite com LEDs, obra por etapas, vista explodida, cortes. Ver `14_modelo_3d/LEIA-ME.md` |
+| — | `imagens/*.png` | Vistas conceituais geradas do 3D (`exp_*` = experiência) (fachada, aérea, fundos, sala/cozinha, gourmet, lavanderia, suíte/closet, escritório, sacada, garagem) |
 | — | `dados/*.csv` | **Fonte única** de plantas, tabela, 3D e orçamento |
 | — | `scripts/` | Geradores e verificação |
 
