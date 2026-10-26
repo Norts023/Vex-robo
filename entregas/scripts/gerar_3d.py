@@ -36,6 +36,14 @@ def gerar():
     tpl2 = open(os.path.join(os.path.dirname(__file__), "experiencia_3d_template.html"), encoding="utf-8").read()
     with open(os.path.join(pasta, "experiencia.html"), "w", encoding="utf-8") as fh:
         fh.write(tpl2.replace("/*__DADOS__*/null", json.dumps(dados, ensure_ascii=False)))
+    # versoes de ARQUIVO UNICO (three.js embutido): abrem com duplo clique, sem outros arquivos ao lado
+    three = open(os.path.join(pasta, "three.min.js"), encoding="utf-8").read()
+    for nome in ("experiencia", "index"):
+        h = open(os.path.join(pasta, nome + ".html"), encoding="utf-8").read()
+        h = h.replace('<script src="three.min.js"></script>', "<script>" + three.replace("</script", "<\\/script") + "</script>")
+        with open(os.path.join(P.BASE, f"14_{'experiencia_3d' if nome == 'experiencia' else 'modelo_3d'}_ARQUIVO_UNICO.html"),
+                  "w", encoding="utf-8") as fh:
+            fh.write(h)
     return pasta
 
 

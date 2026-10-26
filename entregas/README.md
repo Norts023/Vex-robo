@@ -2,6 +2,13 @@
 
 > **Referência inicial para conversar com arquiteto e engenheiro.** Todas as medidas são aproximadas e conceituais. Este material **não é** projeto executivo, cálculo estrutural, ART/RRT nem aprovação municipal, e **não afirma que o projeto é aprovável em Cajamar**.
 
+## Como abrir o 3D (mais fácil)
+
+1. **Link direto (online):** https://raw.githack.com/norts023/vex-robo/ccr-db800c21-jjvkqa/entregas/14_experiencia_3d_ARQUIVO_UNICO.html
+2. **Offline:** baixe `14_experiencia_3d_ARQUIVO_UNICO.html` e dê **duplo clique**. Ele abre no Chrome, Edge ou Firefox e não precisa de nenhum outro arquivo.
+
+Modelo simples de consulta: `14_modelo_3d_ARQUIVO_UNICO.html`. Estudo conceitual, medidas aproximadas.
+
 ## Entregáveis
 
 | # | Arquivo | Conteúdo |
