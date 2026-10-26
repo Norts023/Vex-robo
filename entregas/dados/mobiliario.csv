@@ -1,0 +1,36 @@
+id,pav,nome,x0,y0,x1,y1,altura,cor
+CAR_L,T,Carro 1 (1.80 x 4.55),0.70,4.55,2.50,9.10,1.45,#9aa3ad
+CAR_R,T,Carro 2 (1.80 x 4.55),4.55,4.55,6.35,9.10,1.45,#7d8791
+MOTO,T,Moto (0.90 x 2.20),3.35,4.15,4.25,6.35,1.10,#2b2b2b
+SOFA,T,Sofa 3-4 lugares,2.60,13.95,3.55,16.30,0.80,#cfc6b8
+MESA_C,T,Mesa de centro,1.25,14.60,1.95,15.60,0.40,#6b4f3a
+RACK,T,Rack suspenso + painel TV amadeirado,0.15,13.90,0.55,16.40,0.55,#8a6a4f
+BANC_COZ,T,Bancada cozinha (pia + cooktop 5 bocas),4.40,12.875,6.85,13.475,0.92,#1e1e1e
+TORRE,T,Torre forno + micro-ondas,6.25,13.475,6.85,14.30,2.20,#c8b9a6
+PENINS,T,Peninsula compacta c/ banquetas,4.60,14.40,6.85,15.00,0.92,#1e1e1e
+DEP_ESC,T,Deposito sob patamar,0.075,9.375,1.925,10.40,1.40,#b9a58e
+LAV_BANC,T,Maquina + tanque + bancada,3.475,10.775,3.975,12.725,0.95,#e8e4de
+CHURR,T,Churrasqueira embutida,0.15,19.25,1.15,19.85,2.20,#3a3a3a
+BANC_GOUR,T,Bancada gourmet (pia + cervejeira),1.15,19.25,3.40,19.85,0.92,#1e1e1e
+MESA_G,T,Mesa 6 lugares,3.60,17.20,4.50,19.00,0.75,#6b4f3a
+CAMA_Q,S,Cama queen 1.58 x 1.98,0.20,14.06,2.18,15.64,0.55,#d9cfc0
+CRIADO1,S,Criado-mudo,0.20,13.56,0.65,14.01,0.55,#8a6a4f
+CRIADO2,S,Criado-mudo,0.20,15.69,0.65,16.14,0.55,#8a6a4f
+ARM_CL1,S,Armario closet lado 1,3.775,12.875,6.85,13.475,2.40,#c8b9a6
+ARM_CL2,S,Armario closet lado 2,4.80,14.325,6.85,14.925,2.40,#c8b9a6
+BOX_SUI,S,Box de vidro,5.85,15.075,6.85,16.75,2.00,#a9c7d6
+BANC_SUI,S,Bancada com cuba,3.80,16.25,5.20,16.75,0.90,#e8e4de
+VASO_SUI,S,Vaso,5.30,16.05,5.75,16.75,0.45,#ffffff
+CAMA_QT,S,Cama casal 1.38 x 1.88,4.97,6.50,6.85,7.88,0.55,#d9cfc0
+GR_QT,S,Guarda-roupa,3.075,5.60,3.675,7.90,2.40,#c8b9a6
+MESA_ESC,S,Mesa de trabalho,0.15,6.40,0.80,7.90,0.75,#6b4f3a
+ESTANTE,S,Armario / estante,0.15,8.75,1.90,9.225,2.00,#c8b9a6
+SOFACAMA,S,Sofa-cama compacto,2.075,6.00,2.925,7.90,0.80,#cfc6b8
+BOX_SOC,S,Box de vidro,4.075,9.375,5.25,10.375,2.00,#a9c7d6
+VASO_SOC,S,Vaso,4.75,10.55,5.25,11.25,0.45,#ffffff
+BANC_SOC,S,Bancada com cuba,4.75,11.45,5.25,12.55,0.90,#e8e4de
+POLTR1,S,Poltrona,2.35,4.30,3.10,5.05,0.80,#cfc6b8
+POLTR2,S,Poltrona,3.90,4.30,4.65,5.05,0.80,#cfc6b8
+MESA_L,S,Mesa lateral,3.25,4.50,3.75,4.90,0.50,#2b2b2b
+JARD1,S,Jardineira integrada,0.15,4.05,0.75,5.45,0.60,#5c7a45
+JARD2,S,Jardineira integrada,6.25,4.05,6.85,5.45,0.60,#5c7a45

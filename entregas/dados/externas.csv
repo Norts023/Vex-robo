@@ -1,0 +1,15 @@
+id,nome,x0,y0,x1,y1,coef_perm,acabamento
+R_TR1,Trilho de concreto vaga esq. 1,0.55,0.00,1.05,4.00,0.0,concreto desempenado
+R_TR2,Trilho de concreto vaga esq. 2,1.65,0.00,2.15,4.00,0.0,concreto desempenado
+R_TR3,Trilho de concreto vaga dir. 1,4.75,0.00,5.25,4.00,0.0,concreto desempenado
+R_TR4,Trilho de concreto vaga dir. 2,5.85,0.00,6.35,4.00,0.0,concreto desempenado
+R_CAM,Caminho de pedestres (placas),2.75,0.00,3.95,4.00,0.0,placas de concreto 1.20 x 0.60
+R_G1,Grama recuo faixa 1,0.00,0.00,0.55,4.00,1.0,grama esmeralda
+R_G2,Grama recuo faixa 2,1.05,0.00,1.65,4.00,1.0,grama esmeralda
+R_G3,Grama recuo faixa 3,2.15,0.00,2.75,4.00,1.0,grama esmeralda / forracao
+R_G4,Grama recuo faixa 4,3.95,0.00,4.75,4.00,1.0,grama esmeralda / forracao
+R_G5,Grama recuo faixa 5,5.25,0.00,5.85,4.00,1.0,grama esmeralda
+R_G6,Grama recuo faixa 6,6.35,0.00,7.00,4.00,1.0,grama esmeralda
+P_PISO,Patio - piso de passagem,5.40,9.30,7.00,10.10,0.0,placas de concreto
+P_BRITA,Patio - brita e jardineira,5.40,10.10,7.00,12.80,1.0,brita sobre solo natural + forracao de sombra
+J_FUNDO,Jardim de fundo,5.20,16.90,7.00,20.00,1.0,solo natural com forracao e arvore pequena

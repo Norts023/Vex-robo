@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Modelo 3D conceitual - Casa EPS Cajamar/SP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;font-family:DejaVu Sans,Arial,sans-serif;background:#dfe4e8}
+  #ui{position:absolute;top:10px;left:10px;background:rgba(255,255,255,.93);padding:10px 12px;border-radius:8px;
+      max-width:330px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  #ui h1{font-size:14px;margin:0 0 4px}
+  #ui button{margin:2px 2px 2px 0;padding:4px 7px;font-size:11px;border:1px solid #888;background:#f6f3ee;border-radius:4px;cursor:pointer}
+  #ui button.on{background:#3b3b3b;color:#fff}
+  #ui table{border-collapse:collapse;margin-top:6px;width:100%}
+  #ui td{border-bottom:1px solid #ddd;padding:2px 3px}
+  #aviso{position:absolute;bottom:8px;left:10px;right:10px;font-size:11px;color:#5a1f1f;background:rgba(255,255,255,.85);
+         padding:4px 8px;border-radius:4px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div id="ui">
+  <h1>Casa EPS - Cajamar/SP (modelo conceitual)</h1>
+  <div>Visibilidade:
+    <button data-modo="completo" class="on">Completo</button>
+    <button data-modo="semcob">Sem cobertura</button>
+    <button data-modo="superior">Superior</button>
+    <button data-modo="terreo">Terreo</button>
+    <button id="btnRot">Rotulos</button>
+  </div>
+  <div>Vistas:
+    <button data-v="fachada">Fachada</button><button data-v="aerea">Aerea</button>
+    <button data-v="fundos">Fundos</button><button data-v="planta">Planta</button>
+  </div>
+  <div>Ambientes:
+    <button data-v="sala">Sala/cozinha</button><button data-v="gourmet">Gourmet</button>
+    <button data-v="lavanderia">Lavanderia</button><button data-v="suite">Suite+closet</button>
+    <button data-v="escritorio">Escritorio</button><button data-v="sacada">Sacada</button>
+    <button data-v="garagem">Garagem</button>
+  </div>
+  <table id="tab"></table>
+  <div style="margin-top:4px;color:#666">Arraste: girar | Shift/botao direito: mover | roda: zoom</div>
+</div>
+<div id="aviso">ESTUDO CONCEITUAL - medidas aproximadas, nao executivas. Mesma fonte de dados das plantas e da tabela de areas
+  (dados/ambientes.csv, hash <b id="hash"></b>). Norte, recuos, TO/TP = hipoteses. Requer projeto executivo, calculo estrutural, ART/RRT e aprovacao municipal.</div>
+<script src="three.min.js"></script>
+<script>
+const D = {"hash": "f48b18ad9ed1", "lote": [7.0, 20.0], "laje": 0.18, "pav": {"T": {"z": 0.15, "pd": 2.7, "nome": "Terreo"}, "S": {"z": 3.03, "pd": 2.7, "nome": "Pavimento superior"}}, "ambientes": [{"id": "GAR", "pav": "T", "nome": "Garagem (2 carros + 1 moto)", "tipo": "coberto", "computa": 1, "x0": 0.0, "y0": 4.0, "x1": 7.0, "y1": 9.3, "area_bruta": 37.1, "area_util": 35.0075}, {"id": "ESC_T", "pav": "T", "nome": "Escada em U", "tipo": "fechado", "computa": 1, "x0": 0.0, "y0": 9.3, "x1": 2.0, "y1": 12.8, "area_bruta": 7.0, "area_util": 6.3362}, {"id": "HALL_T", "pav": "T", "nome": "Hall de entrada", "tipo": "fechado", "computa": 1, "x0": 2.0, "y0": 9.3, "x1": 3.4, "y1": 12.8, "area_bruta": 4.9, "area_util": 4.5381}, {"id": "LAVABO", "pav": "T", "nome": "Lavabo", "tipo": "fechado", "computa": 1, "x0": 3.4, "y0": 9.3, "x1": 5.4, "y1": 10.7, "area_bruta": 2.8, "area_util": 2.2188}, {"id": "LAVAND", "pav": "T", "nome": "Lavanderia", "tipo": "fechado", "computa": 1, "x0": 3.4, "y0": 10.7, "x1": 5.4, "y1": 12.8, "area_bruta": 4.2, "area_util": 3.4612}, {"id": "SALA_COZ", "pav": "T", "nome": "Sala e cozinha integradas", "tipo": "fechado", "computa": 1, "x0": 0.0, "y0": 12.8, "x1": 7.0, "y1": 16.9, "area_bruta": 28.7, "area_util": 26.465}, {"id": "GOURMET", "pav": "T", "nome": "Area gourmet", "tipo": "coberto", "computa": 1, "x0": 0.0, "y0": 16.9, "x1": 5.2, "y1": 20.0, "area_bruta": 16.12, "area_util": 14.5187}, {"id": "PATIO", "pav": "T", "nome": "Patio de servico / poco de luz", "tipo": "descoberto", "computa": 0, "x0": 5.4, "y0": 9.3, "x1": 7.0, "y1": 12.8, "area_bruta": 5.6, "area_util": 5.6}, {"id": "JARDIM_F", "pav": "T", "nome": "Jardim de fundo", "tipo": "descoberto", "computa": 0, "x0": 5.2, "y0": 16.9, "x1": 7.0, "y1": 20.0, "area_bruta": 5.58, "area_util": 5.58}, {"id": "RECUO", "pav": "T", "nome": "Recuo frontal (jardim e acesso)", "tipo": "descoberto", "computa": 0, "x0": 0.0, "y0": 0.0, "x1": 7.0, "y1": 4.0, "area_bruta": 28.0, "area_util": 28.0}, {"id": "SACADA", "pav": "S", "nome": "Sacada jardim sobre a garagem", "tipo": "descoberto", "computa": 0, "x0": 0.0, "y0": 4.0, "x1": 7.0, "y1": 5.5, "area_bruta": 10.5, "area_util": 10.5}, {"id": "ESCRIT", "pav": "S", "nome": "Escritorio independente", "tipo": "fechado", "computa": 1, "x0": 0.0, "y0": 5.5, "x1": 3.0, "y1": 9.3, "area_bruta": 11.4, "area_util": 9.9206}, {"id": "QUARTO", "pav": "S", "nome": "Quarto", "tipo": "fechado", "computa": 1, "x0": 3.0, "y0": 5.5, "x1": 7.0, "y1": 9.3, "area_bruta": 15.2, "area_util": 13.4956}, {"id": "ESC_S", "pav": "S", "nome": "Escada (chegada)", "tipo": "fechado", "computa": 1, "x0": 0.0, "y0": 9.3, "x1": 2.0, "y1": 12.8, "area_bruta": 7.0, "area_util": 6.1975}, {"id": "HALL_S", "pav": "S", "nome": "Hall intimo", "tipo": "fechado", "computa": 1, "x0": 2.0, "y0": 9.3, "x1": 4.0, "y1": 12.8, "area_bruta": 7.0, "area_util": 6.4488}, {"id": "BWC_SOC", "pav": "S", "nome": "Banheiro social", "tipo": "fechado", "computa": 1, "x0": 4.0, "y0": 9.3, "x1": 5.4, "y1": 12.8, "area_bruta": 4.9, "area_util": 3.9363}, {"id": "POCO", "pav": "S", "nome": "Poco de luz (vazio)", "tipo": "vazio", "computa": 0, "x0": 5.4, "y0": 9.3, "x1": 7.0, "y1": 12.8, "area_bruta": 5.6, "area_util": 5.6}, {"id": "SUITE", "pav": "S", "nome": "Suite do casal", "tipo": "fechado", "computa": 1, "x0": 0.0, "y0": 12.8, "x1": 3.7, "y1": 16.9, "area_bruta": 15.17, "area_util": 13.4656}, {"id": "CLOSET", "pav": "S", "nome": "Closet", "tipo": "fechado", "computa": 1, "x0": 3.7, "y0": 12.8, "x1": 7.0, "y1": 15.0, "area_bruta": 7.26, "area_util": 6.3037}, {"id": "BWC_SUI", "pav": "S", "nome": "Banheiro da suite", "tipo": "fechado", "computa": 1, "x0": 3.7, "y0": 15.0, "x1": 7.0, "y1": 16.9, "area_bruta": 6.27, "area_util": 5.1506}], "paredes": {"T": [{"x0": 0.0, "x1": 0.15, "y0": 4.0, "y1": 20.0, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 3.3249999999999997, "x1": 3.475, "y0": 9.3, "y1": 9.6, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.3249999999999997, "x1": 3.475, "y0": 9.6, "y1": 10.3, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 3.3249999999999997, "x1": 3.475, "y0": 10.3, "y1": 12.8, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 5.25, "x1": 5.4, "y0": 9.3, "y1": 9.7, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 9.7, "y1": 10.3, "z0": 0, "z1": 1.6, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 9.7, "y1": 10.3, "z0": 2.2, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 10.3, "y1": 10.95, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 10.95, "y1": 11.55, "z0": 0, "z1": 1.1, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 10.95, "y1": 11.55, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 11.55, "y1": 11.7, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 11.7, "y1": 12.5, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 12.5, "y1": 12.8, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 6.85, "x1": 7.0, "y0": 4.0, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 6.85, "x1": 7.0, "y0": 12.8, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.4, "x1": 5.6, "y0": 9.15, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.6, "x1": 6.4, "y0": 9.15, "y1": 9.3, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 6.4, "x1": 7.0, "y0": 9.15, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.0, "x1": 2.4, "y0": 9.225000000000001, "y1": 9.375, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 2.4, "x1": 3.4, "y0": 9.225000000000001, "y1": 9.375, "z0": 2.6, "z1": 2.7, "tipo": "interna"}, {"x0": 3.4, "x1": 5.4, "y0": 9.225000000000001, "y1": 9.375, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.4, "x1": 5.4, "y0": 10.625, "y1": 10.774999999999999, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 5.4, "x1": 5.6, "y0": 12.8, "y1": 12.950000000000001, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.6, "x1": 6.8, "y0": 12.8, "y1": 12.950000000000001, "z0": 0, "z1": 1.1, "tipo": "externa"}, {"x0": 5.6, "x1": 6.8, "y0": 12.8, "y1": 12.950000000000001, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 6.8, "x1": 7.0, "y0": 12.8, "y1": 12.950000000000001, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 3.4, "x1": 3.5, "y0": 12.725000000000001, "y1": 12.875, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.5, "x1": 4.3, "y0": 12.725000000000001, "y1": 12.875, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 4.3, "x1": 5.4, "y0": 12.725000000000001, "y1": 12.875, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 5.2, "x1": 5.4, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.4, "x1": 6.8, "y0": 16.75, "y1": 16.9, "z0": 2.4, "z1": 2.7, "tipo": "externa"}, {"x0": 6.8, "x1": 7.0, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.0, "x1": 0.4, "y0": 16.825, "y1": 16.974999999999998, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 0.4, "x1": 4.8, "y0": 16.825, "y1": 16.974999999999998, "z0": 2.4, "z1": 2.7, "tipo": "interna"}, {"x0": 4.8, "x1": 5.2, "y0": 16.825, "y1": 16.974999999999998, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 0.0, "x1": 5.2, "y0": 19.85, "y1": 20.0, "z0": 0, "z1": 2.7, "tipo": "externa"}], "S": [{"x0": 0.0, "x1": 0.15, "y0": 5.5, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 2.925, "x1": 3.075, "y0": 5.5, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.625, "x1": 3.7750000000000004, "y0": 12.8, "y1": 13.6, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.625, "x1": 3.7750000000000004, "y0": 13.6, "y1": 14.4, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 3.625, "x1": 3.7750000000000004, "y0": 14.4, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.925, "x1": 4.075, "y0": 9.3, "y1": 11.6, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.925, "x1": 4.075, "y0": 11.6, "y1": 12.3, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 3.925, "x1": 4.075, "y0": 12.3, "y1": 12.8, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 5.25, "x1": 5.4, "y0": 9.3, "y1": 10.0, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 10.0, "y1": 10.8, "z0": 0, "z1": 1.5, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 10.0, "y1": 10.8, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 5.25, "x1": 5.4, "y0": 10.8, "y1": 12.8, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 6.85, "x1": 7.0, "y0": 5.5, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 6.85, "x1": 7.0, "y0": 12.8, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.0, "x1": 0.4, "y0": 5.5, "y1": 5.65, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.4, "x1": 2.6, "y0": 5.5, "y1": 5.65, "z0": 2.4, "z1": 2.7, "tipo": "externa"}, {"x0": 2.6, "x1": 4.2, "y0": 5.5, "y1": 5.65, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 4.2, "x1": 6.2, "y0": 5.5, "y1": 5.65, "z0": 2.4, "z1": 2.7, "tipo": "externa"}, {"x0": 6.2, "x1": 7.0, "y0": 5.5, "y1": 5.65, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.4, "x1": 5.6, "y0": 9.15, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.6, "x1": 6.8, "y0": 9.15, "y1": 9.3, "z0": 0, "z1": 1.1, "tipo": "externa"}, {"x0": 5.6, "x1": 6.8, "y0": 9.15, "y1": 9.3, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 6.8, "x1": 7.0, "y0": 9.15, "y1": 9.3, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.0, "x1": 2.1, "y0": 9.225000000000001, "y1": 9.375, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 2.1, "x1": 2.9, "y0": 9.225000000000001, "y1": 9.375, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 2.9, "x1": 3.1, "y0": 9.225000000000001, "y1": 9.375, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.1, "x1": 3.9, "y0": 9.225000000000001, "y1": 9.375, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 3.9, "x1": 5.4, "y0": 9.225000000000001, "y1": 9.375, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 5.4, "x1": 5.6, "y0": 12.8, "y1": 12.950000000000001, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.6, "x1": 6.6, "y0": 12.8, "y1": 12.950000000000001, "z0": 0, "z1": 1.4, "tipo": "externa"}, {"x0": 5.6, "x1": 6.6, "y0": 12.8, "y1": 12.950000000000001, "z0": 2.2, "z1": 2.7, "tipo": "externa"}, {"x0": 6.6, "x1": 7.0, "y0": 12.8, "y1": 12.950000000000001, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.0, "x1": 2.4, "y0": 12.725000000000001, "y1": 12.875, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 2.4, "x1": 3.2, "y0": 12.725000000000001, "y1": 12.875, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 3.2, "x1": 5.4, "y0": 12.725000000000001, "y1": 12.875, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 3.7, "x1": 4.0, "y0": 14.925, "y1": 15.075, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 4.0, "x1": 4.7, "y0": 14.925, "y1": 15.075, "z0": 2.1, "z1": 2.7, "tipo": "interna"}, {"x0": 4.7, "x1": 7.0, "y0": 14.925, "y1": 15.075, "z0": 0, "z1": 2.7, "tipo": "interna"}, {"x0": 0.0, "x1": 0.6, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 0.6, "x1": 3.0, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 0.6, "tipo": "externa"}, {"x0": 0.6, "x1": 3.0, "y0": 16.75, "y1": 16.9, "z0": 2.2, "z1": 2.7, "tipo": "externa"}, {"x0": 3.0, "x1": 5.6, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}, {"x0": 5.6, "x1": 6.6, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 1.5, "tipo": "externa"}, {"x0": 5.6, "x1": 6.6, "y0": 16.75, "y1": 16.9, "z0": 2.1, "z1": 2.7, "tipo": "externa"}, {"x0": 6.6, "x1": 7.0, "y0": 16.75, "y1": 16.9, "z0": 0, "z1": 2.7, "tipo": "externa"}]}, "aberturas": [{"id": "A01", "pav": "T", "tipo": "vao_livre", "eixo": "y", "coord": 4.0, "a": 0.15, "b": 6.85, "altura": 2.4, "peitoril": 0.0, "de": "GAR", "para": "RECUO", "nota": "Frente da garagem aberta (vigas sobre o vao de 7 m - pendencia estrutural)"}, {"id": "A02", "pav": "T", "tipo": "porta_pivotante", "eixo": "y", "coord": 9.3, "a": 2.4, "b": 3.4, "altura": 2.6, "peitoril": 0.0, "de": "HALL_T", "para": "GAR", "nota": "Porta principal alta em madeira 1.00 x 2.60 m"}, {"id": "A03", "pav": "T", "tipo": "porta", "eixo": "y", "coord": 9.3, "a": 5.6, "b": 6.4, "altura": 2.1, "peitoril": 0.0, "de": "PATIO", "para": "GAR", "nota": "Porta de servico garagem-patio"}, {"id": "A04", "pav": "T", "tipo": "porta", "eixo": "x", "coord": 3.4, "a": 9.6, "b": 10.3, "altura": 2.1, "peitoril": 0.0, "de": "LAVABO", "para": "HALL_T", "nota": "Porta do lavabo 0.70 m"}, {"id": "A05", "pav": "T", "tipo": "janela", "eixo": "x", "coord": 5.4, "a": 9.7, "b": 10.3, "altura": 0.6, "peitoril": 1.6, "de": "LAVABO", "para": "PATIO", "nota": "Basculante (ventilacao natural)"}, {"id": "A06", "pav": "T", "tipo": "porta", "eixo": "y", "coord": 12.8, "a": 3.5, "b": 4.3, "altura": 2.1, "peitoril": 0.0, "de": "LAVAND", "para": "SALA_COZ", "nota": "Lavanderia acessada pela cozinha"}, {"id": "A07", "pav": "T", "tipo": "porta", "eixo": "x", "coord": 5.4, "a": 11.7, "b": 12.5, "altura": 2.1, "peitoril": 0.0, "de": "LAVAND", "para": "PATIO", "nota": "Porta veneziana para o patio de secagem"}, {"id": "A08", "pav": "T", "tipo": "janela", "eixo": "x", "coord": 5.4, "a": 10.95, "b": 11.55, "altura": 1.0, "peitoril": 1.1, "de": "LAVAND", "para": "PATIO", "nota": "Janela da lavanderia"}, {"id": "A09", "pav": "T", "tipo": "janela", "eixo": "y", "coord": 12.8, "a": 5.6, "b": 6.8, "altura": 1.0, "peitoril": 1.1, "de": "SALA_COZ", "para": "PATIO", "nota": "Janela sobre a pia da cozinha"}, {"id": "A10", "pav": "T", "tipo": "porta_correr", "eixo": "y", "coord": 16.9, "a": 0.4, "b": 4.8, "altura": 2.4, "peitoril": 0.0, "de": "SALA_COZ", "para": "GOURMET", "nota": "Porta de correr 4 folhas em aluminio preto"}, {"id": "A11", "pav": "T", "tipo": "porta_correr", "eixo": "y", "coord": 16.9, "a": 5.4, "b": 6.8, "altura": 2.4, "peitoril": 0.0, "de": "SALA_COZ", "para": "JARDIM_F", "nota": "Porta de correr para o jardim"}, {"id": "A12", "pav": "T", "tipo": "vao_livre", "eixo": "x", "coord": 5.2, "a": 17.0, "b": 20.0, "altura": 2.4, "peitoril": 0.0, "de": "GOURMET", "para": "JARDIM_F", "nota": "Lado aberto da gourmet"}, {"id": "A13", "pav": "S", "tipo": "porta_correr", "eixo": "y", "coord": 5.5, "a": 0.4, "b": 2.6, "altura": 2.4, "peitoril": 0.0, "de": "ESCRIT", "para": "SACADA", "nota": "Porta de correr escritorio-sacada"}, {"id": "A14", "pav": "S", "tipo": "porta_correr", "eixo": "y", "coord": 5.5, "a": 4.2, "b": 6.2, "altura": 2.4, "peitoril": 0.0, "de": "QUARTO", "para": "SACADA", "nota": "Porta de correr quarto-sacada"}, {"id": "A15", "pav": "S", "tipo": "janela", "eixo": "y", "coord": 9.3, "a": 5.6, "b": 6.8, "altura": 1.0, "peitoril": 1.1, "de": "QUARTO", "para": "POCO", "nota": "Janela para o poco (ventilacao cruzada)"}, {"id": "A16", "pav": "S", "tipo": "porta", "eixo": "y", "coord": 9.3, "a": 2.1, "b": 2.9, "altura": 2.1, "peitoril": 0.0, "de": "ESCRIT", "para": "HALL_S", "nota": "Porta do escritorio"}, {"id": "A17", "pav": "S", "tipo": "porta", "eixo": "y", "coord": 9.3, "a": 3.1, "b": 3.9, "altura": 2.1, "peitoril": 0.0, "de": "QUARTO", "para": "HALL_S", "nota": "Porta do quarto"}, {"id": "A18", "pav": "S", "tipo": "porta", "eixo": "x", "coord": 4.0, "a": 11.6, "b": 12.3, "altura": 2.1, "peitoril": 0.0, "de": "BWC_SOC", "para": "HALL_S", "nota": "Porta do banheiro social 0.70 m"}, {"id": "A19", "pav": "S", "tipo": "janela", "eixo": "x", "coord": 5.4, "a": 10.0, "b": 10.8, "altura": 0.6, "peitoril": 1.5, "de": "BWC_SOC", "para": "POCO", "nota": "Basculante"}, {"id": "A20", "pav": "S", "tipo": "porta", "eixo": "y", "coord": 12.8, "a": 2.4, "b": 3.2, "altura": 2.1, "peitoril": 0.0, "de": "SUITE", "para": "HALL_S", "nota": "Porta da suite"}, {"id": "A21", "pav": "S", "tipo": "vao_livre", "eixo": "x", "coord": 3.7, "a": 13.6, "b": 14.4, "altura": 2.1, "peitoril": 0.0, "de": "SUITE", "para": "CLOSET", "nota": "Passagem suite-closet (porta de correr embutida opcional)"}, {"id": "A22", "pav": "S", "tipo": "porta", "eixo": "y", "coord": 15.0, "a": 4.0, "b": 4.7, "altura": 2.1, "peitoril": 0.0, "de": "BWC_SUI", "para": "CLOSET", "nota": "Porta do banheiro da suite 0.70 m"}, {"id": "A23", "pav": "S", "tipo": "janela", "eixo": "y", "coord": 12.8, "a": 5.6, "b": 6.6, "altura": 0.8, "peitoril": 1.4, "de": "CLOSET", "para": "POCO", "nota": "Janela alta do closet"}, {"id": "A24", "pav": "S", "tipo": "janela", "eixo": "y", "coord": 16.9, "a": 0.6, "b": 3.0, "altura": 1.6, "peitoril": 0.6, "de": "SUITE", "para": "EXT", "nota": "Janela da suite (fundo)"}, {"id": "A25", "pav": "S", "tipo": "janela", "eixo": "y", "coord": 16.9, "a": 5.6, "b": 6.6, "altura": 0.6, "peitoril": 1.5, "de": "BWC_SUI", "para": "EXT", "nota": "Basculante do banheiro da suite"}], "externas": [{"id": "R_TR1", "nome": "Trilho de concreto vaga esq. 1", "x0": 0.55, "y0": 0.0, "x1": 1.05, "y1": 4.0, "coef_perm": 0.0, "acabamento": "concreto desempenado", "area": 2.0}, {"id": "R_TR2", "nome": "Trilho de concreto vaga esq. 2", "x0": 1.65, "y0": 0.0, "x1": 2.15, "y1": 4.0, "coef_perm": 0.0, "acabamento": "concreto desempenado", "area": 2.0}, {"id": "R_TR3", "nome": "Trilho de concreto vaga dir. 1", "x0": 4.75, "y0": 0.0, "x1": 5.25, "y1": 4.0, "coef_perm": 0.0, "acabamento": "concreto desempenado", "area": 2.0}, {"id": "R_TR4", "nome": "Trilho de concreto vaga dir. 2", "x0": 5.85, "y0": 0.0, "x1": 6.35, "y1": 4.0, "coef_perm": 0.0, "acabamento": "concreto desempenado", "area": 2.0}, {"id": "R_CAM", "nome": "Caminho de pedestres (placas)", "x0": 2.75, "y0": 0.0, "x1": 3.95, "y1": 4.0, "coef_perm": 0.0, "acabamento": "placas de concreto 1.20 x 0.60", "area": 4.8}, {"id": "R_G1", "nome": "Grama recuo faixa 1", "x0": 0.0, "y0": 0.0, "x1": 0.55, "y1": 4.0, "coef_perm": 1.0, "acabamento": "grama esmeralda", "area": 2.2}, {"id": "R_G2", "nome": "Grama recuo faixa 2", "x0": 1.05, "y0": 0.0, "x1": 1.65, "y1": 4.0, "coef_perm": 1.0, "acabamento": "grama esmeralda", "area": 2.4}, {"id": "R_G3", "nome": "Grama recuo faixa 3", "x0": 2.15, "y0": 0.0, "x1": 2.75, "y1": 4.0, "coef_perm": 1.0, "acabamento": "grama esmeralda / forracao", "area": 2.4}, {"id": "R_G4", "nome": "Grama recuo faixa 4", "x0": 3.95, "y0": 0.0, "x1": 4.75, "y1": 4.0, "coef_perm": 1.0, "acabamento": "grama esmeralda / forracao", "area": 3.2}, {"id": "R_G5", "nome": "Grama recuo faixa 5", "x0": 5.25, "y0": 0.0, "x1": 5.85, "y1": 4.0, "coef_perm": 1.0, "acabamento": "grama esmeralda", "area": 2.4}, {"id": "R_G6", "nome": "Grama recuo faixa 6", "x0": 6.35, "y0": 0.0, "x1": 7.0, "y1": 4.0, "coef_perm": 1.0, "acabamento": "grama esmeralda", "area": 2.6}, {"id": "P_PISO", "nome": "Patio - piso de passagem", "x0": 5.4, "y0": 9.3, "x1": 7.0, "y1": 10.1, "coef_perm": 0.0, "acabamento": "placas de concreto", "area": 1.28}, {"id": "P_BRITA", "nome": "Patio - brita e jardineira", "x0": 5.4, "y0": 10.1, "x1": 7.0, "y1": 12.8, "coef_perm": 1.0, "acabamento": "brita sobre solo natural + forracao de sombra", "area": 4.32}, {"id": "J_FUNDO", "nome": "Jardim de fundo", "x0": 5.2, "y0": 16.9, "x1": 7.0, "y1": 20.0, "coef_perm": 1.0, "acabamento": "solo natural com forracao e arvore pequena", "area": 5.58}], "mobiliario": [{"id": "CAR_L", "pav": "T", "nome": "Carro 1 (1.80 x 4.55)", "x0": 0.7, "y0": 4.55, "x1": 2.5, "y1": 9.1, "altura": 1.45, "cor": "#9aa3ad"}, {"id": "CAR_R", "pav": "T", "nome": "Carro 2 (1.80 x 4.55)", "x0": 4.55, "y0": 4.55, "x1": 6.35, "y1": 9.1, "altura": 1.45, "cor": "#7d8791"}, {"id": "MOTO", "pav": "T", "nome": "Moto (0.90 x 2.20)", "x0": 3.35, "y0": 4.15, "x1": 4.25, "y1": 6.35, "altura": 1.1, "cor": "#2b2b2b"}, {"id": "SOFA", "pav": "T", "nome": "Sofa 3-4 lugares", "x0": 2.6, "y0": 13.95, "x1": 3.55, "y1": 16.3, "altura": 0.8, "cor": "#cfc6b8"}, {"id": "MESA_C", "pav": "T", "nome": "Mesa de centro", "x0": 1.25, "y0": 14.6, "x1": 1.95, "y1": 15.6, "altura": 0.4, "cor": "#6b4f3a"}, {"id": "RACK", "pav": "T", "nome": "Rack suspenso + painel TV amadeirado", "x0": 0.15, "y0": 13.9, "x1": 0.55, "y1": 16.4, "altura": 0.55, "cor": "#8a6a4f"}, {"id": "BANC_COZ", "pav": "T", "nome": "Bancada cozinha (pia + cooktop 5 bocas)", "x0": 4.4, "y0": 12.875, "x1": 6.85, "y1": 13.475, "altura": 0.92, "cor": "#1e1e1e"}, {"id": "TORRE", "pav": "T", "nome": "Torre forno + micro-ondas", "x0": 6.25, "y0": 13.475, "x1": 6.85, "y1": 14.3, "altura": 2.2, "cor": "#c8b9a6"}, {"id": "PENINS", "pav": "T", "nome": "Peninsula compacta c/ banquetas", "x0": 4.6, "y0": 14.4, "x1": 6.85, "y1": 15.0, "altura": 0.92, "cor": "#1e1e1e"}, {"id": "DEP_ESC", "pav": "T", "nome": "Deposito sob patamar", "x0": 0.075, "y0": 9.375, "x1": 1.925, "y1": 10.4, "altura": 1.4, "cor": "#b9a58e"}, {"id": "LAV_BANC", "pav": "T", "nome": "Maquina + tanque + bancada", "x0": 3.475, "y0": 10.775, "x1": 3.975, "y1": 12.725, "altura": 0.95, "cor": "#e8e4de"}, {"id": "CHURR", "pav": "T", "nome": "Churrasqueira embutida", "x0": 0.15, "y0": 19.25, "x1": 1.15, "y1": 19.85, "altura": 2.2, "cor": "#3a3a3a"}, {"id": "BANC_GOUR", "pav": "T", "nome": "Bancada gourmet (pia + cervejeira)", "x0": 1.15, "y0": 19.25, "x1": 3.4, "y1": 19.85, "altura": 0.92, "cor": "#1e1e1e"}, {"id": "MESA_G", "pav": "T", "nome": "Mesa 6 lugares", "x0": 3.6, "y0": 17.2, "x1": 4.5, "y1": 19.0, "altura": 0.75, "cor": "#6b4f3a"}, {"id": "CAMA_Q", "pav": "S", "nome": "Cama queen 1.58 x 1.98", "x0": 0.2, "y0": 14.06, "x1": 2.18, "y1": 15.64, "altura": 0.55, "cor": "#d9cfc0"}, {"id": "CRIADO1", "pav": "S", "nome": "Criado-mudo", "x0": 0.2, "y0": 13.56, "x1": 0.65, "y1": 14.01, "altura": 0.55, "cor": "#8a6a4f"}, {"id": "CRIADO2", "pav": "S", "nome": "Criado-mudo", "x0": 0.2, "y0": 15.69, "x1": 0.65, "y1": 16.14, "altura": 0.55, "cor": "#8a6a4f"}, {"id": "ARM_CL1", "pav": "S", "nome": "Armario closet lado 1", "x0": 3.775, "y0": 12.875, "x1": 6.85, "y1": 13.475, "altura": 2.4, "cor": "#c8b9a6"}, {"id": "ARM_CL2", "pav": "S", "nome": "Armario closet lado 2", "x0": 4.8, "y0": 14.325, "x1": 6.85, "y1": 14.925, "altura": 2.4, "cor": "#c8b9a6"}, {"id": "BOX_SUI", "pav": "S", "nome": "Box de vidro", "x0": 5.85, "y0": 15.075, "x1": 6.85, "y1": 16.75, "altura": 2.0, "cor": "#a9c7d6"}, {"id": "BANC_SUI", "pav": "S", "nome": "Bancada com cuba", "x0": 3.8, "y0": 16.25, "x1": 5.2, "y1": 16.75, "altura": 0.9, "cor": "#e8e4de"}, {"id": "VASO_SUI", "pav": "S", "nome": "Vaso", "x0": 5.3, "y0": 16.05, "x1": 5.75, "y1": 16.75, "altura": 0.45, "cor": "#ffffff"}, {"id": "CAMA_QT", "pav": "S", "nome": "Cama casal 1.38 x 1.88", "x0": 4.97, "y0": 6.5, "x1": 6.85, "y1": 7.88, "altura": 0.55, "cor": "#d9cfc0"}, {"id": "GR_QT", "pav": "S", "nome": "Guarda-roupa", "x0": 3.075, "y0": 5.6, "x1": 3.675, "y1": 7.9, "altura": 2.4, "cor": "#c8b9a6"}, {"id": "MESA_ESC", "pav": "S", "nome": "Mesa de trabalho", "x0": 0.15, "y0": 6.4, "x1": 0.8, "y1": 7.9, "altura": 0.75, "cor": "#6b4f3a"}, {"id": "ESTANTE", "pav": "S", "nome": "Armario / estante", "x0": 0.15, "y0": 8.75, "x1": 1.9, "y1": 9.225, "altura": 2.0, "cor": "#c8b9a6"}, {"id": "SOFACAMA", "pav": "S", "nome": "Sofa-cama compacto", "x0": 2.075, "y0": 6.0, "x1": 2.925, "y1": 7.9, "altura": 0.8, "cor": "#cfc6b8"}, {"id": "BOX_SOC", "pav": "S", "nome": "Box de vidro", "x0": 4.075, "y0": 9.375, "x1": 5.25, "y1": 10.375, "altura": 2.0, "cor": "#a9c7d6"}, {"id": "VASO_SOC", "pav": "S", "nome": "Vaso", "x0": 4.75, "y0": 10.55, "x1": 5.25, "y1": 11.25, "altura": 0.45, "cor": "#ffffff"}, {"id": "BANC_SOC", "pav": "S", "nome": "Bancada com cuba", "x0": 4.75, "y0": 11.45, "x1": 5.25, "y1": 12.55, "altura": 0.9, "cor": "#e8e4de"}, {"id": "POLTR1", "pav": "S", "nome": "Poltrona", "x0": 2.35, "y0": 4.3, "x1": 3.1, "y1": 5.05, "altura": 0.8, "cor": "#cfc6b8"}, {"id": "POLTR2", "pav": "S", "nome": "Poltrona", "x0": 3.9, "y0": 4.3, "x1": 4.65, "y1": 5.05, "altura": 0.8, "cor": "#cfc6b8"}, {"id": "MESA_L", "pav": "S", "nome": "Mesa lateral", "x0": 3.25, "y0": 4.5, "x1": 3.75, "y1": 4.9, "altura": 0.5, "cor": "#2b2b2b"}, {"id": "JARD1", "pav": "S", "nome": "Jardineira integrada", "x0": 0.15, "y0": 4.05, "x1": 0.75, "y1": 5.45, "altura": 0.6, "cor": "#5c7a45"}, {"id": "JARD2", "pav": "S", "nome": "Jardineira integrada", "x0": 6.25, "y0": 4.05, "x1": 6.85, "y1": 5.45, "altura": 0.6, "cor": "#5c7a45"}], "resumo": {"T": {"bruta": 100.82, "util": 92.546, "paredes": 8.275, "declarada": 100.82}, "S": {"bruta": 74.2, "util": 64.919, "paredes": 9.281, "declarada": 74.2}}};
+document.getElementById('hash').textContent = D.hash;
+const params = new URLSearchParams(location.search);
+
+// ------------------------------------------------------------------ cena
+const renderer = new THREE.WebGLRenderer({antialias:true, preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xdfe6ec);
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.05, 300);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0xb8ad9a, 1.15));
+// HIPOTESE: fundo do lote voltado para o norte -> sol vem do fundo (z negativo) no hemisferio sul
+const sun = new THREE.DirectionalLight(0xfff3e0, 1.6);
+sun.position.set(14, 22, -24); sun.target.position.set(3.5, 0, -10);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, {left:-16, right:16, top:16, bottom:-16, near:1, far:80});
+scene.add(sun, sun.target);
+const fill = new THREE.DirectionalLight(0xffffff, 0.55); fill.position.set(-8, 10, 18); scene.add(fill);
+
+// mapeamento planta -> mundo: (x, altura, -y)
+const grupos = {T:new THREE.Group(), S:new THREE.Group(), COB:new THREE.Group(), EXT:new THREE.Group(), ROT:new THREE.Group()};
+Object.values(grupos).forEach(g => scene.add(g));
+const matCache = {};
+function mat(cor, op=1, extra={}) {
+  const k = cor + op + JSON.stringify(extra);
+  if (!matCache[k]) matCache[k] = new THREE.MeshStandardMaterial(Object.assign({color:cor, roughness:.85, metalness:0,
+      transparent: op<1, opacity: op, depthWrite: op>=1}, extra));
+  return matCache[k];
+}
+function caixa(g, x0, y0, x1, y1, z0, z1, cor, op=1, sombra=true, extra={}) {
+  const w = Math.abs(x1-x0), d = Math.abs(y1-y0), h = Math.abs(z1-z0);
+  if (w < 1e-4 || d < 1e-4 || h < 1e-4) return null;
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(cor, op, extra));
+  m.position.set((x0+x1)/2, (z0+z1)/2, -(y0+y1)/2);
+  if (sombra && op >= 1) { m.castShadow = true; m.receiveShadow = true; }
+  g.add(m); return m;
+}
+
+const COR = {ext:'#ece7df', int:'#f6f3ee', grafite:'#3d4045', madeira:'#8b5e3c', vidro:'#7fa3b5', preto:'#1d1d1d',
+             laje:'#d9d4cc', piso:'#e2d6c4', pisoMolhado:'#d8d4cd', garagem:'#b9b6b0', gourmet:'#a99886',
+             grama:'#7fa35b', concreto:'#c9c5bd', brita:'#b7b2a8', rua:'#7b7d80', muro:'#d8cdbb'};
+const L = D.lote[0], P = D.lote[1];
+
+// terreno, rua, calcada, muros de divisa (contexto; muro e portao fora do orcamento)
+caixa(grupos.EXT, -6, -6, L+6, 0, -0.06, -0.02, COR.rua, 1, false);
+caixa(grupos.EXT, -6, 0, 0, P+4, -0.05, 0, '#cfd3c8', 1, false);
+caixa(grupos.EXT, L, 0, L+6, P+4, -0.05, 0, '#cfd3c8', 1, false);
+caixa(grupos.EXT, -6, P, L+6, P+4, -0.05, 0, '#cfd3c8', 1, false);
+for (const e of D.externas) {
+  const cor = e.id.startsWith('R_TR') ? COR.concreto : e.id === 'R_CAM' || e.id === 'P_PISO' ? '#d3cec5'
+            : e.id === 'P_BRITA' ? COR.brita : COR.grama;
+  caixa(grupos.EXT, e.x0, e.y0, e.x1, e.y1, 0, 0.03, cor, 1, false).receiveShadow = true;
+}
+// muros de divisa laterais/fundo (referencia visual, h=2,20 m)
+caixa(grupos.EXT, -0.12, 0, 0, P, 0, 2.2, COR.muro);
+caixa(grupos.EXT, L, 0, L+0.12, P, 0, 2.2, COR.muro);
+caixa(grupos.EXT, -0.12, P, L+0.12, P+0.12, 0, 2.2, COR.muro);
+// muro frontal baixo + portao (indicativo, FORA DO ORCAMENTO)
+caixa(grupos.EXT, 0, -0.12, 0.55, 0, 0, 1.4, COR.muro); caixa(grupos.EXT, 6.35, -0.12, L, 0, 0, 1.4, COR.muro);
+for (let x = 0.6; x < 6.3; x += 0.12) caixa(grupos.EXT, x, -0.1, x+0.05, -0.02, 0, 1.6, COR.preto);
+
+function arvore(g, x, y, h=3.2, r=1.0, cor='#5f8b45') {
+  const t = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.09, h*0.55, 8), mat('#6d5440'));
+  t.position.set(x, h*0.275, -y); t.castShadow = true; g.add(t);
+  const c = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), mat(cor));
+  c.position.set(x, h*0.62, -y); c.scale.y = 0.85; c.castShadow = true; g.add(c);
+}
+function moita(g, x, y, z, r=0.3, cor='#6f9a4f') {
+  const c = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 8), mat(cor));
+  c.position.set(x, z + r*0.7, -y); c.castShadow = true; g.add(c);
+}
+arvore(grupos.EXT, 6.1, 18.6, 3.6, 0.9);
+arvore(grupos.EXT, 0.3, 1.2, 2.6, 0.55, '#6b9a50');
+[[6.7,1.0],[6.7,2.2],[6.7,3.3],[0.25,2.6],[0.25,3.5],[5.7,11.6],[6.6,12.3],[6.5,10.8],[5.6,17.4],[6.6,17.3]]
+  .forEach(([x,y]) => moita(grupos.EXT, x, y, 0.03, 0.28));
+
+// ------------------------------------------------------------------ pavimentos
+const amb = Object.fromEntries(D.ambientes.map(a => [a.id, a]));
+const zPiso = p => D.pav[p].z, pd = p => D.pav[p].pd;
+const SOL = ['fechado', 'coberto'];
+const pisoCor = id => ({GAR:COR.garagem, GOURMET:COR.gourmet, LAVABO:COR.pisoMolhado, LAVAND:COR.pisoMolhado,
+  BWC_SOC:COR.pisoMolhado, BWC_SUI:COR.pisoMolhado, SUITE:'#b99a78', QUARTO:'#b99a78', ESCRIT:'#b99a78',
+  CLOSET:'#b99a78', SACADA:'#a8a196'})[id] || COR.piso;
+
+for (const a of D.ambientes) {
+  const g = grupos[a.pav];
+  if (a.pav === 'T' && SOL.includes(a.tipo)) caixa(g, a.x0, a.y0, a.x1, a.y1, 0, zPiso('T'), pisoCor(a.id));
+  if (a.pav === 'S' && (SOL.includes(a.tipo) || a.id === 'SACADA')) {
+    if (a.id === 'ESC_S') {  // somente a plataforma de chegada (vazio da escada)
+      caixa(g, 0.15, 11.895, 2.0, 12.725, zPiso('S') - D.laje, zPiso('S'), COR.piso);
+    } else caixa(g, a.x0, a.y0, a.x1, a.y1, zPiso('S') - D.laje, zPiso('S'), pisoCor(a.id));
+  }
+}
+// laje de cobertura da gourmet (nao acessivel) + platibanda baixa
+const gm = amb.GOURMET;
+caixa(grupos.S, gm.x0, gm.y0, gm.x1, gm.y1, zPiso('S') - D.laje, zPiso('S') - 0.02, COR.laje);
+caixa(grupos.S, gm.x0, gm.y1 - 0.15, gm.x1, gm.y1, zPiso('S'), zPiso('S') + 0.35, COR.ext);
+caixa(grupos.S, gm.x1 - 0.15, gm.y0, gm.x1, gm.y1, zPiso('S'), zPiso('S') + 0.35, COR.ext);
+caixa(grupos.T, gm.x1 - 0.2, gm.y1 - 0.2, gm.x1, gm.y1, zPiso('T'), zPiso('S') - D.laje, COR.grafite); // pilar
+
+// paredes
+for (const p of ['T', 'S']) {
+  for (const w of D.paredes[p]) {
+    let cor = w.tipo === 'externa' ? COR.ext : COR.int;
+    // volume grafite: fachada frontal do pavimento superior
+    caixa(grupos[p], w.x0, w.y0, w.x1, w.y1, zPiso(p) + w.z0, zPiso(p) + w.z1, cor);
+  }
+}
+// cobertura: laje + platibanda sobre o pavimento superior (telhado embutido)
+const zCob = zPiso('S') + pd('S');
+for (const a of D.ambientes.filter(a => a.pav === 'S' && SOL.includes(a.tipo))) {
+  if (a.id === 'ESC_S' || a.id === 'HALL_S') continue;
+  caixa(grupos.COB, a.x0, a.y0, a.x1, a.y1, zCob, zCob + D.laje, COR.laje);
+}
+// claraboia linear sobre escada + hall
+caixa(grupos.COB, 0, 9.3, 4.0, 12.8, zCob, zCob + D.laje, COR.laje, 1).visible = false;
+caixa(grupos.COB, 0.0, 9.3, 0.3, 12.8, zCob, zCob + D.laje, COR.laje);
+caixa(grupos.COB, 3.7, 9.3, 4.0, 12.8, zCob, zCob + D.laje, COR.laje);
+caixa(grupos.COB, 0.3, 9.3, 3.7, 9.6, zCob, zCob + D.laje, COR.laje);
+caixa(grupos.COB, 0.3, 12.5, 3.7, 12.8, zCob, zCob + D.laje, COR.laje);
+caixa(grupos.COB, 0.3, 9.6, 3.7, 12.5, zCob + D.laje, zCob + D.laje + 0.02, COR.vidro, 0.45);
+for (const w of D.paredes.S.filter(w => w.tipo === 'externa' && w.z1 >= pd('S') - 0.01)) {
+  caixa(grupos.COB, w.x0, w.y0, w.x1, w.y1, zCob, zCob + 0.85, COR.ext);
+}
+// moldura grafite envolvendo a sacada (sem cobrir: faixa superior de 0,30 m)
+caixa(grupos.COB, 0, 4.0, 0.15, 5.5, zPiso('S'), zCob + 0.85, COR.grafite);
+caixa(grupos.COB, L - 0.15, 4.0, L, 5.5, zPiso('S'), zCob + 0.85, COR.grafite);
+caixa(grupos.COB, 0, 4.0, L, 4.3, zCob + 0.35, zCob + 0.85, COR.grafite);
+// frente da garagem: viga sobre o vao (revestida em grafite) + ripado amadeirado no hall
+caixa(grupos.T, 0, 3.95, L, 4.15, zPiso('T') + 2.40, zPiso('S'), COR.grafite);
+for (let x = 2.0; x < 3.6; x += 0.1) if (x < 2.4 || x > 3.4) caixa(grupos.T, x, 9.15, x + 0.05, 9.225, zPiso('T'), zPiso('T') + 2.7, COR.madeira);
+// ripado vertical amadeirado na fachada superior (entre as portas de correr)
+for (let x = 2.65; x < 4.15; x += 0.1) caixa(grupos.S, x, 5.38, x + 0.05, 5.45, zPiso('S'), zCob + 0.85, COR.madeira);
+
+// aberturas
+for (const o of D.aberturas) {
+  const z = zPiso(o.pav);
+  const seg = (z0, z1, cor, op, esp=0.03) => o.eixo === 'y'
+    ? caixa(grupos[o.pav], o.a, o.coord - esp, o.b, o.coord + esp, z + z0, z + z1, cor, op, false)
+    : caixa(grupos[o.pav], o.coord - esp, o.a, o.coord + esp, o.b, z + z0, z + z1, cor, op, false);
+  if (o.tipo === 'janela') { seg(o.peitoril, o.peitoril + o.altura, COR.vidro, 0.45); }
+  else if (o.tipo === 'porta_correr') { seg(0, o.altura, COR.vidro, 0.4); }
+  else if (o.tipo === 'porta_pivotante') { seg(0, o.altura, COR.madeira, 1, 0.025); }
+  if (['janela', 'porta_correr'].includes(o.tipo)) {  // caixilho preto fosco
+    const t = 0.04;
+    if (o.eixo === 'y') {
+      caixa(grupos[o.pav], o.a, o.coord - .04, o.b, o.coord + .04, z + (o.peitoril||0), z + (o.peitoril||0) + t, COR.preto, 1, false);
+      caixa(grupos[o.pav], o.a, o.coord - .04, o.b, o.coord + .04, z + (o.peitoril||0) + o.altura - t, z + (o.peitoril||0) + o.altura, COR.preto, 1, false);
+      caixa(grupos[o.pav], (o.a+o.b)/2 - .02, o.coord - .04, (o.a+o.b)/2 + .02, o.coord + .04, z + (o.peitoril||0), z + (o.peitoril||0) + o.altura, COR.preto, 1, false);
+    } else {
+      caixa(grupos[o.pav], o.coord - .04, o.a, o.coord + .04, o.b, z + (o.peitoril||0), z + (o.peitoril||0) + t, COR.preto, 1, false);
+      caixa(grupos[o.pav], o.coord - .04, o.a, o.coord + .04, o.b, z + (o.peitoril||0) + o.altura - t, z + (o.peitoril||0) + o.altura, COR.preto, 1, false);
+    }
+  }
+}
+// guarda-corpos de vidro: sacada e vazio da escada
+caixa(grupos.S, 0.15, 3.98, L - 0.15, 4.04, zPiso('S'), zPiso('S') + 1.10, COR.vidro, 0.35, false);
+caixa(grupos.S, 0.15, 3.97, L - 0.15, 4.05, zPiso('S') + 1.06, zPiso('S') + 1.10, COR.preto, 1, false);
+caixa(grupos.S, 1.97, 9.3, 2.03, 11.9, zPiso('S'), zPiso('S') + 1.10, COR.vidro, 0.35, false);
+
+// escada em U (16 espelhos ~0,18 m; pisos 0,27 m) - conceitual
+const zT = zPiso('T'), esp = 0.18, pis = 0.27;
+for (let i = 1; i <= 8; i++) caixa(grupos.T, 1.15, 12.725 - i*pis, 2.0, 12.725 - (i-1)*pis, zT + i*esp - 0.05, zT + i*esp, COR.madeira);
+caixa(grupos.T, 0.15, 9.375, 2.0, 10.565, zT + 9*esp - 0.15, zT + 9*esp, COR.madeira);  // patamar
+for (let j = 1; j <= 6; j++) caixa(grupos.T, 0.15, 10.275 + (j-1)*pis, 1.0, 10.275 + j*pis, zT + (9+j)*esp - 0.05, zT + (9+j)*esp, COR.madeira);
+caixa(grupos.T, 1.0, 10.565, 1.15, 12.725, zT, zT + 1.9, COR.preto);  // montante / estrutura central
+caixa(grupos.T, 0.15, 9.375, 2.0, 10.4, zT, zT + 1.40, '#b9a58e');      // deposito sob patamar
+
+// mobiliario indicativo
+for (const m of D.mobiliario) {
+  const z = zPiso(m.pav);
+  const op = m.id.startsWith('BOX') ? 0.3 : 1;
+  if (m.id.startsWith('JARD')) {
+    caixa(grupos[m.pav], m.x0, m.y0, m.x1, m.y1, z, z + m.altura, COR.grafite);
+    for (let y = m.y0 + 0.25; y < m.y1; y += 0.45) moita(grupos[m.pav], (m.x0+m.x1)/2, y, z + m.altura - 0.1, 0.26);
+    continue;
+  }
+  caixa(grupos[m.pav], m.x0, m.y0, m.x1, m.y1, z, z + m.altura, m.cor, op);
+  if (m.id.startsWith('CAR')) caixa(grupos[m.pav], m.x0 + 0.1, m.y0 + 1.1, m.x1 - 0.1, m.y1 - 1.0, z + m.altura, z + m.altura + 0.4, '#5d6b78', 0.85);
+}
+// coifa da cozinha e da churrasqueira
+caixa(grupos.T, 4.9, 12.875, 5.7, 13.35, zT + 2.0, zT + 2.7, '#9a9a9a');
+caixa(grupos.T, 0.15, 19.25, 1.15, 19.85, zT + 2.2, zT + 2.7, COR.preto);
+
+// ------------------------------------------------------------------ rotulos
+function rotulo(txt1, txt2, x, y, z) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 128;
+  const k = c.getContext('2d');
+  k.fillStyle = 'rgba(255,255,255,.88)'; k.fillRect(0, 0, 512, 128);
+  k.fillStyle = '#222'; k.font = 'bold 40px DejaVu Sans, Arial'; k.textAlign = 'center'; k.fillText(txt1, 256, 52);
+  k.font = '32px DejaVu Sans, Arial'; k.fillStyle = '#555'; k.fillText(txt2, 256, 100);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c), depthTest:false}));
+  s.scale.set(1.9, 0.475, 1); s.position.set(x, z, -y); s.renderOrder = 10; s.userData.pav = null;
+  grupos.ROT.add(s); return s;
+}
+for (const a of D.ambientes) {
+  if (!SOL.includes(a.tipo) && !['SACADA', 'PATIO'].includes(a.id)) continue;
+  const nome = a.nome.split(' (')[0].replace('Sala e cozinha integradas', 'Sala + cozinha');
+  const s = rotulo(nome.length > 22 ? nome.slice(0, 22) : nome, a.area_util.toFixed(2).replace('.', ',') + ' m2 uteis',
+                   (a.x0+a.x1)/2, (a.y0+a.y1)/2, zPiso(a.pav) + 1.6);
+  s.userData.pav = a.pav;
+}
+grupos.ROT.visible = false;
+
+// tabela de areas (mesma fonte)
+const tab = document.getElementById('tab');
+const fmt = v => v.toFixed(2).replace('.', ',');
+let tot = 0, totu = 0;
+tab.innerHTML = '<tr><td><b>Pavimento</b></td><td><b>Bruta</b></td><td><b>Util</b></td></tr>' +
+  Object.entries(D.resumo).map(([p, r]) => { tot += r.bruta; totu += r.util;
+    return `<tr><td>${D.pav[p].nome}</td><td>${fmt(r.bruta)} m2</td><td>${fmt(r.util)} m2</td></tr>`; }).join('') +
+  `<tr><td><b>Total construido</b></td><td><b>${fmt(tot)} m2</b></td><td>${fmt(totu)} m2</td></tr>`;
+
+// ------------------------------------------------------------------ modos e vistas
+let modo = 'completo';
+function aplicaModo(m) {
+  modo = m;
+  grupos.COB.visible = m === 'completo';
+  grupos.S.visible = m !== 'terreo';
+  grupos.ROT.children.forEach(s => s.visible = s.userData.pav === (m === 'terreo' ? 'T' : 'S'));
+  document.querySelectorAll('[data-modo]').forEach(b => b.classList.toggle('on', b.dataset.modo === m));
+}
+const VISTAS = {
+  fachada:   {pos:[3.5, 1.7, 9.5], alvo:[3.5, 3.0, -6], modo:'completo'},
+  aerea:     {pos:[17, 17, 9], alvo:[3.5, 1.5, -9], modo:'completo'},
+  fundos:    {pos:[-6, 7, -28], alvo:[3.5, 2.5, -14], modo:'completo'},
+  planta:    {pos:[3.5, 30, -9.99], alvo:[3.5, 0, -10], modo:'semcob'},
+  sala:      {pos:[6.2, 5.6, -21.5], alvo:[3.0, 0.6, -14.2], modo:'terreo'},
+  gourmet:   {pos:[6.4, 4.8, -14.0], alvo:[2.4, 0.6, -18.6], modo:'terreo'},
+  lavanderia:{pos:[8.0, 5.5, -8.6], alvo:[4.3, 0.4, -11.7], modo:'terreo'},
+  suite:     {pos:[6.6, 9.0, -20.5], alvo:[3.3, 3.0, -14.6], modo:'superior'},
+  escritorio:{pos:[5.8, 8.2, -2.4], alvo:[1.4, 3.1, -7.3], modo:'superior'},
+  sacada:    {pos:[6.2, 5.4, -0.6], alvo:[3.0, 3.4, -5.2], modo:'completo'},
+  garagem:   {pos:[3.5, 2.6, 3.2], alvo:[3.3, 0.6, -8.8], modo:'completo'},
+};
+// controles orbitais simples (sem dependencias externas)
+const alvo = new THREE.Vector3(); let raio = 20, teta = 0, fi = 1;
+function setVista(nome) {
+  const v = VISTAS[nome]; if (!v) return;
+  alvo.set(...v.alvo); const p = new THREE.Vector3(...v.pos).sub(alvo);
+  raio = p.length(); teta = Math.atan2(p.x, p.z); fi = Math.acos(p.y / raio);
+  aplicaModo(v.modo); atualizaCam();
+}
+function atualizaCam() {
+  fi = Math.min(Math.max(fi, 0.0005), Math.PI - 0.05);
+  camera.position.set(alvo.x + raio*Math.sin(fi)*Math.sin(teta), alvo.y + raio*Math.cos(fi), alvo.z + raio*Math.sin(fi)*Math.cos(teta));
+  camera.lookAt(alvo);
+}
+let drag = null;
+renderer.domElement.addEventListener('pointerdown', e => { drag = {x:e.clientX, y:e.clientY, pan: e.shiftKey || e.button === 2}; });
+addEventListener('pointerup', () => drag = null);
+addEventListener('contextmenu', e => e.preventDefault());
+addEventListener('pointermove', e => {
+  if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY;
+  if (drag.pan) {
+    const r = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 0), u = new THREE.Vector3().setFromMatrixColumn(camera.matrix, 1);
+    alvo.addScaledVector(r, -dx * raio / 900).addScaledVector(u, dy * raio / 900);
+  } else { teta -= dx * 0.006; fi -= dy * 0.006; }
+  atualizaCam();
+});
+renderer.domElement.addEventListener('wheel', e => { raio *= e.deltaY > 0 ? 1.1 : 0.9; raio = Math.min(Math.max(raio, 1.5), 90); atualizaCam(); e.preventDefault(); }, {passive:false});
+document.querySelectorAll('[data-modo]').forEach(b => b.onclick = () => aplicaModo(b.dataset.modo));
+document.querySelectorAll('[data-v]').forEach(b => b.onclick = () => setVista(b.dataset.v));
+document.getElementById('btnRot').onclick = e => { grupos.ROT.visible = !grupos.ROT.visible; e.target.classList.toggle('on', grupos.ROT.visible); };
+addEventListener('resize', () => { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); });
+
+setVista(params.get('v') || 'aerea');
+if (params.get('modo')) aplicaModo(params.get('modo'));
+if (params.get('rot') === '1') { grupos.ROT.visible = true; }
+if (params.get('ui') === '0') { document.getElementById('ui').classList.add('hide'); }
+(function loop() { renderer.render(scene, camera); requestAnimationFrame(loop); })();
+window.__pronto = true;
+</script>
+</body>
+</html>

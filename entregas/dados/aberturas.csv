@@ -1,0 +1,26 @@
+id,pav,tipo,eixo,coord,a,b,altura,peitoril,de,para,nota
+A01,T,vao_livre,y,4.00,0.15,6.85,2.40,0,GAR,RECUO,Frente da garagem aberta (vigas sobre o vao de 7 m - pendencia estrutural)
+A02,T,porta_pivotante,y,9.30,2.40,3.40,2.60,0,HALL_T,GAR,Porta principal alta em madeira 1.00 x 2.60 m
+A03,T,porta,y,9.30,5.60,6.40,2.10,0,PATIO,GAR,Porta de servico garagem-patio
+A04,T,porta,x,3.40,9.60,10.30,2.10,0,LAVABO,HALL_T,Porta do lavabo 0.70 m
+A05,T,janela,x,5.40,9.70,10.30,0.60,1.60,LAVABO,PATIO,Basculante (ventilacao natural)
+A06,T,porta,y,12.80,3.50,4.30,2.10,0,LAVAND,SALA_COZ,Lavanderia acessada pela cozinha
+A07,T,porta,x,5.40,11.70,12.50,2.10,0,LAVAND,PATIO,Porta veneziana para o patio de secagem
+A08,T,janela,x,5.40,10.95,11.55,1.00,1.10,LAVAND,PATIO,Janela da lavanderia
+A09,T,janela,y,12.80,5.60,6.80,1.00,1.10,SALA_COZ,PATIO,Janela sobre a pia da cozinha
+A10,T,porta_correr,y,16.90,0.40,4.80,2.40,0,SALA_COZ,GOURMET,Porta de correr 4 folhas em aluminio preto
+A11,T,porta_correr,y,16.90,5.40,6.80,2.40,0,SALA_COZ,JARDIM_F,Porta de correr para o jardim
+A12,T,vao_livre,x,5.20,17.00,20.00,2.40,0,GOURMET,JARDIM_F,Lado aberto da gourmet
+A13,S,porta_correr,y,5.50,0.40,2.60,2.40,0,ESCRIT,SACADA,Porta de correr escritorio-sacada
+A14,S,porta_correr,y,5.50,4.20,6.20,2.40,0,QUARTO,SACADA,Porta de correr quarto-sacada
+A15,S,janela,y,9.30,5.60,6.80,1.00,1.10,QUARTO,POCO,Janela para o poco (ventilacao cruzada)
+A16,S,porta,y,9.30,2.10,2.90,2.10,0,ESCRIT,HALL_S,Porta do escritorio
+A17,S,porta,y,9.30,3.10,3.90,2.10,0,QUARTO,HALL_S,Porta do quarto
+A18,S,porta,x,4.00,11.60,12.30,2.10,0,BWC_SOC,HALL_S,Porta do banheiro social 0.70 m
+A19,S,janela,x,5.40,10.00,10.80,0.60,1.50,BWC_SOC,POCO,Basculante
+A20,S,porta,y,12.80,2.40,3.20,2.10,0,SUITE,HALL_S,Porta da suite
+A21,S,vao_livre,x,3.70,13.60,14.40,2.10,0,SUITE,CLOSET,Passagem suite-closet (porta de correr embutida opcional)
+A22,S,porta,y,15.00,4.00,4.70,2.10,0,BWC_SUI,CLOSET,Porta do banheiro da suite 0.70 m
+A23,S,janela,y,12.80,5.60,6.60,0.80,1.40,CLOSET,POCO,Janela alta do closet
+A24,S,janela,y,16.90,0.60,3.00,1.60,0.60,SUITE,EXT,Janela da suite (fundo)
+A25,S,janela,y,16.90,5.60,6.60,0.60,1.50,BWC_SUI,EXT,Basculante do banheiro da suite

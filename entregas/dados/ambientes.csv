@@ -1,0 +1,21 @@
+id,pav,nome,tipo,computa,x0,y0,x1,y1,lados_abertos,area_ref,ref_txt,nota
+GAR,T,Garagem (2 carros + 1 moto),coberto,1,0.00,4.00,7.00,9.30,S,25.0,25 m2 (planta),Frente aberta para o recuo; fechamento pelo muro/portao do lote (fora do orcamento)
+ESC_T,T,Escada em U,fechado,1,0.00,9.30,2.00,12.80,EN,5.25,~1.5 x 3.5 m,Lances de 0.80 m; deposito sob o patamar
+HALL_T,T,Hall de entrada,fechado,1,2.00,9.30,3.40,12.80,NW,0,(nao definido),Porta pivotante alta a partir da faixa central coberta da garagem
+LAVABO,T,Lavabo,fechado,1,3.40,9.30,5.40,10.70,,2.25,2 a 2.5 m2,Janela basculante para o patio de servico
+LAVAND,T,Lavanderia,fechado,1,3.40,10.70,5.40,12.80,,5.0,5 m2,Acesso pela cozinha; porta para o patio de servico (secagem)
+SALA_COZ,T,Sala e cozinha integradas,fechado,1,0.00,12.80,7.00,16.90,,27.0,26 a 28 m2,Sem sala de jantar separada; peninsula compacta
+GOURMET,T,Area gourmet,coberto,1,0.00,16.90,5.20,20.00,E,15.0,15 m2 (planta),Coberta por laje propria; lado leste aberto para o jardim
+PATIO,T,Patio de servico / poco de luz,descoberto,0,5.40,9.30,7.00,12.80,,0,,Descoberto nos dois pavimentos; ilumina lavabo lavanderia cozinha
+JARDIM_F,T,Jardim de fundo,descoberto,0,5.20,16.90,7.00,20.00,,0,,Area permeavel com arvore de pequeno porte
+RECUO,T,Recuo frontal (jardim e acesso),descoberto,0,0.00,0.00,7.00,4.00,,0,,Recuo frontal de 4.00 m = HIPOTESE
+SACADA,S,Sacada jardim sobre a garagem,descoberto,0,0.00,4.00,7.00,5.50,,8.0,8 m2 (lista) / 21 m2 (geometria),Descoberta; nao computada (HIPOTESE); jardineiras nas extremidades
+ESCRIT,S,Escritorio independente,fechado,1,0.00,5.50,3.00,9.30,,10.0,10 m2 (lista) / 20 m2 (planta),Porta propria; acesso a sacada
+QUARTO,S,Quarto,fechado,1,3.00,5.50,7.00,9.30,,11.0,10 a 12 m2,Janela para o poco de luz (ventilacao cruzada)
+ESC_S,S,Escada (chegada),fechado,1,0.00,9.30,2.00,12.80,E,5.25,~1.5 x 3.5 m,Vazio da escada + plataforma de chegada
+HALL_S,S,Hall intimo,fechado,1,2.00,9.30,4.00,12.80,W,6.0,6 m2,Claraboia linear sobre escada e hall
+BWC_SOC,S,Banheiro social,fechado,1,4.00,9.30,5.40,12.80,,4.0,4 m2,Alinhado sobre lavabo/lavanderia (prumada hidraulica)
+POCO,S,Poco de luz (vazio),vazio,0,5.40,9.30,7.00,12.80,,0,,Vazio sobre o patio de servico
+SUITE,S,Suite do casal,fechado,1,0.00,12.80,3.70,16.90,,14.0,14 m2,Cama queen; janela para o fundo
+CLOSET,S,Closet,fechado,1,3.70,12.80,7.00,15.00,,7.0,7 m2,Entre o dormitorio e o banheiro; armarios nos dois lados
+BWC_SUI,S,Banheiro da suite,fechado,1,3.70,15.00,7.00,16.90,,4.5,4 a 5 m2,Acesso pelo closet; janela para o fundo
